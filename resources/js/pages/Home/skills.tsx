@@ -56,8 +56,7 @@ export default function Skills({ skills = [] }: { skills: Skill[] }) {
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{
                             once: true,
-                            margin: '200px 0px',
-                            amount: 0.5,
+                            amount: 0.2,
                         }}
                         transition={{
                             duration: 0.6,
@@ -93,8 +92,7 @@ export default function Skills({ skills = [] }: { skills: Skill[] }) {
                         whileInView="visible"
                         viewport={{
                             once: true,
-                            margin: '200px 0px',
-                            amount: 0.5,
+                            amount: 0.2,
                         }}
                         className="mt-4 grid grid-cols-2 gap-3 md:flex md:flex-wrap md:items-center md:justify-between md:gap-x-2 md:gap-y-7 md:after:w-[20%] md:after:flex-auto md:after:content-['']"
                     >
@@ -109,7 +107,7 @@ export default function Skills({ skills = [] }: { skills: Skill[] }) {
                                 {/* flex-1 ditambahkan agar nama skill memanjang mengambil sisa ruang di HP */}
                                 <span className="flex h-full flex-1 items-center truncate rounded-l-full border-y border-l border-white/50 bg-white/10 px-2 text-white backdrop-blur-sm md:px-3.5">
                                     <span className="mr-1.5 shrink-0 md:mr-2">
-                                        <i className={skills.icon}></i>
+                                        <i className={skills.icon ?? undefined}></i>
                                     </span>
                                     <span className="truncate text-[10px] font-normal sm:text-xs">
                                         {skills.name_skills}

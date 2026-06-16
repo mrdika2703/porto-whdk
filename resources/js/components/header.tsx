@@ -1,39 +1,51 @@
 import { Link } from '@inertiajs/react';
 import { useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
 import { Watermark } from '@/components/watermark';
 
 export default function Header() {
     const [isVisible, setIsVisible] = useState(false);
-    const [isDark, setIsDark] = useState(true);
+    const [isDark, setIsDark] = useState(false);
 
-    // --- LOGIKA THEME (DARK/LIGHT) ---
+    // 2. STATE BARU UNTUK TRACKING MENU AKTIF
+    const [activeSection, setActiveSection] = useState('home');
+
     useEffect(() => {
-        // Mengecek localStorage (apakah user pernah klik tombol sebelumnya)
-        const savedTheme = localStorage.getItem('theme');
+        const root = document.documentElement;
+        const storedTheme = localStorage.getItem('theme');
 
-        // Karena desain web Anda aslinya gelap, kita set default ke dark
-        if (savedTheme === 'light') {
-            document.documentElement.classList.remove('dark');
+        if (storedTheme === 'dark') {
+            root.classList.add('dark');
+            setIsDark(true);
+        } else if (storedTheme === 'light') {
+            root.classList.remove('dark');
             setIsDark(false);
         } else {
-            document.documentElement.classList.add('dark');
-            setIsDark(true);
+            const currentHour = new Date().getHours();
+            if (currentHour >= 18 || currentHour < 6) {
+                root.classList.add('dark');
+                setIsDark(true);
+            } else {
+                root.classList.remove('dark');
+                setIsDark(false);
+            }
         }
     }, []);
 
     const toggleTheme = () => {
+        const root = document.documentElement;
         if (isDark) {
-            document.documentElement.classList.remove('dark');
+            root.classList.remove('dark');
             localStorage.setItem('theme', 'light');
             setIsDark(false);
         } else {
-            document.documentElement.classList.add('dark');
+            root.classList.add('dark');
             localStorage.setItem('theme', 'dark');
             setIsDark(true);
         }
     };
 
-    // --- LOGIKA SCROLL NAVBAR ---
+    // --- LOGIKA SCROLL NAVBAR HIDE/SHOW ---
     useEffect(() => {
         let lastScrollY = window.scrollY;
 
@@ -58,49 +70,161 @@ export default function Header() {
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
 
+    // 3. LOGIKA DETEKSI SECTION MANA YANG SEDANG DI LAYAR (SCROLL SPY)
+    useEffect(() => {
+        const observer = new IntersectionObserver(
+            (entries) => {
+                entries.forEach((entry) => {
+                    // Jika elemen menyentuh 40% area tengah layar, jadikan menu tersebut aktif
+                    if (entry.isIntersecting) {
+                        setActiveSection(entry.target.id);
+                    }
+                });
+            },
+            { rootMargin: '-40% 0px -40% 0px' },
+        );
+
+        // Daftarkan semua ID section yang ada di halaman utama
+        const sections = [
+            'home',
+            'about',
+            'journey',
+            'design',
+            'photo',
+            'website',
+            'contact-footer',
+        ];
+        sections.forEach((id) => {
+            const element = document.getElementById(id);
+            if (element) observer.observe(element);
+        });
+
+        return () => observer.disconnect();
+    }, []);
+
+    // Helper untuk mengecek apakah salah satu isi Portofolio sedang aktif
+    const isPortfolioActive = ['design', 'photo', 'website'].includes(
+        activeSection,
+    );
+
     return (
         <header
-            // 1. PERBAIKAN LEBAR: w-[95vw] dan justify-between untuk HP agar melebar maksimal, md:w-max untuk Desktop
-            className={`font-inter fixed top-4 left-1/2 z-50 flex w-[95vw] -translate-x-1/2 items-center justify-between gap-2 transition-all duration-500 ease-in-out md:top-6 md:w-max md:justify-center md:gap-4 ${
+            className={`font-inter fixed top-4 left-1/2 z-50 flex w-[95vw] -translate-x-1/2 items-center justify-between gap-1.5 transition-all duration-500 ease-in-out md:top-6 md:w-max md:justify-center md:gap-4 ${
                 isVisible
                     ? 'translate-y-0 opacity-100'
                     : 'pointer-events-none -translate-y-8 opacity-0'
             }`}
         >
-            {/* Navigasi Utama (Pill Putih) */}
-            {/* 1. PERBAIKAN LEBAR: w-full untuk HP agar mengisi sisa ruang, md:w-auto untuk Desktop */}
-            <nav className="flex w-full items-center justify-between gap-2 rounded-full bg-white px-5 py-2 shadow-lg md:w-auto md:gap-10 md:px-10 md:py-3">
+            <nav className="flex w-full items-center justify-between gap-0.5 rounded-full bg-white px-3 py-1.5 shadow-lg md:w-auto md:gap-4 md:px-6 md:py-2.5">
                 <a
                     href="#"
-                    className="transition-colors hover:text-hbshine sm:text-sm md:text-base"
+                    className="mr-2 hidden transition-colors hover:text-hbshine md:mr-6 md:block md:text-sm"
                 >
                     <Watermark className="h-6 w-6 text-htext hover:text-hbshine" />
                 </a>
 
+                {/* --- MENU HOME --- */}
                 <a
                     href="#home"
-                    className="text-[13.5px] font-medium text-htext transition-colors hover:text-hbshine sm:text-sm md:text-base"
+                    onClick={() => setActiveSection('home')}
+                    className={`relative rounded-full px-2 py-1.5 text-xs font-medium transition-colors md:px-4 md:text-sm ${
+                        activeSection === 'home'
+                            ? 'text-hbshine'
+                            : 'text-htext hover:text-hbshine'
+                    }`}
                 >
-                    Home
+                    {/* 4. ANIMASI OUTLINE BERPINDAH (FRAMER MOTION) */}
+                    {activeSection === 'home' && (
+                        <motion.div
+                            layoutId="active-nav-pill"
+                            className="absolute inset-0 rounded-full border border-bshine bg-bshine/5"
+                            transition={{
+                                type: 'spring',
+                                stiffness: 400,
+                                damping: 30,
+                            }}
+                        />
+                    )}
+                    <span className="relative z-10">Home</span>
                 </a>
 
-                {/* Dropdown Portofolio */}
-                {/* 2. PERBAIKAN DROPDOWN: Tambahkan tabIndex={0} dan outline-none agar div ini bisa menerima "Tap" / Fokus di HP */}
+                {/* --- MENU ABOUT --- */}
+                <a
+                    href="#about"
+                    onClick={() => setActiveSection('about')}
+                    className={`relative rounded-full px-2 py-1.5 text-xs font-medium transition-colors md:px-4 md:text-sm ${
+                        activeSection === 'about'
+                            ? 'text-hbshine'
+                            : 'text-htext hover:text-hbshine'
+                    }`}
+                >
+                    {activeSection === 'about' && (
+                        <motion.div
+                            layoutId="active-nav-pill"
+                            className="absolute inset-0 rounded-full border border-bshine bg-bshine/5"
+                            transition={{
+                                type: 'spring',
+                                stiffness: 400,
+                                damping: 30,
+                            }}
+                        />
+                    )}
+                    <span className="relative z-10">About</span>
+                </a>
+
+                {/* --- MENU Journey --- */}
+                <a
+                    href="#journey"
+                    onClick={() => setActiveSection('journey')}
+                    className={`relative rounded-full px-2 py-1.5 text-xs font-medium transition-colors md:px-4 md:text-sm ${
+                        activeSection === 'journey'
+                            ? 'text-hbshine'
+                            : 'text-htext hover:text-hbshine'
+                    }`}
+                >
+                    {activeSection === 'journey' && (
+                        <motion.div
+                            layoutId="active-nav-pill"
+                            className="absolute inset-0 rounded-full border border-bshine bg-bshine/5"
+                            transition={{
+                                type: 'spring',
+                                stiffness: 400,
+                                damping: 30,
+                            }}
+                        />
+                    )}
+                    <span className="relative z-10">Journey</span>
+                </a>
+
+                {/* --- MENU PORTOFOLIO --- */}
                 <div
                     tabIndex={0}
-                    className="group relative flex cursor-pointer items-center gap-1 pb-0 outline-none"
+                    className={`group relative flex cursor-pointer items-center gap-1 rounded-full px-2 py-1.5 transition-colors outline-none md:px-4 ${
+                        isPortfolioActive
+                            ? 'text-hbshine'
+                            : 'text-htext hover:text-hbshine'
+                    }`}
                 >
-                    {/* Tambahkan group-focus: agar saat ditap warnanya berubah */}
-                    <span className="text-[13.5px] font-medium text-htext transition-colors group-hover:text-hbshine group-focus:text-hhtext sm:text-sm md:text-base">
+                    {isPortfolioActive && (
+                        <motion.div
+                            layoutId="active-nav-pill"
+                            className="absolute inset-0 rounded-full border border-bshine bg-bshine/5"
+                            transition={{
+                                type: 'spring',
+                                stiffness: 400,
+                                damping: 30,
+                            }}
+                        />
+                    )}
+                    <span className="relative z-10 text-xs font-medium md:text-sm">
                         Portofolio
                     </span>
-                    {/* Tambahkan group-focus:rotate-180 agar panah ikut berputar saat ditap */}
                     <svg
                         fill="none"
                         stroke="currentColor"
                         strokeWidth="2"
                         viewBox="0 0 24 24"
-                        className="mt-0.5 h-3 w-3 transition-transform group-hover:rotate-180 group-focus:rotate-180 md:mt-1 md:h-3.5 md:w-3.5"
+                        className="relative z-10 mt-0.5 h-3 w-3 transition-transform group-hover:rotate-180 group-focus:rotate-180 md:mt-1 md:h-3.5 md:w-3.5"
                     >
                         <path
                             strokeLinecap="round"
@@ -110,41 +234,36 @@ export default function Header() {
                     </svg>
 
                     {/* Menu Dropdown */}
-                    {/* 2. PERBAIKAN DROPDOWN: Tambahkan group-focus:visible dan group-focus:opacity-100 agar menu muncul saat layar ditap */}
                     <div className="invisible absolute top-full left-1/2 mt-2 flex w-40 -translate-x-1/2 flex-col overflow-hidden rounded-xl border border-gray-100 bg-white opacity-0 shadow-xl transition-all duration-300 group-hover:visible group-hover:opacity-100 group-focus:visible group-focus:opacity-100 md:w-48 md:rounded-2xl">
                         <a
                             href="#design"
-                            className="px-4 py-2.5 text-[13.5px] text-gray-700 hover:bg-gray-100 hover:text-hbshine md:px-5 md:py-3 md:text-sm"
+                            onClick={() => setActiveSection('design')}
+                            className={`px-4 py-2.5 text-xs hover:bg-gray-100 hover:text-hbshine md:px-5 md:py-3 md:text-sm ${activeSection === 'design' ? 'bg-gray-50 font-semibold text-hbshine' : 'text-gray-700'}`}
                         >
                             Design Graphic
                         </a>
                         <a
                             href="#photo"
-                            className="px-4 py-2.5 text-[13.5px] text-gray-700 hover:bg-gray-100 hover:text-hbshine md:px-5 md:py-3 md:text-sm"
+                            onClick={() => setActiveSection('photo')}
+                            className={`px-4 py-2.5 text-xs hover:bg-gray-100 hover:text-hbshine md:px-5 md:py-3 md:text-sm ${activeSection === 'photo' ? 'bg-gray-50 font-semibold text-hbshine' : 'text-gray-700'}`}
                         >
                             Photography & Video
                         </a>
                         <a
                             href="#website"
-                            className="px-4 py-2.5 text-[13.5px] text-gray-700 hover:bg-gray-100 hover:text-hbshine md:px-5 md:py-3 md:text-sm"
+                            onClick={() => setActiveSection('website')}
+                            className={`px-4 py-2.5 text-xs hover:bg-gray-100 hover:text-hbshine md:px-5 md:py-3 md:text-sm ${activeSection === 'website' ? 'bg-gray-50 font-semibold text-hbshine' : 'text-gray-700'}`}
                         >
                             Websites
                         </a>
                     </div>
                 </div>
-
-                <a
-                    href="#about"
-                    className="text-[13.5px] font-medium text-htext transition-colors hover:text-hbshine sm:text-sm md:text-base"
-                >
-                    About
-                </a>
             </nav>
 
             {/* Tombol Tema (Sun / Moon Icon) */}
             <button
                 onClick={toggleTheme}
-                className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-gray-300 border-white/50 bg-white/20 text-bsecond shadow-lg backdrop-blur-md transition-all hover:bg-white/30 sm:h-10 sm:w-10 md:h-[52px] md:w-[52px] dark:border-white/50 dark:text-white"
+                className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-white/50 bg-white/20 text-bsecond shadow-lg backdrop-blur-md transition-all hover:bg-white/30 sm:h-10 sm:w-10 md:h-[52px] md:w-[52px] dark:border-white/50 dark:text-white"
             >
                 {isDark ? (
                     <svg
@@ -177,7 +296,7 @@ export default function Header() {
             {/* Tombol Chat */}
             <a
                 href="#contact-footer"
-                className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-gray-300 border-white/50 bg-white/20 text-bsecond shadow-lg backdrop-blur-md transition-all hover:bg-white/30 sm:h-10 sm:w-10 md:h-[52px] md:w-[52px] dark:border-white/50 dark:text-white"
+                className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-white/50 ${activeSection === 'contact-footer' ? 'bg-bshine/20' : 'bg-white/20'} text-bsecond shadow-lg backdrop-blur-md transition-all hover:bg-white/30 sm:h-10 sm:w-10 md:h-[52px] md:w-[52px] dark:border-white/50 dark:text-white`}
             >
                 <svg
                     fill="currentColor"

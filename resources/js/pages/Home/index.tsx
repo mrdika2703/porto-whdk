@@ -4,9 +4,12 @@ import Hero from './hero';
 import About from './about';
 import Skills from './skills';
 import Experience from './experience';
+import DirectSection from './direct';
 import DesignGraphicSection from './grapich';
 import PhotoVideoSection from './photography';
 import WebsiteSection from './website';
+import CertificateSection from './certificate';
+import OtherSection from './other';
 
 export interface Profile {
     id: number;
@@ -25,6 +28,17 @@ export interface Skill {
     category: string;
     level: string | null;
     icon: string | null;
+}
+
+export interface Certificate {
+    id: number;
+    category: string;
+    title: string;
+    description: string;
+    start_date: string;
+    end_date: string | null;
+    url_1: string;
+    url_2: string | null;
 }
 
 export interface Experience {
@@ -78,6 +92,18 @@ export interface Website {
     images: string[];
 }
 
+export interface Other {
+    id: number;
+    category: string;
+    title: string;
+    description: string;
+    url_1: string;
+    url_2: string | null;
+    url_3: string | null;
+    url_4: string | null;
+    url_5: string | null;
+}
+
 export interface Footers {
     id: number;
     name: string;
@@ -93,22 +119,26 @@ export interface Footers {
 interface HomeProps {
     profiles: Profile[];
     skills: Skill[];
+    certificates: Certificate[];
     experiences: Experience[];
     educations: Education[];
     designs: Design[];
     photovideos: PhotoVideo[];
     websites: Website[];
+    others: Other[];
     footers: Footers[];
 }
 
 export default function Home({
     profiles = [],
     skills = [],
+    certificates = [],
     experiences = [],
     educations = [],
     designs = [],
     photovideos = [],
     websites = [],
+    others = [],
     footers = [],
 }: HomeProps) {
     return (
@@ -125,11 +155,14 @@ export default function Home({
                                 educations={educations}
                             />
                         </div>
+                        <CertificateSection certificates={certificates} />
+                        <DirectSection />
                         <DesignGraphicSection designs={designs} />
                         <div className="bg-bphotograph">
                             <PhotoVideoSection photovideos={photovideos} />
                         </div>
                         <WebsiteSection websites={websites} />
+                        <OtherSection others={others} />
                     </div>
                 </div>
             </Layout>

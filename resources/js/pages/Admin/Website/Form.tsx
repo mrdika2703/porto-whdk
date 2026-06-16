@@ -3,50 +3,58 @@ import LayoutAdmin from '../Layout/AdminLayout';
 import { FormEvent, useState, useEffect } from 'react';
 import Swal from 'sweetalert2';
 
-interface PhotoVideoData {
+interface WebsiteData {
     id?: number;
     category: string;
     title: string;
-    description: string;
-    type: 'photo' | 'video';
+    description: string | null;
+    tech: string;
+    link: string | null;
+    origin: string | null;
     url_1: string | File | null;
     url_2: string | File | null;
     url_3: string | File | null;
     url_4: string | File | null;
     url_5: string | File | null;
+    url_6: string | File | null;
+    url_7: string | File | null;
+    url_8: string | File | null;
 }
 
 interface FormProps {
-    photovideos?: PhotoVideoData;
+    websites?: WebsiteData;
     existingCategories?: string[]; // Prop baru dari backend
 }
 
-export default function Form({
-    photovideos,
-    existingCategories = [],
-}: FormProps) {
-    const isEdit = !!photovideos;
+export default function Form({ websites, existingCategories = [] }: FormProps) {
+    const isEdit = !!websites;
 
-    const { data, setData, post, processing, errors } = useForm<PhotoVideoData>(
-        {
-            category: photovideos?.category ?? '',
-            title: photovideos?.title ?? '',
-            description: photovideos?.description ?? '',
-            type: photovideos?.type ?? 'photo',
-            url_1: null,
-            url_2: null,
-            url_3: null,
-            url_4: null,
-            url_5: null,
-        },
-    );
+    const { data, setData, post, processing, errors } = useForm<WebsiteData>({
+        category: websites?.category ?? '',
+        title: websites?.title ?? '',
+        description: websites?.description ?? '',
+        tech: websites?.tech ?? '',
+        link: websites?.link ?? null,
+        origin: websites?.origin ?? null,
+        url_1: null,
+        url_2: null,
+        url_3: null,
+        url_4: null,
+        url_5: null,
+        url_6: null,
+        url_7: null,
+        url_8: null,
+    });
 
     const [previews, setPreviews] = useState<{ [key: string]: string | null }>({
-        url_1: photovideos?.url_1 ? `/storage/${photovideos.url_1}` : null,
-        url_2: photovideos?.url_2 ? `/storage/${photovideos.url_2}` : null,
-        url_3: photovideos?.url_3 ? `/storage/${photovideos.url_3}` : null,
-        url_4: photovideos?.url_4 ? `/storage/${photovideos.url_4}` : null,
-        url_5: photovideos?.url_5 ? `/storage/${photovideos.url_5}` : null,
+        url_1: websites?.url_1 ? `/storage/${websites.url_1}` : null,
+        url_2: websites?.url_2 ? `/storage/${websites.url_2}` : null,
+        url_3: websites?.url_3 ? `/storage/${websites.url_3}` : null,
+        url_4: websites?.url_4 ? `/storage/${websites.url_4}` : null,
+        url_5: websites?.url_5 ? `/storage/${websites.url_5}` : null,
+        url_6: websites?.url_6 ? `/storage/${websites.url_6}` : null,
+        url_7: websites?.url_7 ? `/storage/${websites.url_7}` : null,
+        url_8: websites?.url_8 ? `/storage/${websites.url_8}` : null,
     });
 
     const [modalMedia, setModalMedia] = useState<string | null>(null);
@@ -63,16 +71,14 @@ export default function Form({
     }, []);
 
     const handleFileChange = (num: number, file: File | null) => {
-        const urlKey = `url_${num}` as keyof PhotoVideoData;
+        const urlKey = `url_${num}` as keyof WebsiteData;
         setData(urlKey, file);
 
         if (file) {
             const objectUrl = URL.createObjectURL(file);
             setPreviews((prev) => ({ ...prev, [urlKey]: objectUrl }));
         } else {
-            const existingFile = photovideos
-                ? (photovideos as any)[urlKey]
-                : null;
+            const existingFile = websites ? (websites as any)[urlKey] : null;
             setPreviews((prev) => ({
                 ...prev,
                 [urlKey]: existingFile ? `/storage/${existingFile}` : null,
@@ -117,9 +123,9 @@ export default function Form({
         };
 
         if (isEdit) {
-            post(`/admin/photo-video/${photovideos.id}`, options);
+            post(`/admin/website/${websites.id}`, options);
         } else {
-            post('/admin/photo-video', options);
+            post('/admin/website', options);
         }
     };
 
@@ -132,23 +138,21 @@ export default function Form({
 
     return (
         <LayoutAdmin>
-            <Head
-                title={isEdit ? 'Edit Photo & Video' : 'Tambah Photo & Video'}
-            />
+            <Head title={isEdit ? 'Edit Website' : 'Tambah Website'} />
 
             <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                 <div>
                     <h2 className="text-2xl font-bold text-htext dark:text-tmain">
-                        {isEdit ? 'Edit Portofolio' : 'Tambah Portofolio'}
+                        {isEdit ? 'Edit Website' : 'Tambah Website'}
                     </h2>
                     <p className="mt-1 text-sm text-tmuted">
                         {isEdit
-                            ? 'Ubah informasi karya visual Anda.'
-                            : 'Unggah dan deskripsikan karya desain baru Anda.'}
+                            ? 'Ubah informasi Website Anda.'
+                            : 'Unggah dan deskripsikan karya Website Anda.'}
                     </p>
                 </div>
                 <Link
-                    href="/admin/photo-video"
+                    href="/admin/website"
                     className="flex items-center gap-2 self-start rounded-xl bg-bmain/20 px-4 py-2 text-sm font-semibold text-htext transition-colors hover:bg-bmain/40 dark:text-tmain"
                 >
                     <i className="fa-solid fa-arrow-left"></i> Kembali
@@ -164,12 +168,12 @@ export default function Form({
                     <div className="space-y-4 rounded-2xl border border-bmain/20 bg-bcard p-6 shadow-sm">
                         <h3 className="text-md mb-4 border-b border-bmain/20 pb-3 font-bold text-htext dark:text-tmain">
                             <i className="fa-solid fa-circle-info mr-2 text-accent"></i>{' '}
-                            Detail Karya
+                            Detail Website
                         </h3>
 
                         <div>
                             <label className="mb-2 block text-xs font-semibold tracking-wider text-tmuted uppercase">
-                                Judul Karya
+                                Judul Website
                             </label>
                             <input
                                 type="text"
@@ -187,7 +191,7 @@ export default function Form({
                             )}
                         </div>
 
-                        <div className="grid grid-cols-2 gap-4">
+                        <div>
                             {/* BAGIAN AUTOCOMPLETE KATEGORI */}
                             <div className="relative">
                                 <label className="mb-2 block text-xs font-semibold tracking-wider text-tmuted uppercase">
@@ -202,7 +206,7 @@ export default function Form({
                                         setData('category', e.target.value)
                                     }
                                     className="w-full rounded-xl border border-bmain/30 bg-main/40 px-4 py-3 text-sm text-htext transition-colors focus:border-accent focus:outline-none dark:text-tmain"
-                                    placeholder="Contoh: Branding"
+                                    placeholder="Contoh: Company Profile"
                                     autoComplete="off"
                                 />
 
@@ -240,32 +244,26 @@ export default function Form({
                                     </p>
                                 )}
                             </div>
+                        </div>
 
-                            <div>
-                                <label className="mb-2 block text-xs font-semibold tracking-wider text-tmuted uppercase">
-                                    Tipe Media
-                                </label>
-                                <select
-                                    value={data.type}
-                                    onChange={(e) =>
-                                        setData(
-                                            'type',
-                                            e.target.value as 'photo' | 'video',
-                                        )
-                                    }
-                                    className="w-full rounded-xl border border-bmain/30 bg-main/40 px-4 py-3 text-sm text-htext transition-colors focus:border-accent focus:outline-none dark:text-tmain"
-                                >
-                                    <option value="photo">Photo (Foto)</option>
-                                    <option value="video">
-                                        Video (Animasi/Clip)
-                                    </option>
-                                </select>
-                                {errors.type && (
-                                    <p className="mt-1 text-xs text-red-500">
-                                        {errors.type}
-                                    </p>
-                                )}
-                            </div>
+                        <div>
+                            <label className="mb-2 block text-xs font-semibold tracking-wider text-tmuted uppercase">
+                                Teknologi yang digunakan
+                            </label>
+                            <input
+                                type="text"
+                                value={data.tech}
+                                onChange={(e) =>
+                                    setData('tech', e.target.value)
+                                }
+                                className="w-full rounded-xl border border-bmain/30 bg-main/40 px-4 py-3 text-sm text-htext transition-colors focus:border-accent focus:outline-none dark:text-tmain"
+                                placeholder="Contoh: HTML, CSS, Javascript"
+                            />
+                            {errors.tech && (
+                                <p className="mt-1 text-xs text-red-500">
+                                    {errors.tech}
+                                </p>
+                            )}
                         </div>
 
                         <div>
@@ -274,7 +272,7 @@ export default function Form({
                             </label>
                             <textarea
                                 rows={4}
-                                value={data.description}
+                                value={data.description || ''}
                                 onChange={(e) =>
                                     setData('description', e.target.value)
                                 }
@@ -287,6 +285,46 @@ export default function Form({
                                 </p>
                             )}
                         </div>
+
+                        <div>
+                            <label className="mb-2 block text-xs font-semibold tracking-wider text-tmuted uppercase">
+                                Link Karya
+                            </label>
+                            <input
+                                type="text"
+                                value={data.link || ''}
+                                onChange={(e) =>
+                                    setData('link', e.target.value)
+                                }
+                                className="w-full rounded-xl border border-bmain/30 bg-main/40 px-4 py-3 text-sm text-htext transition-colors focus:border-accent focus:outline-none dark:text-tmain"
+                                placeholder="Link Karya (Opsional)"
+                            />
+                            {errors.link && (
+                                <p className="mt-1 text-xs text-red-500">
+                                    {errors.link}
+                                </p>
+                            )}
+                        </div>
+
+                        <div>
+                            <label className="mb-2 block text-xs font-semibold tracking-wider text-tmuted uppercase">
+                                Sumber Projek
+                            </label>
+                            <input
+                                type="text"
+                                value={data.origin || ''}
+                                onChange={(e) =>
+                                    setData('origin', e.target.value)
+                                }
+                                className="w-full rounded-xl border border-bmain/30 bg-main/40 px-4 py-3 text-sm text-htext transition-colors focus:border-accent focus:outline-none dark:text-tmain"
+                                placeholder="Sumber Projek"
+                            />
+                            {errors.origin && (
+                                <p className="mt-1 text-xs text-red-500">
+                                    {errors.origin}
+                                </p>
+                            )}
+                        </div>
                     </div>
 
                     <div className="space-y-4 rounded-2xl border border-bmain/20 bg-bcard p-6 shadow-sm">
@@ -295,7 +333,7 @@ export default function Form({
                             File Upload
                         </h3>
 
-                        {[1, 2, 3, 4, 5].map((num) => {
+                        {[1, 2, 3, 4, 5, 6, 7, 8].map((num) => {
                             const urlKey = `url_${num}`;
                             const previewUrl = previews[urlKey];
 
@@ -320,19 +358,11 @@ export default function Form({
                                                 setModalMedia(previewUrl)
                                             }
                                         >
-                                            {data.type === 'video' &&
-                                            num === 1 ? (
-                                                <video
-                                                    src={previewUrl}
-                                                    className="h-full w-full object-cover"
-                                                />
-                                            ) : (
-                                                <img
-                                                    src={previewUrl}
-                                                    alt={`Preview ${num}`}
-                                                    className="h-full w-full object-cover"
-                                                />
-                                            )}
+                                            <img
+                                                src={previewUrl}
+                                                alt={`Preview ${num}`}
+                                                className="h-full w-full object-cover"
+                                            />
 
                                             <div className="absolute inset-0 flex items-center justify-center bg-black/50 opacity-0 transition-opacity group-hover:opacity-100">
                                                 <i className="fa-solid fa-magnifying-glass-plus text-3xl text-white"></i>
@@ -352,11 +382,11 @@ export default function Form({
                                         }
                                         className="w-full cursor-pointer text-xs text-tmuted file:mr-4 file:rounded-xl file:border-0 file:bg-accent/10 file:px-4 file:py-2 file:text-xs file:font-semibold file:text-accent hover:file:bg-accent/20"
                                     />
-                                    {errors[urlKey as keyof PhotoVideoData] && (
+                                    {errors[urlKey as keyof WebsiteData] && (
                                         <p className="mt-1 text-xs text-red-500">
                                             {
                                                 errors[
-                                                    urlKey as keyof PhotoVideoData
+                                                    urlKey as keyof WebsiteData
                                                 ]
                                             }
                                         </p>
@@ -408,20 +438,11 @@ export default function Form({
                         </button>
 
                         <div className="flex justify-center overflow-hidden rounded-2xl bg-black shadow-2xl">
-                            {data.type === 'video' ? (
-                                <video
-                                    src={modalMedia}
-                                    controls
-                                    autoPlay
-                                    className="max-h-[85vh] w-auto object-contain"
-                                />
-                            ) : (
-                                <img
-                                    src={modalMedia}
-                                    alt="Zoom Preview"
-                                    className="max-h-[85vh] w-auto object-contain"
-                                />
-                            )}
+                            <img
+                                src={modalMedia}
+                                alt="Zoom Preview"
+                                className="max-h-[85vh] w-auto object-contain"
+                            />
                         </div>
                     </div>
                 </div>

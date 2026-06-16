@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Certificate;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Carbon\Carbon;
@@ -11,6 +12,7 @@ use App\Models\Profile;
 use App\Models\Skill;
 use App\Models\Experience;
 use App\Models\Education;
+use App\Models\Other;
 use App\Models\PhotoVideo;
 use App\Models\Website;
 use Inertia\Inertia;
@@ -44,6 +46,10 @@ class HomeController extends Controller
 
         $skill = Cache::remember('all_skill_array', 3600, function () {
             return Skill::all()->toArray();
+        });
+
+        $certificate = Cache::remember('all_certificate_array', 3600, function () {
+            return Certificate::all()->toArray();
         });
 
         $experience = Cache::remember('all_experience_array', 3600, function () {
@@ -90,14 +96,20 @@ class HomeController extends Controller
             })->toArray();
         });
 
+        $others = Cache::remember('all_others_array', 3600, function () {
+            return Other::all()->toArray();
+        });
+
         return Inertia::render('Home/index', [
             'profiles' => $profile,
             'skills' => $skill,
+            'certificates' => $certificate,
             'experiences' => $experience,
             'educations' => $education,
             'designs' => $design,
             'photovideos' => $photovideo,
             'websites' => $website,
+            'others' => $others,
             'footers' => $profile,
         ]);
     }

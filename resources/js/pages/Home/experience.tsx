@@ -1,4 +1,5 @@
-import { motion } from 'framer-motion';
+import { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import type { Experience, Education } from './index';
 
 // --- VARIAN ANIMASI FRAMER MOTION ---
@@ -29,7 +30,7 @@ const lineVariants = {
     },
 } as const;
 
-const getMonthYear = (dateString) => {
+const getMonthYear = (dateString: string | null) => {
     if (!dateString) return '';
     const date = new Date(dateString);
     return date.toLocaleString('id-ID', { month: 'short', year: 'numeric' });
@@ -42,6 +43,11 @@ export default function ExperienceEducationSection({
     experiences: Experience[];
     educations: Education[];
 }) {
+    const [expandedExp, setExpandedExp] = useState<number | null>(null);
+    const [expandedEdu, setExpandedEdu] = useState<number | null>(null);
+    const [hoveredExp, setHoveredExp] = useState<number | null>(null);
+    const [hoveredEdu, setHoveredEdu] = useState<number | null>(null);
+
     return (
         <section
             id="journey"
@@ -56,7 +62,7 @@ export default function ExperienceEducationSection({
                 <motion.div
                     initial={{ opacity: 0, y: 30 }}
                     whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true, margin: '200px 0px', amount: 0.3 }}
+                    viewport={{ once: true, amount: 0.2 }}
                     transition={{ duration: 0.6, delay: 0.2 }}
                     className="flex flex-row items-center justify-center gap-4 text-center md:justify-between md:text-left"
                 >
@@ -92,8 +98,7 @@ export default function ExperienceEducationSection({
                         whileInView="visible"
                         viewport={{
                             once: true,
-                            margin: '200px 0px',
-                            amount: 0.3,
+                            amount: 0.2,
                         }}
                         transition={{ delay: 0.2 }}
                         className="flex flex-col gap-10"
@@ -121,7 +126,18 @@ export default function ExperienceEducationSection({
                                     <div className="absolute top-1.5 left-[-5px] h-4 w-4 rounded-full border-4 border-[#050015] bg-bshine transition-all duration-300 group-hover:scale-125 group-hover:shadow-[0_0_15px_rgba(192,104,0,0.6)] group-hover:brightness-130 md:left-[-1px] dark:group-hover:shadow-[0_0_15px_rgba(34,211,238,0.6)]" />
 
                                     {/* Konten Card */}
-                                    <div className="flex flex-col gap-2 rounded-2xl border border-white/5 bg-white/[0.02] p-6 backdrop-blur-sm transition-all duration-300 group-hover:border-white/10 group-hover:bg-white/[0.04] group-hover:shadow-xl">
+                                    <div
+                                        className="flex cursor-pointer flex-col gap-2 rounded-2xl border border-white/5 bg-white/[0.02] p-6 backdrop-blur-sm transition-all duration-300 group-hover:border-white/10 group-hover:bg-white/[0.04] group-hover:shadow-xl"
+                                        onClick={() =>
+                                            setExpandedExp(
+                                                expandedExp === item.id
+                                                    ? null
+                                                    : item.id,
+                                            )
+                                        }
+                                        onMouseEnter={() => setHoveredExp(item.id)}
+                                        onMouseLeave={() => setHoveredExp(null)}
+                                    >
                                         <span className="inline-block w-fit rounded-full bg-bshine/20 px-3 py-1 text-xs font-medium text-white/80">
                                             {getMonthYear(item.start_date)}
                                             {item.end_date !== null
@@ -129,15 +145,53 @@ export default function ExperienceEducationSection({
                                                   getMonthYear(item.end_date)
                                                 : ''}
                                         </span>
-                                        <h4 className="mt-1 text-lg font-bold text-white md:text-xl">
-                                            {item.title}
-                                        </h4>
+                                        <div className="mt-1 flex items-center justify-between">
+                                            <h4 className="text-lg font-bold text-white md:text-xl">
+                                                {item.title}
+                                            </h4>
+                                            <motion.span
+                                                className="inline-block"
+                                                animate={{
+                                                    rotate:
+                                                        expandedExp === item.id || hoveredExp === item.id
+                                                            ? 180
+                                                            : 0,
+                                                }}
+                                                transition={{ duration: 0.2 }}
+                                            >
+                                                <i className="fa-solid fa-chevron-down text-xs text-gray-400" />
+                                            </motion.span>
+                                        </div>
                                         <h5 className="text-sm font-medium text-gray-400 italic">
                                             {item.origin}
                                         </h5>
-                                        <p className="mt-2 text-sm leading-relaxed text-gray-300">
-                                            {item.description}
-                                        </p>
+                                        <AnimatePresence>
+                                            {(expandedExp === item.id || hoveredExp === item.id) && (
+                                                <motion.div
+                                                    initial={{
+                                                        height: 0,
+                                                        opacity: 0,
+                                                    }}
+                                                    animate={{
+                                                        height: 'auto',
+                                                        opacity: 1,
+                                                    }}
+                                                    exit={{
+                                                        height: 0,
+                                                        opacity: 0,
+                                                    }}
+                                                    transition={{
+                                                        duration: 0.1,
+                                                        ease: 'easeInOut',
+                                                    }}
+                                                    className="overflow-hidden"
+                                                >
+                                                    <p className="mt-2 text-sm leading-relaxed text-gray-300">
+                                                        {item.description}
+                                                    </p>
+                                                </motion.div>
+                                            )}
+                                        </AnimatePresence>
                                     </div>
                                 </motion.div>
                             ))}
@@ -151,8 +205,7 @@ export default function ExperienceEducationSection({
                         whileInView="visible"
                         viewport={{
                             once: true,
-                            margin: '200px 0px',
-                            amount: 0.3,
+                            amount: 0.2,
                         }}
                         transition={{ delay: 0.2 }}
                         className="flex flex-col gap-10"
@@ -180,7 +233,18 @@ export default function ExperienceEducationSection({
                                     <div className="absolute top-1.5 left-[-5px] h-4 w-4 rounded-full border-4 border-[#050015] bg-bshine transition-all duration-300 group-hover:scale-125 group-hover:shadow-[0_0_15px_rgba(192,104,0,0.6)] group-hover:brightness-130 md:left-[-1px] dark:group-hover:shadow-[0_0_15px_rgba(34,211,238,0.6)]" />
 
                                     {/* Konten Card */}
-                                    <div className="flex flex-col gap-2 rounded-2xl border border-white/5 bg-white/[0.02] p-6 backdrop-blur-sm transition-all duration-300 group-hover:border-white/10 group-hover:bg-white/[0.04] group-hover:shadow-xl">
+                                    <div
+                                        className="flex cursor-pointer flex-col gap-2 rounded-2xl border border-white/5 bg-white/[0.02] p-6 backdrop-blur-sm transition-all duration-300 group-hover:border-white/10 group-hover:bg-white/[0.04] group-hover:shadow-xl"
+                                        onClick={() =>
+                                            setExpandedEdu(
+                                                expandedEdu === item.id
+                                                    ? null
+                                                    : item.id,
+                                            )
+                                        }
+                                        onMouseEnter={() => setHoveredEdu(item.id)}
+                                        onMouseLeave={() => setHoveredEdu(null)}
+                                    >
                                         <span className="inline-block w-fit rounded-full bg-bshine/20 px-3 py-1 text-xs font-medium text-white/80">
                                             {getMonthYear(item.start_date)}
                                             {item.end_date !== null
@@ -188,15 +252,53 @@ export default function ExperienceEducationSection({
                                                   getMonthYear(item.end_date)
                                                 : ''}
                                         </span>
-                                        <h4 className="mt-1 text-lg font-bold text-white md:text-xl">
-                                            {item.title}
-                                        </h4>
+                                        <div className="mt-1 flex items-center justify-between">
+                                            <h4 className="text-lg font-bold text-white md:text-xl">
+                                                {item.title}
+                                            </h4>
+                                            <motion.span
+                                                className="inline-block"
+                                                animate={{
+                                                    rotate:
+                                                        expandedEdu === item.id || hoveredEdu === item.id
+                                                            ? 180
+                                                            : 0,
+                                                }}
+                                                transition={{ duration: 0.2 }}
+                                            >
+                                                <i className="fa-solid fa-chevron-down text-xs text-gray-400" />
+                                            </motion.span>
+                                        </div>
                                         <h5 className="text-sm font-medium text-gray-400 italic">
                                             {item.origin}
                                         </h5>
-                                        <p className="mt-2 text-sm leading-relaxed text-gray-300">
-                                            {item.description}
-                                        </p>
+                                        <AnimatePresence>
+                                            {(expandedEdu === item.id || hoveredEdu === item.id) && (
+                                                <motion.div
+                                                    initial={{
+                                                        height: 0,
+                                                        opacity: 0,
+                                                    }}
+                                                    animate={{
+                                                        height: 'auto',
+                                                        opacity: 1,
+                                                    }}
+                                                    exit={{
+                                                        height: 0,
+                                                        opacity: 0,
+                                                    }}
+                                                    transition={{
+                                                        duration: 0.1,
+                                                        ease: 'easeInOut',
+                                                    }}
+                                                    className="overflow-hidden"
+                                                >
+                                                    <p className="mt-2 text-sm leading-relaxed text-gray-300">
+                                                        {item.description}
+                                                    </p>
+                                                </motion.div>
+                                            )}
+                                        </AnimatePresence>
                                     </div>
                                 </motion.div>
                             ))}

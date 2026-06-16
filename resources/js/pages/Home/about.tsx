@@ -82,7 +82,7 @@ export default function About({ profiles = [] }: { profiles: Profile[] }) {
           ABOUT SECTION
       ========================================= */}
             {/* Radius lengkungan diperkecil sedikit di HP agar proporsional */}
-            <section className="relative z-10 flex w-full flex-col items-center overflow-hidden rounded-t-[40px] pt-16 pb-16 shadow-[0_-15px_50px_rgba(0,0,0,0.4)] md:rounded-t-[60px] md:pt-24 md:pb-24 lg:rounded-t-[120px]">
+            <section className="relative z-10 flex w-full flex-col items-center overflow-hidden rounded-t-[40px] pt-16 pb-16 shadow-[0_-15px_50px_rgba(0,0,0,0.2)] md:rounded-t-[60px] md:pt-24 md:pb-24 lg:rounded-t-[120px] dark:shadow-[0_-15px_50px_rgba(0,0,0,0.4)]">
                 {/* Background Foto Gunung */}
                 <div className="pointer-events-none absolute top-0 left-0 h-[582px] w-full overflow-hidden opacity-40">
                     <img
@@ -181,7 +181,7 @@ export default function About({ profiles = [] }: { profiles: Profile[] }) {
                             <div className="relative h-[320px] w-full max-w-[350px] sm:h-[420px]">
                                 {/* Foto Dika menabrak batas shape */}
                                 <img
-                                    src="/assets/profile-photo/dika_group.svg"
+                                    src={`/storage/${profile?.photo}`}
                                     alt="Wahyu Adam Anandika"
                                     className="absolute bottom-0 left-1/2 z-10 h-auto w-[220px] -translate-x-1/2 object-contain drop-shadow-2xl sm:w-[280px] md:w-[387px]"
                                 />

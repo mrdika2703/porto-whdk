@@ -38,11 +38,11 @@ export default function Header({ setSidebarOpen }: HeaderProps) {
         const root = document.documentElement;
         if (isDark) {
             root.classList.remove('dark');
-            localStorage.setItem('theme', 'light'); // Simpan pilihan manual user
+            localStorage.setItem('theme', 'light');
             setIsDark(false);
         } else {
             root.classList.add('dark');
-            localStorage.setItem('theme', 'dark'); // Simpan pilihan manual user
+            localStorage.setItem('theme', 'dark');
             setIsDark(true);
         }
     };

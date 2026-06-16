@@ -1,6 +1,6 @@
 import { useState, useRef } from 'react';
 import { Link } from '@inertiajs/react';
-import { motion } from 'framer-motion'; // Tambahkan import framer-motion
+import { motion, AnimatePresence } from 'framer-motion'; // Tambahkan import framer-motion
 import { Design } from './index';
 
 const categories = ['Sosmed', 'Poster', 'Banner'];
@@ -11,7 +11,7 @@ interface GrapichProps {
 
 export default function DesignGraphicSection({ designs = [] }: GrapichProps) {
     const [activeCategory, setActiveCategory] = useState('Sosmed');
-    const [selectedImage, setSelectedImage] = useState<string | null>(null);
+    const [selectedDesign, setSelectedDesign] = useState<Design | null>(null);
     const scrollRef = useRef<HTMLDivElement>(null);
 
     // console.log('Isi data designs:', designs);
@@ -74,7 +74,7 @@ export default function DesignGraphicSection({ designs = [] }: GrapichProps) {
                 <motion.div
                     initial={{ opacity: 0, y: -20 }}
                     whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true, margin: '200px 0px', amount: 0.3 }}
+                    viewport={{ once: true, amount: 0.2 }}
                     transition={{ duration: 0.6, ease: 'easeOut', delay: 0.2 }}
                     className="relative z-20 flex flex-row items-center justify-between gap-4 md:gap-6"
                 >
@@ -174,9 +174,7 @@ export default function DesignGraphicSection({ designs = [] }: GrapichProps) {
                                                 key={designs.id}
                                                 className="group/card relative w-full cursor-pointer overflow-hidden rounded-xl bg-white/5 md:rounded-2xl"
                                                 onClick={() =>
-                                                    setSelectedImage(
-                                                        designs.url_1,
-                                                    )
+                                                    setSelectedDesign(designs)
                                                 }
                                             >
                                                 {/* Badge Hover */}
@@ -188,7 +186,7 @@ export default function DesignGraphicSection({ designs = [] }: GrapichProps) {
 
                                                 {/* Gambar */}
                                                 <img
-                                                    src={designs.url_1}
+                                                    src={`/storage/${designs.url_1}`}
                                                     alt={designs.title}
                                                     className="h-auto w-full object-cover transition-transform duration-700 group-hover/card:scale-105"
                                                     loading="lazy"
@@ -240,44 +238,73 @@ export default function DesignGraphicSection({ designs = [] }: GrapichProps) {
             </div>
 
             {/* --- MODAL UNTUK PREVIEW GAMBAR --- */}
-            {selectedImage && (
-                <div
-                    className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 p-4 backdrop-blur-sm md:p-6"
-                    onClick={() => setSelectedImage(null)}
-                >
-                    <div
-                        className="relative flex max-h-[90vh] w-full max-w-5xl items-center justify-center"
-                        onClick={(e) => e.stopPropagation()}
+            <AnimatePresence>
+                {selectedDesign && (
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        transition={{ duration: 0.1 }}
+                        className="fixed inset-0 z-50 flex items-center justify-center bg-black/35 p-4 backdrop-blur-md"
+                        onClick={() => setSelectedDesign(null)}
                     >
-                        {/* Tombol Close ditaruh di dalam/atas gambar untuk HP agar tidak terpotong browser UI */}
-                        <button
-                            className="absolute -top-12 right-0 z-50 flex h-10 w-10 items-center justify-center rounded-full bg-white text-slate-900 shadow-xl transition-transform hover:scale-110 md:-top-4 md:-right-4"
-                            onClick={() => setSelectedImage(null)}
+                        <motion.div
+                            initial={{ scale: 0.9, opacity: 0, y: 20 }}
+                            animate={{ scale: 1, opacity: 1, y: 0 }}
+                            exit={{ scale: 0.9, opacity: 0, y: 20 }}
+                            transition={{
+                                type: 'spring',
+                                stiffness: 220,
+                                damping: 26,
+                            }}
+                            className="relative flex w-full max-w-5xl flex-col overflow-hidden rounded-2xl border border-white/10 bg-main shadow-2xl backdrop-blur-md md:flex-row"
+                            onClick={(e) => e.stopPropagation()}
                         >
-                            <svg
-                                width="20"
-                                height="20"
-                                fill="none"
-                                stroke="currentColor"
-                                strokeWidth="2.5"
-                                viewBox="0 0 24 24"
+                            {/* Close */}
+                            <button
+                                onClick={() => setSelectedDesign(null)}
+                                className="absolute top-4 right-4 z-20 flex h-10 w-10 items-center justify-center rounded-full bg-hbshine/50 text-white backdrop-blur-sm transition-all hover:bg-hbshine/65"
                             >
-                                <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    d="M6 18L18 6M6 6l12 12"
-                                />
-                            </svg>
-                        </button>
+                                <i className="fa-solid fa-xmark text-lg" />
+                            </button>
 
-                        <img
-                            src={selectedImage}
-                            alt="Preview Full"
-                            className="max-h-[80vh] w-auto rounded-xl object-contain shadow-2xl md:max-h-[85vh]"
-                        />
-                    </div>
-                </div>
-            )}
+                            {/* Image side (more space) */}
+                            <div className="relative flex min-h-[280px] w-full items-center justify-center p-3 md:min-h-[480px] md:w-3/5 lg:w-2/3">
+                                <img
+                                    src={`/storage/${selectedDesign.url_1}`}
+                                    alt={selectedDesign.title}
+                                    className="max-h-[50vh] max-w-full rounded-lg object-contain shadow-lg md:max-h-[85vh]"
+                                    draggable={false}
+                                />
+                            </div>
+
+                            {/* Info side (less space) */}
+                            <div className="flex w-full flex-col justify-between border-t border-white/10 p-6 sm:p-8 md:w-2/5 md:border-t-0 md:border-l lg:w-1/3">
+                                <div className="flex flex-col">
+                                    <span className="mb-3 w-fit rounded-full border border-bshine/10 bg-bshine/20 px-3 py-1 text-xs font-semibold text-bshine backdrop-blur-sm">
+                                        {selectedDesign.category}
+                                    </span>
+
+                                    <h3 className="text-xl leading-snug font-bold text-tmain md:text-2xl">
+                                        {selectedDesign.title}
+                                    </h3>
+
+                                    <div className="my-5 h-px bg-hbshine/20" />
+
+                                    <h4 className="text-xs font-bold tracking-wider text-tmain uppercase">
+                                        Description
+                                    </h4>
+
+                                    <div className="mt-2.5 text-sm leading-relaxed text-tmain">
+                                        Desain grafis untuk kategori{' '}
+                                        {selectedDesign.category}.
+                                    </div>
+                                </div>
+                            </div>
+                        </motion.div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
 
             <style>{`
                 .hide-scrollbar::-webkit-scrollbar {

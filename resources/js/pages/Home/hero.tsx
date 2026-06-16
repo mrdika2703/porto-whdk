@@ -21,7 +21,7 @@ export default function PortfolioHero() {
     const heroBlur = useTransform(
         scrollY,
         [0, 400],
-        ['blur(0px)', 'blur(10px)'],
+        ['blur(0px)', 'blur(5px)'],
     );
 
     // 1. Logika Timer untuk durasi teks Intro (3 Detik)
