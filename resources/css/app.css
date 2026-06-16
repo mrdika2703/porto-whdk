@@ -1,0 +1,67 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-poppins: "Poppins", sans-serif;
+  --color-brand-bg: #0E002D;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* 1. Tentukan Variabel Warna Dasar (Light Mode: Putih & Coklat Aesthetic) */
+:root {
+  --main: white; 
+  --secondary: #412D15;  
+  --sectiondark: #2b1d0c;
+  --bcard: #FFFFFF;
+  --tmain: #2C241B; 
+  --tmuted: #8C7A6B; 
+  --accent: #A67C52; 
+  --bmain: #D1C7BD;
+  --bsecond : #412D15;
+  --bshine: #C06800;
+  --hbshine: #884e06;
+  --bphotograph: #e9d9c5;
+  --htext: #2C241B;
+  --hhtext: #342a1f;
+}
+
+/* 2. Tentukan Warna Dark Mode (Sesuai desain asli Anda) */
+.dark {
+  --main: #0E002D;
+  --secondary: #050015;
+  --sectiondark: #050015;
+  --bcard: rgba(255, 255, 255, 0.05);
+  --tmain: #FFFFFF;
+  --tmuted: rgba(255, 255, 255, 0.7);
+  --accent: #93C2FF;
+  --bmain: rgba(255, 255, 255, 0.15);
+  --bsecond : white;
+  --bshine: #53EAFD;
+  --hbshine: #0b9aad;
+  --bphotograph: #08031b;
+  --htext: #050015;
+  --hhtext: #0b0326;
+}
+
+/* 3. Daftarkan variabel ke Tema Tailwind v4 */
+@theme {
+  --color-main: var(--main);
+  --color-secondary: var(--secondary);
+  --color-sectiondark: var(--sectiondark);
+  --color-bcard: var(--bcard);
+  --color-tmain: var(--tmain);
+  --color-tmuted: var(--tmuted);
+  --color-accent: var(--accent);
+  --color-bmain: var(--bmain);
+  --color-bsecond : var(--bsecond);
+  --color-bshine: var(--bshine);
+  --color-hbshine: var(--hbshine);
+  --color-bphotograph: var(--bphotograph);
+  --color-htext: var(--htext);
+  --color-hhtext: var(--hhtext);
+}
