@@ -6,22 +6,25 @@ import {
     AnimatePresence,
 } from 'framer-motion';
 import { useState, useEffect } from 'react';
+import { useIsMobile } from '@/hooks/useIsMobile';
 
 export default function PortfolioHero() {
     const fullText = 'Wahyu Adam Anandika';
     const [typedText, setTypedText] = useState('');
     const [showIntro, setShowIntro] = useState(true);
+    const isMobile = useIsMobile();
 
     // Hook Scroll dari Framer Motion
     const { scrollY } = useScroll();
 
-    // Transformasi Parallax & Blur untuk Hero
-    const heroY = useTransform(scrollY, [0, 500], [0, 200]);
+    // Transformasi Parallax — tanpa blur di mobile (blur sangat berat)
+    const heroY = useTransform(scrollY, [0, 500], [0, isMobile ? 100 : 200]);
     const heroOpacity = useTransform(scrollY, [0, 400], [1, 0]);
+    // Hanya blur di desktop, mobile pakai opacity saja
     const heroBlur = useTransform(
         scrollY,
         [0, 400],
-        ['blur(0px)', 'blur(5px)'],
+        isMobile ? ['blur(0px)', 'blur(0px)'] : ['blur(0px)', 'blur(5px)'],
     );
 
     // 1. Logika Timer untuk durasi teks Intro (3 Detik)
@@ -55,6 +58,85 @@ export default function PortfolioHero() {
         };
     }, [showIntro, fullText]);
 
+    // Animasi shape: matikan infinite di mobile
+    const shapeAnimation = isMobile
+        ? { opacity: 1 } // Static, no loop
+        : { opacity: [1, 0.7, 1] }; // Infinite pulse di desktop
+
+    const shapeTransition1 = isMobile
+        ? { duration: 0.5 }
+        : {
+              duration: 4,
+              repeat: Infinity,
+              ease: 'easeInOut' as const,
+              delay: 1.2,
+          };
+
+    const shapeTransition2 = isMobile
+        ? { duration: 0.5 }
+        : {
+              duration: 5,
+              repeat: Infinity,
+              ease: 'easeInOut' as const,
+              delay: 1.5,
+          };
+
+    // textShadow glow: matikan infinite di mobile
+    const textShadowAnimation = isMobile
+        ? {
+              opacity: 1,
+              y: 0,
+              textShadow: '0px 0px 15px rgba(255,255,255,0.2)',
+          }
+        : {
+              opacity: 1,
+              y: 0,
+              textShadow: [
+                  '0px 0px 15px rgba(255,255,255,0.2)',
+                  '0px 0px 45px rgba(255,255,255,0.8)',
+                  '0px 0px 15px rgba(255,255,255,0.2)',
+              ],
+          };
+
+    const textShadowTransition = isMobile
+        ? {
+              opacity: { duration: 0.8, delay: 0.4 },
+              y: {
+                  duration: 0.8,
+                  delay: 0.4,
+                  type: 'spring' as const,
+                  stiffness: 80,
+              },
+          }
+        : {
+              opacity: { duration: 0.8, delay: 0.4 },
+              y: {
+                  duration: 0.8,
+                  delay: 0.4,
+                  type: 'spring' as const,
+                  stiffness: 80,
+              },
+              textShadow: {
+                  duration: 5,
+                  repeat: Infinity,
+                  ease: 'easeInOut' as const,
+                  delay: 1.5,
+              },
+          };
+
+    // Cursor blink: matikan infinite di mobile setelah awal
+    const cursorAnimation = isMobile
+        ? { opacity: [0, 1] }
+        : { opacity: 1 };
+
+    const cursorTransition = isMobile
+        ? { duration: 0.8 }
+        : {
+              repeat: Infinity,
+              duration: 0.8,
+              repeatType: 'reverse' as const,
+          };
+
     return (
         <>
             <Head title="Portofolio - Wahyu Adam Anandika" />
@@ -62,32 +144,26 @@ export default function PortfolioHero() {
             {/* Tambahan overflow-hidden agar elemen SVG absolut tidak tembus/scroll ke samping */}
             <div id="home" className="bg-bg-sec relative min-h-screen w-full">
                 <motion.div
-                    style={{ y: heroY, opacity: heroOpacity, filter: heroBlur }}
+                    style={
+                        isMobile
+                            ? { y: heroY, opacity: heroOpacity }
+                            : { y: heroY, opacity: heroOpacity, filter: heroBlur }
+                    }
                     // Tambahkan overflow-hidden juga di kontainer fixed
-                    className="fixed top-0 left-0 flex min-h-screen w-full flex-col items-center justify-center text-tmain"
+                    className="fixed top-0 left-0 flex min-h-screen w-full flex-col items-center justify-center text-tmain will-change-transform"
                 >
                     {/* --- SHAPE 1 (TOP RIGHT) --- */}
                     <motion.div className="pointer-events-none absolute -top-[150px] -right-[150px] h-[400px] w-[400px] max-w-none mix-blend-screen sm:-top-[400px] sm:-right-[300px] sm:h-[900px] sm:w-[800px] md:-top-[800px] md:-right-[600px] md:h-[1812px] md:w-[1611px]">
                         <motion.img
-                            animate={{ opacity: [1, 0.7, 1] }}
-                            transition={{
-                                duration: 4,
-                                repeat: Infinity,
-                                ease: 'easeInOut',
-                                delay: 1.2,
-                            }}
+                            animate={shapeAnimation}
+                            transition={shapeTransition1}
                             src="/assets/shapes/brown_shape_1.svg"
                             alt="Brown Shape Top Right"
                             className="h-full w-full dark:hidden"
                         />
                         <motion.img
-                            animate={{ opacity: [1, 0.7, 1] }}
-                            transition={{
-                                duration: 4,
-                                repeat: Infinity,
-                                ease: 'easeInOut',
-                                delay: 1.2,
-                            }}
+                            animate={shapeAnimation}
+                            transition={shapeTransition1}
                             src="/assets/shapes/blue_shape_1.svg"
                             alt="Blue Shape Top Right"
                             className="hidden h-full w-full dark:block"
@@ -97,25 +173,15 @@ export default function PortfolioHero() {
                     {/* --- SHAPE 2 (BOTTOM LEFT) --- */}
                     <motion.div className="pointer-events-none absolute -bottom-[150px] -left-[100px] h-[350px] w-[350px] max-w-none mix-blend-screen sm:-bottom-[300px] sm:-left-[200px] sm:h-[700px] sm:w-[600px] md:-bottom-[600px] md:-left-[500px] md:h-[1355px] md:w-[1204px]">
                         <motion.img
-                            animate={{ opacity: [1, 0.7, 1] }}
-                            transition={{
-                                duration: 5,
-                                repeat: Infinity,
-                                ease: 'easeInOut',
-                                delay: 1.5,
-                            }}
+                            animate={shapeAnimation}
+                            transition={shapeTransition2}
                             src="/assets/shapes/brown_shape_2.svg"
                             alt="Brown Shape Bottom Left"
                             className="h-full w-full dark:hidden"
                         />
                         <motion.img
-                            animate={{ opacity: [1, 0.7, 1] }}
-                            transition={{
-                                duration: 5,
-                                repeat: Infinity,
-                                ease: 'easeInOut',
-                                delay: 1.5,
-                            }}
+                            animate={shapeAnimation}
+                            transition={shapeTransition2}
                             src="/assets/shapes/blue_shape_2.svg"
                             alt="Blue Shape Bottom Left"
                             className="hidden h-full w-full dark:block"
@@ -206,44 +272,15 @@ export default function PortfolioHero() {
                                             textShadow:
                                                 '0px 0px 0px rgba(255,255,255,0)',
                                         }}
-                                        animate={{
-                                            opacity: 1,
-                                            y: 0,
-                                            textShadow: [
-                                                '0px 0px 15px rgba(255,255,255,0.2)',
-                                                '0px 0px 45px rgba(255,255,255,0.8)',
-                                                '0px 0px 15px rgba(255,255,255,0.2)',
-                                            ],
-                                        }}
-                                        transition={{
-                                            opacity: {
-                                                duration: 0.8,
-                                                delay: 0.4,
-                                            },
-                                            y: {
-                                                duration: 0.8,
-                                                delay: 0.4,
-                                                type: 'spring',
-                                                stiffness: 80,
-                                            },
-                                            textShadow: {
-                                                duration: 5,
-                                                repeat: Infinity,
-                                                ease: 'easeInOut',
-                                                delay: 1.5,
-                                            },
-                                        }}
+                                        animate={textShadowAnimation}
+                                        transition={textShadowTransition}
                                         className="mb-4 px-2 text-4xl leading-tight font-bold sm:text-5xl md:mb-6 md:text-6xl"
                                     >
                                         {typedText}
                                         <motion.span
                                             initial={{ opacity: 0 }}
-                                            animate={{ opacity: 1 }}
-                                            transition={{
-                                                repeat: Infinity,
-                                                duration: 0.8,
-                                                repeatType: 'reverse',
-                                            }}
+                                            animate={cursorAnimation}
+                                            transition={cursorTransition}
                                             className="font-light"
                                         >
                                             |
@@ -268,7 +305,7 @@ export default function PortfolioHero() {
                         </AnimatePresence>
                     </div>
 
-                    {/* Scroll Down Indicator */}
+                    {/* Scroll Down Indicator — gunakan CSS animation bukan animate-bounce */}
                     <AnimatePresence>
                         {!showIntro && (
                             <motion.a
@@ -277,7 +314,11 @@ export default function PortfolioHero() {
                                 animate={{ opacity: 1 }}
                                 exit={{ opacity: 0 }}
                                 transition={{ duration: 1, delay: 1.2 }}
-                                className="group absolute bottom-8 z-10 flex animate-bounce cursor-pointer flex-col items-center gap-2 md:bottom-12"
+                                className="group absolute bottom-8 z-10 flex cursor-pointer flex-col items-center gap-2 md:bottom-12"
+                                style={{
+                                    animation: 'gentleBounce 2s ease-in-out infinite',
+                                    willChange: 'transform',
+                                }}
                             >
                                 <svg
                                     width="24"
@@ -323,6 +364,14 @@ export default function PortfolioHero() {
                 {/* Pembatas Scroll */}
                 <div className="min-h-screen w-full"></div>
             </div>
+
+            {/* CSS animation ringan (compositor-thread) sebagai pengganti animate-bounce */}
+            <style>{`
+                @keyframes gentleBounce {
+                    0%, 100% { transform: translateY(0); }
+                    50% { transform: translateY(-8px); }
+                }
+            `}</style>
         </>
     );
 }

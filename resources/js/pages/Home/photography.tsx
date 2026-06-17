@@ -3,6 +3,7 @@ import { Link } from '@inertiajs/react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { BgPhotograph } from '@/components/bg-photograph';
 import { PhotoVideo } from './index';
+import { useIsMobile } from '@/hooks/useIsMobile';
 
 export default function PhotoVideoSection({
     photovideos = [],
@@ -14,6 +15,7 @@ export default function PhotoVideoSection({
         useState<PhotoVideo | null>(null);
     const [activeImg, setActiveImg] = useState<string | null>(null);
     const scrollRef = useRef<HTMLDivElement>(null);
+    const isMobile = useIsMobile();
 
     const getImages = (item: PhotoVideo | null) => {
         if (!item) return [];
@@ -97,8 +99,11 @@ export default function PhotoVideoSection({
             id="photo"
             className="relative flex min-h-[500px] w-full flex-col items-center overflow-hidden py-16 pb-14 md:py-24 md:pb-32"
         >
+            {/* BgPhotograph SVG (71KB, 400 path) — skip di mobile untuk performa */}
             <div className="absolute top-0 left-0 z-0 h-full w-full">
-                <BgPhotograph className="text-amber-900 dark:text-cyan-600" />
+                {!isMobile && (
+                    <BgPhotograph className="text-amber-900 dark:text-cyan-600" />
+                )}
             </div>
 
             {/* TOP FADE GRADIENT */}
@@ -177,7 +182,7 @@ export default function PhotoVideoSection({
                         {/* Digeser agak ke dalam (left-1) untuk HP agar tombol bisa diklik */}
                         <button
                             onClick={() => scroll('left')}
-                            className="absolute top-1/2 left-1 z-30 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full bg-gray-400/60 text-white opacity-0 shadow-lg backdrop-blur-md transition-all duration-300 group-hover/nav:opacity-100 md:-left-4 md:h-12 md:w-12 md:-translate-x-6 dark:bg-black/60"
+                            className="absolute top-1/2 left-1 z-30 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full bg-gray-400/60 text-white opacity-0 shadow-lg md:backdrop-blur-md transition-all duration-300 group-hover/nav:opacity-100 md:-left-4 md:h-12 md:w-12 md:-translate-x-6 dark:bg-black/60"
                             aria-label="Previous"
                         >
                             <svg
@@ -246,7 +251,7 @@ export default function PhotoVideoSection({
                         {/* Tombol Panah Kanan */}
                         <button
                             onClick={() => scroll('right')}
-                            className="absolute top-1/2 right-1 z-30 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full bg-gray-400/60 text-white opacity-0 shadow-lg backdrop-blur-md transition-all duration-300 group-hover/nav:opacity-100 md:-right-4 md:h-12 md:w-12 md:translate-x-6 dark:bg-black/60"
+                            className="absolute top-1/2 right-1 z-30 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full bg-gray-400/60 text-white opacity-0 shadow-lg md:backdrop-blur-md transition-all duration-300 group-hover/nav:opacity-100 md:-right-4 md:h-12 md:w-12 md:translate-x-6 dark:bg-black/60"
                             aria-label="Next"
                         >
                             <svg

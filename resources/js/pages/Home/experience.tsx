@@ -53,9 +53,9 @@ export default function ExperienceEducationSection({
             id="journey"
             className="relative overflow-hidden pb-24 text-white"
         >
-            {/* Latar Belakang Glow Ambient (Menyesuaikan dengan karakter desain Anda) */}
-            <div className="pointer-events-none absolute top-1/4 left-0 h-[500px] w-[500px] -translate-x-1/2 rounded-full bg-bshine/10 blur-[120px]"></div>
-            <div className="pointer-events-none absolute top-3/4 right-0 h-[400px] w-[400px] translate-x-1/3 rounded-full bg-bshine/10 blur-[100px]"></div>
+            {/* Latar Belakang Glow Ambient — hidden di mobile untuk performa */}
+            <div className="pointer-events-none absolute top-1/4 left-0 hidden h-[500px] w-[500px] -translate-x-1/2 rounded-full bg-bshine/10 blur-[120px] md:block"></div>
+            <div className="pointer-events-none absolute top-3/4 right-0 hidden h-[400px] w-[400px] translate-x-1/3 rounded-full bg-bshine/10 blur-[100px] md:block"></div>
 
             <div className="relative z-10 mx-auto flex w-full max-w-[1440px] flex-col gap-16 px-6 md:px-12">
                 {/* --- HEADER --- */}
@@ -127,7 +127,7 @@ export default function ExperienceEducationSection({
 
                                     {/* Konten Card */}
                                     <div
-                                        className="flex cursor-pointer flex-col gap-2 rounded-2xl border border-white/5 bg-white/[0.02] p-6 backdrop-blur-sm transition-all duration-300 group-hover:border-white/10 group-hover:bg-white/[0.04] group-hover:shadow-xl"
+                                        className="flex cursor-pointer flex-col gap-2 rounded-2xl border border-white/5 bg-white/[0.02] p-6 md:backdrop-blur-sm transition-all duration-300 group-hover:border-white/10 group-hover:bg-white/[0.04] group-hover:shadow-xl"
                                         onClick={() =>
                                             setExpandedExp(
                                                 expandedExp === item.id
@@ -234,7 +234,7 @@ export default function ExperienceEducationSection({
 
                                     {/* Konten Card */}
                                     <div
-                                        className="flex cursor-pointer flex-col gap-2 rounded-2xl border border-white/5 bg-white/[0.02] p-6 backdrop-blur-sm transition-all duration-300 group-hover:border-white/10 group-hover:bg-white/[0.04] group-hover:shadow-xl"
+                                        className="flex cursor-pointer flex-col gap-2 rounded-2xl border border-white/5 bg-white/[0.02] p-6 md:backdrop-blur-sm transition-all duration-300 group-hover:border-white/10 group-hover:bg-white/[0.04] group-hover:shadow-xl"
                                         onClick={() =>
                                             setExpandedEdu(
                                                 expandedEdu === item.id

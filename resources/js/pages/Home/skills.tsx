@@ -105,7 +105,7 @@ export default function Skills({ skills = [] }: { skills: Skill[] }) {
                             >
                                 {/* Nama Skill */}
                                 {/* flex-1 ditambahkan agar nama skill memanjang mengambil sisa ruang di HP */}
-                                <span className="flex h-full flex-1 items-center truncate rounded-l-full border-y border-l border-white/50 bg-white/10 px-2 text-white backdrop-blur-sm md:px-3.5">
+                                <span className="flex h-full flex-1 items-center truncate rounded-l-full border-y border-l border-white/50 bg-white/10 px-2 text-white md:backdrop-blur-sm md:px-3.5">
                                     <span className="mr-1.5 shrink-0 md:mr-2">
                                         <i className={skills.icon ?? undefined}></i>
                                     </span>
@@ -116,7 +116,7 @@ export default function Skills({ skills = [] }: { skills: Skill[] }) {
 
                                 {/* Level Skill */}
                                 {/* shrink-0 agar level tidak menyusut tertekan teks nama */}
-                                <span className="flex h-full shrink-0 items-center rounded-r-full border-y border-r border-white/50 bg-white/20 px-2 backdrop-blur-sm md:px-3.5">
+                                <span className="flex h-full shrink-0 items-center rounded-r-full border-y border-r border-white/50 bg-white/20 px-2 md:backdrop-blur-sm md:px-3.5">
                                     <span className="text-[10px] font-medium text-white sm:text-xs">
                                         {skills.level}
                                     </span>
@@ -146,7 +146,7 @@ export default function Skills({ skills = [] }: { skills: Skill[] }) {
                     {/* Baris Animasi 1 */}
                     <div className="flex w-full border border-x-transparent border-y-white/15 py-5 md:py-7">
                         <motion.div
-                            className="flex w-max gap-12 md:gap-20"
+                            className="flex w-max gap-12 md:gap-20 will-change-transform"
                             animate={
                                 isAppInView
                                     ? { x: ['0%', '-50%'] }
@@ -184,7 +184,7 @@ export default function Skills({ skills = [] }: { skills: Skill[] }) {
                     {/* Baris Animasi 2 */}
                     <div className="flex w-full border border-x-transparent border-y-white/15 py-5 md:py-7">
                         <motion.div
-                            className="flex w-max gap-12 md:gap-20"
+                            className="flex w-max gap-12 md:gap-20 will-change-transform"
                             animate={
                                 isAppInView
                                     ? { x: ['-50%', '0%'] }

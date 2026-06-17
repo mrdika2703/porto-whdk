@@ -2,9 +2,11 @@ import { Head } from '@inertiajs/react';
 import { useState, useEffect, useRef } from 'react';
 import { motion, useInView } from 'framer-motion';
 import { Profile } from './index';
+import { useIsMobile } from '@/hooks/useIsMobile';
 
 export default function About({ profiles = [] }: { profiles: Profile[] }) {
     const profile = profiles[0];
+    const isMobile = useIsMobile();
 
     const words = [
         `I'm ${profile?.nickname || 'Nickname'}`,
@@ -77,6 +79,7 @@ export default function About({ profiles = [] }: { profiles: Profile[] }) {
     };
 
     return (
+        <>
         <div id="about" className="w-full">
             {/* =========================================
           ABOUT SECTION
@@ -108,7 +111,7 @@ export default function About({ profiles = [] }: { profiles: Profile[] }) {
                         className="mb-16 flex flex-col items-center gap-4 text-center md:mb-20 md:gap-6"
                     >
                         <div className="relative inline-flex items-center">
-                            <div className="rounded-full border border-bsecond bg-bsecond/80 px-5 py-1.5 backdrop-blur-md md:px-6 md:py-2 dark:bg-bsecond/10">
+                            <div className="rounded-full border border-bsecond bg-bsecond/80 px-5 py-1.5 md:backdrop-blur-md md:px-6 md:py-2 dark:bg-bsecond/10">
                                 <span className="text-lg font-medium text-white md:text-xl">
                                     Hello!
                                 </span>
@@ -186,27 +189,40 @@ export default function About({ profiles = [] }: { profiles: Profile[] }) {
                                     className="absolute bottom-0 left-1/2 z-10 h-auto w-[220px] -translate-x-1/2 object-contain drop-shadow-2xl sm:w-[280px] md:w-[387px]"
                                 />
 
-                                {/* Kutipan Animasi Melayang (Floating Badge) */}
-                                <motion.div
-                                    animate={{ y: [0, -12, 0] }}
-                                    transition={{
-                                        duration: 4,
-                                        repeat: Infinity,
-                                        ease: 'easeInOut',
-                                    }}
+                                {/* Kutipan Animasi Melayang (Floating Badge) — CSS animation untuk performa */}
+                                <div
                                     // Responsif posisi: tengah di HP, melayang ke kiri di desktop.
-                                    className="absolute -bottom-4 left-1/2 z-20 w-[90%] -translate-x-1/2 rounded-full border border-white/20 bg-gray-600/40 px-4 py-3 text-center shadow-2xl backdrop-blur-md sm:bottom-12 sm:left-4 sm:w-auto sm:translate-x-0 sm:px-6 sm:py-3.5 sm:text-left lg:-left-20"
+                                    className="absolute -bottom-4 left-1/2 z-20 w-[90%] -translate-x-1/2 rounded-full border border-white/20 bg-gray-600/70 px-4 py-3 text-center shadow-2xl md:bg-gray-600/40 md:backdrop-blur-md sm:bottom-12 sm:left-4 sm:w-auto sm:translate-x-0 sm:px-6 sm:py-3.5 sm:text-left lg:-left-20"
+                                    style={{
+                                        animation: 'floatBadge 4s ease-in-out infinite',
+                                        willChange: 'transform',
+                                    }}
                                 >
                                     {/* Mencegah wrap di desktop (whitespace-nowrap), izinkan wrap di HP (whitespace-normal) */}
                                     <p className="text-[10px] font-light tracking-wide whitespace-normal text-gray-200 italic sm:text-xs sm:whitespace-nowrap">
                                         {profile?.caption}
                                     </p>
-                                </motion.div>
+                                </div>
                             </div>
                         </motion.div>
                     </div>
                 </div>
             </section>
         </div>
+
+        {/* CSS float animation — berjalan di compositor thread, jauh lebih ringan dari Framer Motion */}
+        <style>{`
+            @keyframes floatBadge {
+                0%, 100% { transform: translateX(-50%) translateY(0); }
+                50% { transform: translateX(-50%) translateY(-12px); }
+            }
+            @media (min-width: 640px) {
+                @keyframes floatBadge {
+                    0%, 100% { transform: translateX(0) translateY(0); }
+                    50% { transform: translateX(0) translateY(-12px); }
+                }
+            }
+        `}</style>
+        </>
     );
 }

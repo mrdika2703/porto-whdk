@@ -53,7 +53,7 @@ export default function CertificateSection({
             className="relative w-full overflow-hidden py-16 text-white"
         >
             {/* Glow */}
-            <div className="pointer-events-none absolute top-1/2 left-1/4 h-[400px] w-[400px] -translate-y-1/2 rounded-full bg-bshine/5 blur-[120px]"></div>
+            <div className="pointer-events-none absolute top-1/2 left-1/4 hidden h-[400px] w-[400px] -translate-y-1/2 rounded-full bg-bshine/5 blur-[120px] md:block"></div>
 
             <div className="mx-auto flex w-full max-w-[1440px] flex-col gap-8 px-6 md:px-12">
                 {/* Header */}
@@ -84,7 +84,7 @@ export default function CertificateSection({
                         onClick={() => setIsOpen(!isOpen)}
                         whileHover={{ scale: 1.02 }}
                         whileTap={{ scale: 0.95 }}
-                        className="group flex items-center gap-2 rounded-full border border-bshine/50 bg-bshine/10 px-6 py-2.5 text-sm font-medium text-bshine backdrop-blur-sm transition-all duration-300 hover:border-bshine hover:bg-bshine/20 hover:shadow-[0_0_20px_rgba(192,104,0,0.3)]"
+                        className="group flex items-center gap-2 rounded-full border border-bshine/50 bg-bshine/10 px-6 py-2.5 text-sm font-medium text-bshine md:backdrop-blur-sm transition-all duration-300 hover:border-bshine hover:bg-bshine/20 hover:shadow-[0_0_20px_rgba(192,104,0,0.3)]"
                     >
                         <i
                             className={`fa-solid ${isOpen ? 'fa-xmark' : 'fa-certificate'} transition-transform duration-300`}
@@ -149,7 +149,7 @@ export default function CertificateSection({
                                     className="group relative w-[320px] shrink-0 sm:w-[420px] md:w-[480px]"
                                 >
                                     <div
-                                        className="relative aspect-[16/10] w-full overflow-hidden rounded-2xl border border-white/5 bg-white/[0.02] backdrop-blur-sm transition-all duration-300 hover:border-bshine/30 hover:shadow-[0_4px_30px_rgba(192,104,0,0.15)]"
+                                        className="relative aspect-[16/10] w-full overflow-hidden rounded-2xl border border-white/5 bg-white/[0.02] md:backdrop-blur-sm transition-all duration-300 hover:border-bshine/30 hover:shadow-[0_4px_30px_rgba(192,104,0,0.15)]"
                                         onClick={() => {
                                             if (!isDragging) {
                                                 openModal(cert);
@@ -157,7 +157,7 @@ export default function CertificateSection({
                                         }}
                                     >
                                         {/* Category Tag */}
-                                        <div className="absolute top-4 left-4 z-10 rounded-full border border-white/10 bg-black/60 px-3 py-1 text-[11px] font-semibold text-white/95 backdrop-blur-md transition-colors duration-300 group-hover:bg-bshine/90">
+                                        <div className="absolute top-4 left-4 z-10 rounded-full border border-white/10 bg-black/60 px-3 py-1 text-[11px] font-semibold text-white/95 md:backdrop-blur-md transition-colors duration-300 group-hover:bg-bshine/90">
                                             {cert.category}
                                         </div>
 

@@ -133,7 +133,7 @@ export default function DesignGraphicSection({ designs = [] }: GrapichProps) {
                         {/* Posisi digeser ke dalam di HP (left-1) agar tidak terpotong, dan ukurannya diperkecil */}
                         <button
                             onClick={() => scroll('left')}
-                            className="absolute top-1/2 left-1 z-30 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full bg-gray-400/60 text-white opacity-0 shadow-lg backdrop-blur-sm transition-opacity group-hover/nav:opacity-100 md:-left-4 md:h-12 md:w-12 md:-translate-x-1/2 dark:bg-black/60"
+                            className="absolute top-1/2 left-1 z-30 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full bg-gray-400/60 text-white opacity-0 shadow-lg md:backdrop-blur-sm transition-opacity group-hover/nav:opacity-100 md:-left-4 md:h-12 md:w-12 md:-translate-x-1/2 dark:bg-black/60"
                             aria-label="Previous"
                         >
                             <svg
@@ -178,7 +178,7 @@ export default function DesignGraphicSection({ designs = [] }: GrapichProps) {
                                                 }
                                             >
                                                 {/* Badge Hover */}
-                                                <div className="absolute top-2 right-2 z-10 rounded-full bg-bshine/90 px-3 py-1 opacity-0 backdrop-blur-md transition-opacity duration-300 group-hover/card:opacity-100 md:top-3 md:right-3 md:px-4 md:py-1.5 dark:bg-cyan-500/90">
+                                                <div className="absolute top-2 right-2 z-10 rounded-full bg-bshine/90 px-3 py-1 opacity-0 md:backdrop-blur-md transition-opacity duration-300 group-hover/card:opacity-100 md:top-3 md:right-3 md:px-4 md:py-1.5 dark:bg-cyan-500/90">
                                                     <span className="text-[10px] font-semibold tracking-wide text-white md:text-xs">
                                                         {designs.title}
                                                     </span>
@@ -203,7 +203,7 @@ export default function DesignGraphicSection({ designs = [] }: GrapichProps) {
                         {/* Tombol Kanan */}
                         <button
                             onClick={() => scroll('right')}
-                            className="absolute top-1/2 right-1 z-30 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full bg-gray-400/60 text-white opacity-0 shadow-lg backdrop-blur-sm transition-opacity group-hover/nav:opacity-100 md:-right-4 md:h-12 md:w-12 md:translate-x-1/2 dark:bg-black/60"
+                            className="absolute top-1/2 right-1 z-30 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full bg-gray-400/60 text-white opacity-0 shadow-lg md:backdrop-blur-sm transition-opacity group-hover/nav:opacity-100 md:-right-4 md:h-12 md:w-12 md:translate-x-1/2 dark:bg-black/60"
                             aria-label="Next"
                         >
                             <svg

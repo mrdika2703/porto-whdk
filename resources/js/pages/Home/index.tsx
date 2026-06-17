@@ -10,6 +10,7 @@ import PhotoVideoSection from './photography';
 import WebsiteSection from './website';
 import CertificateSection from './certificate';
 import OtherSection from './other';
+import { useLazySection } from '@/hooks/useLazySection';
 
 export interface Profile {
     id: number;
@@ -141,6 +142,12 @@ export default function Home({
     others = [],
     footers = [],
 }: HomeProps) {
+    // Lazy load section berat — hanya render saat mendekati viewport (200px sebelum terlihat)
+    const designSection = useLazySection('300px');
+    const photoSection = useLazySection('300px');
+    const websiteSection = useLazySection('300px');
+    const otherSection = useLazySection('300px');
+
     return (
         <>
             <Layout footers={footers}>
@@ -157,12 +164,39 @@ export default function Home({
                         </div>
                         <CertificateSection certificates={certificates} />
                         <DirectSection />
-                        <DesignGraphicSection designs={designs} />
-                        <div className="bg-bphotograph">
-                            <PhotoVideoSection photovideos={photovideos} />
+
+                        {/* Lazy-loaded sections — placeholder div tetap ada agar scroll position benar */}
+                        <div ref={designSection.ref}>
+                            {designSection.shouldRender ? (
+                                <DesignGraphicSection designs={designs} />
+                            ) : (
+                                <div className="min-h-[500px]" />
+                            )}
                         </div>
-                        <WebsiteSection websites={websites} />
-                        <OtherSection others={others} />
+
+                        <div className="bg-bphotograph" ref={photoSection.ref}>
+                            {photoSection.shouldRender ? (
+                                <PhotoVideoSection photovideos={photovideos} />
+                            ) : (
+                                <div className="min-h-[500px]" />
+                            )}
+                        </div>
+
+                        <div ref={websiteSection.ref}>
+                            {websiteSection.shouldRender ? (
+                                <WebsiteSection websites={websites} />
+                            ) : (
+                                <div className="min-h-[650px]" />
+                            )}
+                        </div>
+
+                        <div ref={otherSection.ref}>
+                            {otherSection.shouldRender ? (
+                                <OtherSection others={others} />
+                            ) : (
+                                <div className="min-h-[200px]" />
+                            )}
+                        </div>
                     </div>
                 </div>
             </Layout>

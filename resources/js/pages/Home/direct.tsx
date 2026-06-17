@@ -39,8 +39,8 @@ export default function DirectSection() {
                 id="direct"
                 className="min-h-5xl relative my-10 w-full py-30"
             >
-                <div className="pointer-events-none absolute top-0.5 left-0 h-[500px] w-[500px] -translate-x-1/2 rounded-full bg-bshine/10 blur-[120px]"></div>
-                <div className="pointer-events-none absolute top-3/4 right-0 h-[400px] w-[400px] translate-x-1/3 rounded-full bg-bshine/10 blur-[100px]"></div>
+                <div className="pointer-events-none absolute top-0.5 left-0 hidden h-[500px] w-[500px] -translate-x-1/2 rounded-full bg-bshine/10 blur-[120px] md:block"></div>
+                <div className="pointer-events-none absolute top-3/4 right-0 hidden h-[400px] w-[400px] translate-x-1/3 rounded-full bg-bshine/10 blur-[100px] md:block"></div>
 
                 <div className="relative mx-auto flex w-full max-w-7xl flex-col gap-10 px-4 sm:px-8 md:px-12">
                     <motion.div
