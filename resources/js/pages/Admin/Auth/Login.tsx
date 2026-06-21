@@ -1,5 +1,6 @@
 import { Head, useForm } from '@inertiajs/react';
-import { FormEvent, useEffect, useState } from 'react';
+import type { FormEvent} from 'react';
+import { useEffect, useState } from 'react';
 import { BgPhotograph } from '@/components/bg-photograph';
 
 export default function Login() {
@@ -25,6 +26,7 @@ export default function Login() {
         } else {
             // Auto-Dark Mode berdasarkan jam (18.00 - 05.59)
             const currentHour = new Date().getHours();
+
             if (currentHour >= 18 || currentHour < 6) {
                 root.classList.add('dark');
                 setIsDark(true);
@@ -43,6 +45,7 @@ export default function Login() {
     // 2. Fungsi Toggle Theme Manual
     const toggleTheme = () => {
         const root = document.documentElement;
+
         if (isDark) {
             root.classList.remove('dark');
             localStorage.setItem('theme', 'light');

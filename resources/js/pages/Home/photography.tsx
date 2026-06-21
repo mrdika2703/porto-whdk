@@ -1,9 +1,10 @@
-import { useState, useRef } from 'react';
 import { Link } from '@inertiajs/react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { animated, useSpring, useTransition, to } from '@react-spring/web';
+import { useState, useRef } from 'react';
 import { BgPhotograph } from '@/components/bg-photograph';
-import { PhotoVideo } from './index';
+import { useInView } from '@/hooks/useInView';
 import { useIsMobile } from '@/hooks/useIsMobile';
+import type { PhotoVideo } from './index';
 
 export default function PhotoVideoSection({
     photovideos = [],
@@ -18,7 +19,10 @@ export default function PhotoVideoSection({
     const isMobile = useIsMobile();
 
     const getImages = (item: PhotoVideo | null) => {
-        if (!item) return [];
+        if (!item) {
+return [];
+}
+
         return [
             item.url_1,
             item.url_2,
@@ -32,38 +36,43 @@ export default function PhotoVideoSection({
     const activeIndex = activeImg ? activeImages.indexOf(activeImg) : 0;
 
     const handlePrev = () => {
-        if (activeImages.length <= 1) return;
+        if (activeImages.length <= 1) {
+return;
+}
+
         const newIndex =
             (activeIndex - 1 + activeImages.length) % activeImages.length;
         setActiveImg(activeImages[newIndex]);
     };
 
     const handleNext = () => {
-        if (activeImages.length <= 1) return;
+        if (activeImages.length <= 1) {
+return;
+}
+
         const newIndex = (activeIndex + 1) % activeImages.length;
         setActiveImg(activeImages[newIndex]);
     };
 
-    // 1. Filter data berdasarkan tab yang aktif
     const filteredProjects = photovideos.filter(
         (item) => item.type === activeTab,
     );
 
-    // 2. Fungsi memecah data menjadi kolom-kolom (Maks 2-3 item per kolom ala Pinterest)
     const getColumns = (items: typeof photovideos) => {
         const columns: (typeof items)[] = [];
         let i = 0;
+
         while (i < items.length) {
             const chunkSize = columns.length % 2 === 0 ? 2 : 3;
             columns.push(items.slice(i, i + chunkSize));
             i += chunkSize;
         }
+
         return columns;
     };
 
     const projectColumns = getColumns(filteredProjects);
 
-    // 3. Fungsi untuk Slider (Kiri/Kanan) dengan sistem Loop
     const scroll = (direction: 'left' | 'right') => {
         if (scrollRef.current) {
             const { scrollLeft, clientWidth, scrollWidth } = scrollRef.current;
@@ -94,12 +103,30 @@ export default function PhotoVideoSection({
         }
     };
 
+    // Header animation
+    const headerRef = useRef<HTMLDivElement>(null);
+    const isHeaderInView = useInView(headerRef, { once: true, amount: 0.2 });
+    const headerSpring = useSpring({
+        opacity: isHeaderInView ? 1 : 0,
+        transform: isHeaderInView ? 'translateY(0px)' : 'translateY(-20px)',
+        config: { tension: 280, friction: 60 },
+        delay: 200,
+    });
+
+    // Modal transition
+    const modalTransition = useTransition(selectedPhotoVideo, {
+        from: { opacity: 0, scale: 0.9, y: 20 },
+        enter: { opacity: 1, scale: 1, y: 0 },
+        leave: { opacity: 0, scale: 0.9, y: 20 },
+        config: { tension: 220, friction: 26 },
+    });
+
     return (
         <section
             id="photo"
             className="relative flex min-h-[500px] w-full flex-col items-center overflow-hidden py-16 pb-14 md:py-24 md:pb-32"
         >
-            {/* BgPhotograph SVG (71KB, 400 path) — skip di mobile untuk performa */}
+            {/* BgPhotograph SVG */}
             <div className="absolute top-0 left-0 z-0 h-full w-full">
                 {!isMobile && (
                     <BgPhotograph className="text-amber-900 dark:text-cyan-600" />
@@ -111,15 +138,11 @@ export default function PhotoVideoSection({
 
             <div className="mx-auto flex w-full max-w-7xl flex-col items-center gap-10 px-4 sm:px-8 md:gap-12 md:px-12">
                 {/* --- HEADER DENGAN ANIMASI --- */}
-                <motion.div
-                    initial={{ opacity: 0, y: -20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true, amount: 0.2 }}
-                    transition={{ duration: 0.6, ease: 'easeOut', delay: 0.2 }}
+                <animated.div
+                    style={headerSpring}
                     className="relative z-20 flex flex-col items-center gap-2 text-center md:gap-4"
                 >
-                    <div className="relative inline-flex items-center gap-3 md:gap-4">
-                        {/* Ukuran font disesuaikan di HP */}
+                    <div ref={headerRef} className="relative inline-flex items-center gap-3 md:gap-4">
                         <h2 className="text-xl font-bold text-tmain sm:text-2xl md:text-3xl">
                             Photography &{' '}
                             <span className="text-bshine">Videography</span>
@@ -135,18 +158,16 @@ export default function PhotoVideoSection({
                             className="absolute top-0 -right-8 hidden h-6 w-6 rotate-12 transform md:-right-10 md:h-8 md:w-8 dark:block"
                         />
                     </div>
-                    {/* Teks preview disembunyikan di layar HP paling kecil agar bersih */}
                     <p className="hidden text-sm font-light text-tmain sm:block md:text-base">
                         Preview Project
                     </p>
-                </motion.div>
+                </animated.div>
 
                 {/* --- TABS (Filter & See More) --- */}
                 <div className="relative z-20 flex w-full flex-col items-center justify-center gap-3 md:gap-6">
                     <div className="flex w-full flex-wrap items-center justify-center gap-3 md:gap-6">
                         <button
                             onClick={() => setActiveTab('photo')}
-                            // Ukuran tombol diperkecil di HP
                             className={`flex items-center justify-center rounded-full px-4 py-1.5 text-xs transition-all duration-300 sm:text-sm md:px-6 md:py-2 md:text-base ${
                                 activeTab === 'photo'
                                     ? 'border bg-gradient-to-r from-bsecond to-stone-500 font-medium text-white dark:border-white dark:bg-white/10 dark:bg-none dark:shadow-[0_0_30px_rgba(255,255,255,0.3)]'
@@ -179,7 +200,6 @@ export default function PhotoVideoSection({
                     {/* --- MAIN MASONRY SLIDER CONTENT --- */}
                     <div className="group/nav relative z-20 w-full md:mt-6">
                         {/* Tombol Panah Kiri */}
-                        {/* Digeser agak ke dalam (left-1) untuk HP agar tombol bisa diklik */}
                         <button
                             onClick={() => scroll('left')}
                             className="absolute top-1/2 left-1 z-30 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full bg-gray-400/60 text-white opacity-0 shadow-lg md:backdrop-blur-md transition-all duration-300 group-hover/nav:opacity-100 md:-left-4 md:h-12 md:w-12 md:-translate-x-6 dark:bg-black/60"
@@ -215,7 +235,6 @@ export default function PhotoVideoSection({
                                 {projectColumns.map((column, colIndex) => (
                                     <div
                                         key={colIndex}
-                                        // Lebar kolom responsif (220px di HP, membesar di tablet/desktop)
                                         className="flex w-[120px] shrink-0 snap-start flex-col gap-4 sm:w-[260px] md:w-[320px] md:gap-6"
                                     >
                                         {column.map((project) => (
@@ -286,24 +305,17 @@ export default function PhotoVideoSection({
             </div>
 
             {/* --- MODAL UNTUK PREVIEW GAMBAR --- */}
-            <AnimatePresence>
-                {selectedPhotoVideo && (
-                    <motion.div
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                        transition={{ duration: 0.1 }}
+            {modalTransition((styles, project) =>
+                project && (
+                    <animated.div
+                        style={{ opacity: styles.opacity }}
                         className="fixed inset-0 z-50 flex items-center justify-center bg-black/35 p-4 backdrop-blur-md"
                         onClick={() => setSelectedPhotoVideo(null)}
                     >
-                        <motion.div
-                            initial={{ scale: 0.9, opacity: 0, y: 20 }}
-                            animate={{ scale: 1, opacity: 1, y: 0 }}
-                            exit={{ scale: 0.9, opacity: 0, y: 20 }}
-                            transition={{
-                                type: 'spring',
-                                stiffness: 220,
-                                damping: 26,
+                        <animated.div
+                            style={{
+                                opacity: styles.opacity,
+                                transform: to([styles.scale, styles.y], (s, y) => `scale(${s}) translateY(${y}px)`),
                             }}
                             className="relative flex w-full max-w-5xl flex-col overflow-hidden rounded-2xl border border-white/10 bg-main shadow-2xl backdrop-blur-md md:flex-row"
                             onClick={(e) => e.stopPropagation()}
@@ -321,7 +333,7 @@ export default function PhotoVideoSection({
                                 {activeImg && (
                                     <img
                                         src={`/storage/${activeImg}`}
-                                        alt={selectedPhotoVideo.title}
+                                        alt={project.title}
                                         className="max-h-[50vh] max-w-full rounded-lg object-contain shadow-lg md:max-h-[85vh]"
                                         draggable={false}
                                     />
@@ -374,11 +386,11 @@ export default function PhotoVideoSection({
                             <div className="flex w-full flex-col justify-between border-t border-white/10 p-6 sm:p-8 md:w-2/5 md:border-t-0 md:border-l lg:w-1/3">
                                 <div className="flex flex-col">
                                     <span className="mb-3 w-fit rounded-full border border-bshine/10 bg-bshine/20 px-3 py-1 text-xs font-semibold text-bshine backdrop-blur-sm">
-                                        {selectedPhotoVideo.category}
+                                        {project.category}
                                     </span>
 
                                     <h3 className="text-xl leading-snug font-bold text-tmain md:text-2xl">
-                                        {selectedPhotoVideo.title}
+                                        {project.title}
                                     </h3>
 
                                     <div className="my-5 h-px bg-hbshine/20" />
@@ -391,15 +403,15 @@ export default function PhotoVideoSection({
                                         className="mt-2.5 max-h-[160px] overflow-y-auto pr-2 text-sm leading-relaxed text-tmain md:max-h-[260px]"
                                         style={{ scrollbarWidth: 'thin' }}
                                     >
-                                        {selectedPhotoVideo.description ||
+                                        {project.description ||
                                             'Tidak ada deskripsi.'}
                                     </div>
                                 </div>
                             </div>
-                        </motion.div>
-                    </motion.div>
-                )}
-            </AnimatePresence>
+                        </animated.div>
+                    </animated.div>
+                )
+            )}
 
             <style>{`
                 .hide-scrollbar::-webkit-scrollbar {

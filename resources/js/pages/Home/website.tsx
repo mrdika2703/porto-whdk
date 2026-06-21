@@ -1,7 +1,8 @@
-import { useState, useEffect } from 'react';
 import { Link } from '@inertiajs/react';
-import { motion, AnimatePresence } from 'framer-motion'; // Tambahkan import framer-motion
-import { Website } from './index';
+import { animated, useSpring, useTransition, to } from '@react-spring/web';
+import { useState, useEffect, useRef } from 'react';
+import { useInView } from '@/hooks/useInView';
+import type { Website } from './index';
 
 interface ProjectCardProps {
     project: Website;
@@ -19,6 +20,7 @@ const ProjectCard = ({
 }: ProjectCardProps) => {
     // Menentukan kelas CSS berdasarkan posisi
     let positionClass = '';
+
     if (position === 'center') {
         positionClass = 'opacity-100 scale-100 z-30 translate-x-0 ';
     } else if (position === 'left') {
@@ -39,7 +41,6 @@ const ProjectCard = ({
                     ? onClickCard
                     : () => onOpenDetails(project)
             }
-            // PERBAIKAN: Ubah md:flex-row menjadi lg:flex-row agar tablet tetap atas-bawah
             className={`absolute flex w-full max-w-7xl flex-col items-center gap-6 rounded-xl bg-sectiondark px-6 py-10 transition-all duration-700 ease-in-out md:px-10 md:py-12 lg:flex-row lg:items-start lg:gap-10 lg:px-15 lg:py-18 ${positionClass} ${position === 'center' ? 'cursor-pointer hover:border-bshine/30 hover:shadow-[0_4px_30px_rgba(192,104,0,0.15)]' : ''}`}
         >
             {/* KOLOM GAMBAR */}
@@ -73,7 +74,6 @@ const ProjectCard = ({
                     </span>
                 </div>
 
-                {/* max-width dihapus agar teks penuh jika atas-bawah, baru dibatasi saat desktop */}
                 <p className="text-xs leading-relaxed font-normal text-white/90 sm:text-sm lg:max-w-[640px]">
                     {project.description}
                 </p>
@@ -106,7 +106,10 @@ export default function WebsiteSection({
     const [activeImg, setActiveImg] = useState<string | null>(null);
 
     const getImages = (item: Website | null) => {
-        if (!item) return [];
+        if (!item) {
+return [];
+}
+
         return item.images || [];
     };
 
@@ -114,14 +117,20 @@ export default function WebsiteSection({
     const activeIndex = activeImg ? activeImages.indexOf(activeImg) : 0;
 
     const handlePrevImg = () => {
-        if (activeImages.length <= 1) return;
+        if (activeImages.length <= 1) {
+return;
+}
+
         const newIndex =
             (activeIndex - 1 + activeImages.length) % activeImages.length;
         setActiveImg(activeImages[newIndex]);
     };
 
     const handleNextImg = () => {
-        if (activeImages.length <= 1) return;
+        if (activeImages.length <= 1) {
+return;
+}
+
         const newIndex = (activeIndex + 1) % activeImages.length;
         setActiveImg(activeImages[newIndex]);
     };
@@ -131,7 +140,6 @@ export default function WebsiteSection({
         setActiveImg(project.images[0] || null);
     };
 
-    // 1. STATE BARU UNTUK AUTO-SWIPE & TOUCH SWIPE
     const [isPaused, setIsPaused] = useState(false);
     const [touchStartX, setTouchStartX] = useState<number | null>(null);
     const [touchEndX, setTouchEndX] = useState<number | null>(null);
@@ -140,9 +148,12 @@ export default function WebsiteSection({
         (item) => item.category === activeTab,
     );
 
-    useEffect(() => {
+    const [prevActiveTab, setPrevActiveTab] = useState(activeTab);
+
+    if (activeTab !== prevActiveTab) {
+        setPrevActiveTab(activeTab);
         setProjectIndex(0);
-    }, [activeTab]);
+    }
 
     const handleNextProject = () => {
         setProjectIndex((prev) => (prev + 1) % filteredProjects.length);
@@ -154,13 +165,12 @@ export default function WebsiteSection({
         );
     };
 
-    // 2. LOGIKA AUTO-SWIPE (5 DETIK)
     useEffect(() => {
-        // Jangan jalankan interval jika card sedang ditahan/hover atau data kosong
-        if (isPaused || filteredProjects.length === 0) return;
+        if (isPaused || filteredProjects.length === 0) {
+return;
+}
 
         const interval = setInterval(() => {
-            // Animasi hanya aktif jika halaman sedang dilihat user (tab tidak disembunyikan)
             if (!document.hidden) {
                 setProjectIndex((prev) => (prev + 1) % filteredProjects.length);
             }
@@ -169,10 +179,9 @@ export default function WebsiteSection({
         return () => clearInterval(interval);
     }, [isPaused, filteredProjects.length]);
 
-    // 3. LOGIKA DETEKSI SWIPE MOBILE
     const handleTouchStart = (e: React.TouchEvent) => {
         setTouchStartX(e.targetTouches[0].clientX);
-        setIsPaused(true); // Hentikan auto-swipe saat layar ditahan
+        setIsPaused(true);
     };
 
     const handleTouchMove = (e: React.TouchEvent) => {
@@ -181,37 +190,71 @@ export default function WebsiteSection({
 
     const handleTouchEnd = () => {
         if (!touchStartX || !touchEndX) {
-            setIsPaused(false); // Lanjutkan auto-swipe jika hanya sekadar tap
+            setIsPaused(false);
+
             return;
         }
 
         const distance = touchStartX - touchEndX;
 
-        // Jarak minimal swipe 50px agar tidak bentrok dengan tap tombol biasa
         if (distance > 50) {
-            handleNextProject(); // Swipe Kiri -> Card Selanjutnya
+            handleNextProject();
         } else if (distance < -50) {
-            handlePrevProject(); // Swipe Kanan -> Card Sebelumnya
+            handlePrevProject();
         }
 
-        // Reset nilai
         setTouchStartX(null);
         setTouchEndX(null);
-        setIsPaused(false); // Lanjutkan auto-swipe setelah jari dilepas
+        setIsPaused(false);
     };
 
     const getCardPosition = (index: number) => {
         const total = filteredProjects.length;
-        if (total === 1) return index === projectIndex ? 'center' : 'hidden';
+
+        if (total === 1) {
+return index === projectIndex ? 'center' : 'hidden';
+}
+
         if (total === 2) {
-            if (index === projectIndex) return 'center';
+            if (index === projectIndex) {
+return 'center';
+}
+
             return 'right';
         }
-        if (index === projectIndex) return 'center';
-        if (index === (projectIndex - 1 + total) % total) return 'left';
-        if (index === (projectIndex + 1) % total) return 'right';
+
+        if (index === projectIndex) {
+return 'center';
+}
+
+        if (index === (projectIndex - 1 + total) % total) {
+return 'left';
+}
+
+        if (index === (projectIndex + 1) % total) {
+return 'right';
+}
+
         return 'hidden';
     };
+
+    // Header animation
+    const headerRef = useRef<HTMLDivElement>(null);
+    const isHeaderInView = useInView(headerRef, { once: true, amount: 0.2 });
+    const headerSpring = useSpring({
+        opacity: isHeaderInView ? 1 : 0,
+        transform: isHeaderInView ? 'translateY(0px)' : 'translateY(-30px)',
+        config: { tension: 280, friction: 60 },
+        delay: 200,
+    });
+
+    // Modal transition
+    const modalTransition = useTransition(selectedWebsite, {
+        from: { opacity: 0, scale: 0.9, y: 20 },
+        enter: { opacity: 1, scale: 1, y: 0 },
+        leave: { opacity: 0, scale: 0.9, y: 20 },
+        config: { tension: 220, friction: 26 },
+    });
 
     return (
         <section
@@ -220,14 +263,11 @@ export default function WebsiteSection({
         >
             <div className="mx-auto flex w-full max-w-[1440px] flex-col gap-10 px-4 md:gap-16 md:px-12">
                 {/* --- HEADER DENGAN ANIMASI --- */}
-                <motion.div
-                    initial={{ opacity: 0, y: -30 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true, amount: 0.2 }}
-                    transition={{ duration: 0.6, ease: 'easeOut', delay: 0.2 }}
+                <animated.div
+                    style={headerSpring}
                     className="flex flex-row items-center justify-between gap-4 px-2 md:gap-6 md:px-4"
                 >
-                    <div className="relative flex items-center gap-3 md:gap-4">
+                    <div ref={headerRef} className="relative flex items-center gap-3 md:gap-4">
                         <h2 className="text-2xl font-bold text-tmain sm:text-3xl">
                             Website
                         </h2>
@@ -245,7 +285,7 @@ export default function WebsiteSection({
                     <p className="hidden text-sm font-light text-tmain sm:block md:text-base">
                         Preview Project
                     </p>
-                </motion.div>
+                </animated.div>
 
                 {/* --- TABS --- */}
                 <div className="flex flex-col items-center gap-3 md:gap-10">
@@ -275,15 +315,15 @@ export default function WebsiteSection({
                     {/* --- AREA CAROUSEL UTAMA --- */}
                     <div
                         className="relative flex h-[450px] w-full items-center justify-center md:h-[600px] lg:h-[400px]"
-                        // 4. PASANG EVENT HANDLER DI SINI
-                        onMouseEnter={() => setIsPaused(true)} // Desktop Hover (Tahan)
-                        onMouseLeave={() => setIsPaused(false)} // Desktop Lepas
-                        onTouchStart={handleTouchStart} // HP Tahan Layar
-                        onTouchMove={handleTouchMove} // HP Geser Jari
-                        onTouchEnd={handleTouchEnd} // HP Angkat Jari
+                        onMouseEnter={() => setIsPaused(true)}
+                        onMouseLeave={() => setIsPaused(false)}
+                        onTouchStart={handleTouchStart}
+                        onTouchMove={handleTouchMove}
+                        onTouchEnd={handleTouchEnd}
                     >
                         {filteredProjects.map((project, idx) => {
                             const position = getCardPosition(idx);
+
                             return (
                                 <ProjectCard
                                     key={project.id}
@@ -370,24 +410,17 @@ export default function WebsiteSection({
             </div>
 
             {/* --- MODAL UNTUK PREVIEW GAMBAR --- */}
-            <AnimatePresence>
-                {selectedWebsite && (
-                    <motion.div
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                        transition={{ duration: 0.1 }}
+            {modalTransition((styles, project) =>
+                project && (
+                    <animated.div
+                        style={{ opacity: styles.opacity }}
                         className="fixed inset-0 z-50 flex items-center justify-center bg-black/35 p-4 backdrop-blur-md"
                         onClick={() => setSelectedWebsite(null)}
                     >
-                        <motion.div
-                            initial={{ scale: 0.9, opacity: 0, y: 20 }}
-                            animate={{ scale: 1, opacity: 1, y: 0 }}
-                            exit={{ scale: 0.9, opacity: 0, y: 20 }}
-                            transition={{
-                                type: 'spring',
-                                stiffness: 220,
-                                damping: 26,
+                        <animated.div
+                            style={{
+                                opacity: styles.opacity,
+                                transform: to([styles.scale, styles.y], (s, y) => `scale(${s}) translateY(${y}px)`),
                             }}
                             className="relative flex w-full max-w-5xl flex-col overflow-hidden rounded-2xl border border-white/10 bg-main shadow-2xl backdrop-blur-md md:flex-row"
                             onClick={(e) => e.stopPropagation()}
@@ -405,7 +438,7 @@ export default function WebsiteSection({
                                 {activeImg && (
                                     <img
                                         src={`/storage/${activeImg}`}
-                                        alt={selectedWebsite.title}
+                                        alt={project.title}
                                         className="max-h-[50vh] max-w-full rounded-lg object-contain shadow-lg md:max-h-[85vh]"
                                         draggable={false}
                                     />
@@ -458,16 +491,16 @@ export default function WebsiteSection({
                             <div className="flex w-full flex-col justify-between border-t border-white/10 p-6 sm:p-8 md:w-2/5 md:border-t-0 md:border-l lg:w-1/3">
                                 <div className="animate-fade-in flex flex-col">
                                     <span className="mb-3 w-fit rounded-full border border-bshine/10 bg-bshine/20 px-3 py-1 text-xs font-semibold text-bshine capitalize backdrop-blur-sm">
-                                        {selectedWebsite.category}
+                                        {project.category}
                                     </span>
 
                                     <h3 className="text-xl leading-snug font-bold text-tmain md:text-2xl">
-                                        {selectedWebsite.title}
+                                        {project.title}
                                     </h3>
 
                                     <p className="mt-2 flex items-center gap-1.5 text-xs font-semibold text-hbshine">
                                         <i className="fa-regular fa-building text-bshine" />
-                                        {selectedWebsite.origin}
+                                        {project.origin}
                                     </p>
 
                                     <div className="my-4 border-l-2 border-bshine py-1 pl-4">
@@ -475,7 +508,7 @@ export default function WebsiteSection({
                                             Tech Stack
                                         </p>
                                         <p className="mt-0.5 text-sm font-medium text-tmain italic">
-                                            {selectedWebsite.tech}
+                                            {project.tech}
                                         </p>
                                     </div>
 
@@ -489,13 +522,13 @@ export default function WebsiteSection({
                                         className="mt-2.5 max-h-[160px] overflow-y-auto pr-2 text-sm leading-relaxed text-tmain md:max-h-[220px]"
                                         style={{ scrollbarWidth: 'thin' }}
                                     >
-                                        {selectedWebsite.description ||
+                                        {project.description ||
                                             'Tidak ada deskripsi.'}
                                     </div>
 
-                                    {selectedWebsite.link && (
+                                    {project.link && (
                                         <a
-                                            href={selectedWebsite.link}
+                                            href={project.link}
                                             target="_blank"
                                             rel="noopener noreferrer"
                                             className="mt-6 flex w-full items-center justify-center gap-2 rounded-full border border-bshine/50 bg-bshine/10 px-6 py-2 text-sm font-semibold text-bshine backdrop-blur-sm transition-all duration-300 hover:border-bshine hover:bg-bshine/20 hover:shadow-[0_0_20px_rgba(192,104,0,0.2)]"
@@ -506,10 +539,10 @@ export default function WebsiteSection({
                                     )}
                                 </div>
                             </div>
-                        </motion.div>
-                    </motion.div>
-                )}
-            </AnimatePresence>
+                        </animated.div>
+                    </animated.div>
+                )
+            )}
         </section>
     );
 }

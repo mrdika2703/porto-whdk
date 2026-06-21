@@ -1,6 +1,6 @@
 import { Link } from '@inertiajs/react';
-import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
+import { useState, useEffect } from 'react';
 import { Watermark } from '@/components/watermark';
 
 export default function Header() {
@@ -22,6 +22,7 @@ export default function Header() {
             setIsDark(false);
         } else {
             const currentHour = new Date().getHours();
+
             if (currentHour >= 18 || currentHour < 6) {
                 root.classList.add('dark');
                 setIsDark(true);
@@ -34,6 +35,7 @@ export default function Header() {
 
     const toggleTheme = () => {
         const root = document.documentElement;
+
         if (isDark) {
             root.classList.remove('dark');
             localStorage.setItem('theme', 'light');
@@ -96,7 +98,10 @@ export default function Header() {
         ];
         sections.forEach((id) => {
             const element = document.getElementById(id);
-            if (element) observer.observe(element);
+
+            if (element) {
+observer.observe(element);
+}
         });
 
         return () => observer.disconnect();

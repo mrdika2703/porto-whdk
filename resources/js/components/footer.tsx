@@ -2,6 +2,7 @@ import type { Footers } from '../pages/Home';
 
 export default function Footer({ footers }: { footers: Footers[] }) {
     const footer = footers[0];
+
     return (
         <footer
             id="contact-footer"

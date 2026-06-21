@@ -1,6 +1,4 @@
 import { Head, Link } from '@inertiajs/react';
-import LayoutAdmin from '../Layout/AdminLayout';
-import Swal from 'sweetalert2';
 import { useEffect, useState } from 'react';
 import {
     AreaChart,
@@ -11,6 +9,8 @@ import {
     Tooltip,
     ResponsiveContainer,
 } from 'recharts';
+import Swal from 'sweetalert2';
+import LayoutAdmin from '../Layout/AdminLayout';
 
 interface ProfileData {
     id: number;
@@ -98,6 +98,7 @@ export default function Dashboard({
                 timerProgressBar: true,
             });
         }
+
         if (flash?.error) {
             Swal.fire({
                 icon: 'error',
@@ -189,6 +190,7 @@ export default function Dashboard({
                 </div>
             );
         }
+
         return null;
     };
 
@@ -200,6 +202,7 @@ export default function Dashboard({
             hour: '2-digit',
             minute: '2-digit',
         };
+
         return new Date(dateString).toLocaleDateString('id-ID', options);
     };
 

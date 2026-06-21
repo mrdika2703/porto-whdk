@@ -1,7 +1,8 @@
-import { useState, useRef } from 'react';
 import { Link } from '@inertiajs/react';
-import { motion, AnimatePresence } from 'framer-motion'; // Tambahkan import framer-motion
-import { Design } from './index';
+import { animated, useSpring, useTransition, to } from '@react-spring/web';
+import { useState, useRef } from 'react';
+import { useInView } from '@/hooks/useInView';
+import type { Design } from './index';
 
 const categories = ['Sosmed', 'Poster', 'Banner'];
 
@@ -14,9 +15,6 @@ export default function DesignGraphicSection({ designs = [] }: GrapichProps) {
     const [selectedDesign, setSelectedDesign] = useState<Design | null>(null);
     const scrollRef = useRef<HTMLDivElement>(null);
 
-    // console.log('Isi data designs:', designs);
-
-    // Gunakan pengamanan Array.isArray
     const filteredDesigns = Array.isArray(designs)
         ? designs.filter((item) => item.category === activeCategory)
         : [];
@@ -24,11 +22,13 @@ export default function DesignGraphicSection({ designs = [] }: GrapichProps) {
     const getColumns = (items: typeof designs) => {
         const columns: (typeof items)[] = [];
         let i = 0;
+
         while (i < items.length) {
             const chunkSize = columns.length % 2 === 0 ? 2 : 3;
             columns.push(items.slice(i, i + chunkSize));
             i += chunkSize;
         }
+
         return columns;
     };
 
@@ -64,6 +64,24 @@ export default function DesignGraphicSection({ designs = [] }: GrapichProps) {
         }
     };
 
+    // Header entrance animation
+    const headerRef = useRef<HTMLDivElement>(null);
+    const isHeaderInView = useInView(headerRef, { once: true, amount: 0.2 });
+    const headerSpring = useSpring({
+        opacity: isHeaderInView ? 1 : 0,
+        transform: isHeaderInView ? 'translateY(0px)' : 'translateY(-20px)',
+        config: { tension: 280, friction: 60 },
+        delay: 200,
+    });
+
+    // Modal transition
+    const modalTransition = useTransition(selectedDesign, {
+        from: { opacity: 0, scale: 0.9, y: 20 },
+        enter: { opacity: 1, scale: 1, y: 0 },
+        leave: { opacity: 0, scale: 0.9, y: 20 },
+        config: { tension: 220, friction: 26 },
+    });
+
     return (
         <section
             id="design"
@@ -71,15 +89,11 @@ export default function DesignGraphicSection({ designs = [] }: GrapichProps) {
         >
             <div className="mx-auto flex w-full max-w-7xl flex-col gap-10 px-4 sm:px-8 md:gap-12 md:px-12">
                 {/* --- HEADER DENGAN ANIMASI --- */}
-                <motion.div
-                    initial={{ opacity: 0, y: -20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true, amount: 0.2 }}
-                    transition={{ duration: 0.6, ease: 'easeOut', delay: 0.2 }}
+                <animated.div
+                    style={headerSpring}
                     className="relative z-20 flex flex-row items-center justify-between gap-4 md:gap-6"
                 >
-                    <div className="flex items-center gap-3 md:gap-4">
-                        {/* Ukuran teks disesuaikan untuk HP */}
+                    <div ref={headerRef} className="flex items-center gap-3 md:gap-4">
                         <h2 className="text-xl font-bold text-tmain sm:text-2xl md:text-3xl">
                             Design <span className="text-bshine">Graphic</span>
                         </h2>
@@ -94,13 +108,12 @@ export default function DesignGraphicSection({ designs = [] }: GrapichProps) {
                             className="hidden h-6 w-6 rotate-12 transform text-blue-300 sm:h-8 sm:w-8 dark:block"
                         />
                     </div>
-                    {/* Teks preview disembunyikan di layar sangat kecil agar tidak bertabrakan */}
                     <p className="hidden text-sm font-light text-tmain sm:block md:text-base">
                         Preview Project
                     </p>
-                </motion.div>
+                </animated.div>
 
-                {/* --- MAIN CONTENT (Tabs & Slider) --- */}
+                {/* --- MAIN CONTENT --- */}
                 <div className="relative z-20 flex w-full flex-col items-center gap-3 md:gap-6">
                     {/* TABS */}
                     <div className="flex w-full flex-wrap items-center justify-center gap-3 md:gap-6">
@@ -108,7 +121,6 @@ export default function DesignGraphicSection({ designs = [] }: GrapichProps) {
                             <button
                                 key={cat}
                                 onClick={() => setActiveCategory(cat)}
-                                // Padding dan teks diperkecil di HP
                                 className={`flex items-center justify-center rounded-3xl px-4 py-1.5 text-xs transition-all duration-300 sm:text-sm md:px-6 md:py-2 md:text-base ${
                                     activeCategory === cat
                                         ? 'border bg-gradient-to-r from-bsecond to-stone-500 font-medium text-white dark:border-white dark:bg-white/10 dark:bg-none dark:shadow-[0_0_30px_rgba(255,255,255,0.3)]'
@@ -130,10 +142,9 @@ export default function DesignGraphicSection({ designs = [] }: GrapichProps) {
                     {/* SLIDER CONTAINER */}
                     <div className="group/nav relative w-full">
                         {/* Tombol Kiri */}
-                        {/* Posisi digeser ke dalam di HP (left-1) agar tidak terpotong, dan ukurannya diperkecil */}
                         <button
                             onClick={() => scroll('left')}
-                            className="absolute top-1/2 left-1 z-30 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full bg-gray-400/60 text-white opacity-0 shadow-lg md:backdrop-blur-sm transition-opacity group-hover/nav:opacity-100 md:-left-4 md:h-12 md:w-12 md:-translate-x-1/2 dark:bg-black/60"
+                            className="absolute top-1/2 left-1/3 z-30 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full bg-gray-400/60 text-white opacity-0 shadow-lg md:backdrop-blur-sm transition-opacity group-hover/nav:opacity-100 md:-left-4 md:h-12 md:w-12 md:-translate-x-1/2 dark:bg-black/60"
                             aria-label="Previous"
                         >
                             <svg
@@ -166,7 +177,6 @@ export default function DesignGraphicSection({ designs = [] }: GrapichProps) {
                                 {designsColumns.map((column, colIndex) => (
                                     <div
                                         key={colIndex}
-                                        // Lebar kolom di HP diperkecil menjadi 220px agar nyaman dilihat
                                         className="flex w-[120px] shrink-0 snap-start flex-col gap-4 sm:w-[160px] md:w-[320px] md:gap-6"
                                     >
                                         {column.map((designs) => (
@@ -195,7 +205,6 @@ export default function DesignGraphicSection({ designs = [] }: GrapichProps) {
                                         ))}
                                     </div>
                                 ))}
-                                {/* Gradient fade disesuaikan tinggi dan transparansinya */}
                                 <div className="from-bg-sec pointer-events-none absolute bottom-0 left-0 z-20 h-32 w-full bg-gradient-to-t to-transparent md:h-48"></div>
                             </div>
                         </div>
@@ -203,7 +212,7 @@ export default function DesignGraphicSection({ designs = [] }: GrapichProps) {
                         {/* Tombol Kanan */}
                         <button
                             onClick={() => scroll('right')}
-                            className="absolute top-1/2 right-1 z-30 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full bg-gray-400/60 text-white opacity-0 shadow-lg md:backdrop-blur-sm transition-opacity group-hover/nav:opacity-100 md:-right-4 md:h-12 md:w-12 md:translate-x-1/2 dark:bg-black/60"
+                            className="absolute top-1/2 right-1/3 z-30 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full bg-gray-400/60 text-white opacity-0 shadow-lg md:backdrop-blur-sm transition-opacity group-hover/nav:opacity-100 md:-right-4 md:h-12 md:w-12 md:translate-x-1/2 dark:bg-black/60"
                             aria-label="Next"
                         >
                             <svg
@@ -238,24 +247,17 @@ export default function DesignGraphicSection({ designs = [] }: GrapichProps) {
             </div>
 
             {/* --- MODAL UNTUK PREVIEW GAMBAR --- */}
-            <AnimatePresence>
-                {selectedDesign && (
-                    <motion.div
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                        transition={{ duration: 0.1 }}
+            {modalTransition((styles, design) =>
+                design && (
+                    <animated.div
+                        style={{ opacity: styles.opacity }}
                         className="fixed inset-0 z-50 flex items-center justify-center bg-black/35 p-4 backdrop-blur-md"
                         onClick={() => setSelectedDesign(null)}
                     >
-                        <motion.div
-                            initial={{ scale: 0.9, opacity: 0, y: 20 }}
-                            animate={{ scale: 1, opacity: 1, y: 0 }}
-                            exit={{ scale: 0.9, opacity: 0, y: 20 }}
-                            transition={{
-                                type: 'spring',
-                                stiffness: 220,
-                                damping: 26,
+                        <animated.div
+                            style={{
+                                opacity: styles.opacity,
+                                transform: to([styles.scale, styles.y], (s, y) => `scale(${s}) translateY(${y}px)`),
                             }}
                             className="relative flex w-full max-w-5xl flex-col overflow-hidden rounded-2xl border border-white/10 bg-main shadow-2xl backdrop-blur-md md:flex-row"
                             onClick={(e) => e.stopPropagation()}
@@ -271,8 +273,8 @@ export default function DesignGraphicSection({ designs = [] }: GrapichProps) {
                             {/* Image side (more space) */}
                             <div className="relative flex min-h-[280px] w-full items-center justify-center p-3 md:min-h-[480px] md:w-3/5 lg:w-2/3">
                                 <img
-                                    src={`/storage/${selectedDesign.url_1}`}
-                                    alt={selectedDesign.title}
+                                    src={`/storage/${design.url_1}`}
+                                    alt={design.title}
                                     className="max-h-[50vh] max-w-full rounded-lg object-contain shadow-lg md:max-h-[85vh]"
                                     draggable={false}
                                 />
@@ -282,11 +284,11 @@ export default function DesignGraphicSection({ designs = [] }: GrapichProps) {
                             <div className="flex w-full flex-col justify-between border-t border-white/10 p-6 sm:p-8 md:w-2/5 md:border-t-0 md:border-l lg:w-1/3">
                                 <div className="flex flex-col">
                                     <span className="mb-3 w-fit rounded-full border border-bshine/10 bg-bshine/20 px-3 py-1 text-xs font-semibold text-bshine backdrop-blur-sm">
-                                        {selectedDesign.category}
+                                        {design.category}
                                     </span>
 
                                     <h3 className="text-xl leading-snug font-bold text-tmain md:text-2xl">
-                                        {selectedDesign.title}
+                                        {design.title}
                                     </h3>
 
                                     <div className="my-5 h-px bg-hbshine/20" />
@@ -297,14 +299,14 @@ export default function DesignGraphicSection({ designs = [] }: GrapichProps) {
 
                                     <div className="mt-2.5 text-sm leading-relaxed text-tmain">
                                         Desain grafis untuk kategori{' '}
-                                        {selectedDesign.category}.
+                                        {design.category}.
                                     </div>
                                 </div>
                             </div>
-                        </motion.div>
-                    </motion.div>
-                )}
-            </AnimatePresence>
+                        </animated.div>
+                    </animated.div>
+                )
+            )}
 
             <style>{`
                 .hide-scrollbar::-webkit-scrollbar {

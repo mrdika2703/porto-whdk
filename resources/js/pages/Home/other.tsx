@@ -1,5 +1,6 @@
+import { animated, useSpring, useTrail, useTransition, to } from '@react-spring/web';
 import { useState, useRef } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { useInView } from '@/hooks/useInView';
 import type { Other } from './index';
 
 export default function OtherSection({ others }: { others: Other[] }) {
@@ -19,10 +20,14 @@ export default function OtherSection({ others }: { others: Other[] }) {
     };
 
     const handleMouseMove = (e: React.MouseEvent) => {
-        if (!isDragging) return;
+        if (!isDragging) {
+return;
+}
+
         e.preventDefault();
         const x = e.pageX - (scrollRef.current?.offsetLeft ?? 0);
         const walk = (x - startX) * 1.5;
+
         if (scrollRef.current) {
             scrollRef.current.scrollLeft = scrollLeft - walk;
         }
@@ -37,9 +42,11 @@ export default function OtherSection({ others }: { others: Other[] }) {
         setActiveImg(item.url_1);
     };
 
-    // Helper to get all valid images for slider
     const getImages = (item: Other | null) => {
-        if (!item) return [];
+        if (!item) {
+return [];
+}
+
         return [item.url_1, item.url_2, item.url_3, item.url_4, item.url_5].filter(
             Boolean
         ) as string[];
@@ -49,16 +56,78 @@ export default function OtherSection({ others }: { others: Other[] }) {
     const activeIndex = activeImg ? activeImages.indexOf(activeImg) : 0;
 
     const handlePrev = () => {
-        if (activeImages.length <= 1) return;
+        if (activeImages.length <= 1) {
+return;
+}
+
         const newIndex = (activeIndex - 1 + activeImages.length) % activeImages.length;
         setActiveImg(activeImages[newIndex]);
     };
 
     const handleNext = () => {
-        if (activeImages.length <= 1) return;
+        if (activeImages.length <= 1) {
+return;
+}
+
         const newIndex = (activeIndex + 1) % activeImages.length;
         setActiveImg(activeImages[newIndex]);
     };
+
+    // Header animation
+    const headerRef = useRef<HTMLDivElement>(null);
+    const isHeaderInView = useInView(headerRef, { once: true, amount: 0.2 });
+    const headerSpring = useSpring({
+        opacity: isHeaderInView ? 1 : 0,
+        transform: isHeaderInView ? 'translateY(0px)' : 'translateY(30px)',
+        config: { tension: 280, friction: 60 },
+        delay: 200,
+    });
+
+    // Button hover & active spring
+    const [isBtnHovered, setIsBtnHovered] = useState(false);
+    const [isBtnActive, setIsBtnActive] = useState(false);
+    const btnSpring = useSpring({
+        scale: isBtnActive ? 0.95 : isBtnHovered ? 1.02 : 1,
+        config: { tension: 300, friction: 15 },
+    });
+
+    // Chevron rotation spring
+    const chevronSpring = useSpring({
+        transform: isOpen ? 'rotate(180deg)' : 'rotate(0deg)',
+        config: { duration: 100 },
+    });
+
+    // Badge count transition
+    const badgeTransition = useTransition(isOpen, {
+        from: { opacity: 0, transform: 'translateY(-10px)' },
+        enter: { opacity: 1, transform: 'translateY(0px)' },
+        leave: { opacity: 0, transform: 'translateY(-10px)' },
+        config: { duration: 200 },
+    });
+
+    // List height transition
+    const listTransition = useTransition(isOpen, {
+        from: { height: 0, opacity: 0 },
+        enter: { height: 'auto', opacity: 1 },
+        leave: { height: 0, opacity: 0 },
+        config: { duration: 400, tension: 280, friction: 30 },
+    });
+
+    // Staggered items trail animation
+    const itemsTrail = useTrail(isOpen ? others.length : 0, {
+        opacity: 1,
+        transform: 'translateX(0px)',
+        from: { opacity: 0, transform: 'translateX(50px)' },
+        config: { tension: 280, friction: 30 },
+    });
+
+    // Modal transition
+    const modalTransition = useTransition(selectedOther, {
+        from: { opacity: 0, scale: 0.9, y: 20 },
+        enter: { opacity: 1, scale: 1, y: 0 },
+        leave: { opacity: 0, scale: 0.9, y: 20 },
+        config: { tension: 220, friction: 26 },
+    });
 
     return (
         <section
@@ -70,14 +139,11 @@ export default function OtherSection({ others }: { others: Other[] }) {
 
             <div className="mx-auto flex w-full max-w-[1440px] flex-col gap-8 px-6 md:px-12">
                 {/* Header */}
-                <motion.div
-                    initial={{ opacity: 0, y: 30 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true, amount: 0.2 }}
-                    transition={{ duration: 0.6, delay: 0.2 }}
+                <animated.div
+                    style={headerSpring}
                     className="flex flex-col items-center gap-5 text-center md:flex-row md:justify-between md:text-left"
                 >
-                    <div className="relative flex items-center">
+                    <div ref={headerRef} className="relative flex items-center">
                         <h2 className="text-3xl font-bold tracking-wide text-tmain">
                             Other <span className="text-bshine">Creations</span>
                         </h2>
@@ -93,48 +159,47 @@ export default function OtherSection({ others }: { others: Other[] }) {
                         />
                     </div>
 
-                    <motion.button
+                    <animated.button
                         onClick={() => setIsOpen(!isOpen)}
-                        whileHover={{ scale: 1.02 }}
-                        whileTap={{ scale: 0.95 }}
+                        onMouseEnter={() => setIsBtnHovered(true)}
+                        onMouseLeave={() => {
+                            setIsBtnHovered(false);
+                            setIsBtnActive(false);
+                        }}
+                        onMouseDown={() => setIsBtnActive(true)}
+                        onMouseUp={() => setIsBtnActive(false)}
+                        style={{ transform: btnSpring.scale.to(s => `scale(${s})`) }}
                         className="group flex items-center gap-2 rounded-full border border-bshine/50 bg-bshine/10 px-6 py-2.5 text-sm font-medium text-bshine md:backdrop-blur-sm transition-all duration-300 hover:border-bshine hover:bg-bshine/20 hover:shadow-[0_0_20px_rgba(192,104,0,0.3)]"
                     >
                         <i
                             className={`fa-solid ${isOpen ? 'fa-xmark' : 'fa-folder-open'} transition-transform duration-300`}
                         />
                         {isOpen ? 'Tutup Lainnya' : 'Lihat Lainnya'}
-                        <motion.i
+                        <animated.i
+                            style={chevronSpring}
                             className="fa-solid fa-chevron-down text-xs text-bshine"
-                            animate={{ rotate: isOpen ? 180 : 0 }}
-                            transition={{ duration: 0.1 }}
                         />
-                    </motion.button>
-                </motion.div>
+                    </animated.button>
+                </animated.div>
 
                 {/* Badge count */}
-                <AnimatePresence>
-                    {isOpen && (
-                        <motion.p
-                            initial={{ opacity: 0, y: -10 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            exit={{ opacity: 0, y: -10 }}
-                            transition={{ duration: 0.2 }}
+                {badgeTransition((styles, item) =>
+                    item && (
+                        <animated.p
+                            style={styles}
                             className="text-center text-sm text-gray-400 md:text-left"
                         >
                             Geser ke kanan untuk lihat selengkapnya
-                        </motion.p>
-                    )}
-                </AnimatePresence>
+                        </animated.p>
+                    )
+                )}
             </div>
 
             {/* Horizontal scroll */}
-            <AnimatePresence>
-                {isOpen && (
-                    <motion.div
-                        initial={{ height: 0, opacity: 0 }}
-                        animate={{ height: 'auto', opacity: 1 }}
-                        exit={{ height: 0, opacity: 0 }}
-                        transition={{ duration: 0.4, ease: 'easeInOut' }}
+            {listTransition((styles, item) =>
+                item && (
+                    <animated.div
+                        style={styles}
                         className="overflow-hidden"
                     >
                         <div
@@ -150,72 +215,68 @@ export default function OtherSection({ others }: { others: Other[] }) {
                             onMouseUp={handleMouseUp}
                             onMouseLeave={handleMouseUp}
                         >
-                            {others.map((item, index) => (
-                                <motion.div
-                                    key={item.id}
-                                    initial={{ opacity: 0, x: 50 }}
-                                    animate={{ opacity: 1, x: 0 }}
-                                    transition={{
-                                        duration: 0.4,
-                                        delay: index * 0.08,
-                                    }}
-                                    className="group relative w-[320px] shrink-0 sm:w-[420px] md:w-[480px]"
-                                >
-                                    <div
-                                        className="relative aspect-[16/10] w-full overflow-hidden rounded-2xl border border-white/5 bg-white/[0.02] md:backdrop-blur-sm transition-all duration-300 hover:border-bshine/30 hover:shadow-[0_4px_30px_rgba(192,104,0,0.15)]"
-                                        onClick={() => {
-                                            if (!isDragging) {
-                                                openModal(item);
-                                            }
-                                        }}
+                            {itemsTrail.map((trailStyle, index) => {
+                                const item = others[index];
+
+                                if (!item) {
+return null;
+}
+
+                                return (
+                                    <animated.div
+                                        key={item.id}
+                                        style={trailStyle}
+                                        className="group relative w-[320px] shrink-0 sm:w-[420px] md:w-[480px]"
                                     >
-                                        {/* Category Tag */}
-                                        <div className="absolute top-4 left-4 z-10 rounded-full border border-white/10 bg-black/60 px-3 py-1 text-[11px] font-semibold text-white/95 md:backdrop-blur-md transition-colors duration-300 group-hover:bg-bshine/90">
-                                            {item.category}
-                                        </div>
+                                        <div
+                                            className="relative aspect-[16/10] w-full overflow-hidden rounded-2xl border border-white/5 bg-white/[0.02] md:backdrop-blur-sm transition-all duration-300 hover:border-bshine/30 hover:shadow-[0_4px_30px_rgba(192,104,0,0.15)] cursor-pointer"
+                                            onClick={() => {
+                                                if (!isDragging) {
+                                                    openModal(item);
+                                                }
+                                            }}
+                                        >
+                                            {/* Category Tag */}
+                                            <div className="absolute top-4 left-4 z-10 rounded-full border border-white/10 bg-black/60 px-3 py-1 text-[11px] font-semibold text-white/95 md:backdrop-blur-md transition-colors duration-300 group-hover:bg-bshine/90">
+                                                {item.category}
+                                            </div>
 
-                                        {/* Image */}
-                                        <img
-                                            src={`/storage/${item.url_1}`}
-                                            alt={item.title}
-                                            className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-                                            draggable={false}
-                                        />
+                                            {/* Image */}
+                                            <img
+                                                src={`/storage/${item.url_1}`}
+                                                alt={item.title}
+                                                className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                                                draggable={false}
+                                            />
 
-                                        {/* Hover Overlay with Gradient info */}
-                                        <div className="absolute inset-x-0 bottom-0 flex translate-y-3 flex-col justify-end bg-gradient-to-t from-black/95 via-black/60 to-transparent p-6 pt-20 opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100">
-                                            <h4 className="text-base font-bold text-white md:text-lg">
-                                                {item.title}
-                                            </h4>
+                                            {/* Hover Overlay with Gradient info */}
+                                            <div className="absolute inset-x-0 bottom-0 flex translate-y-3 flex-col justify-end bg-gradient-to-t from-black/95 via-black/60 to-transparent p-6 pt-20 opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100">
+                                                <h4 className="text-base font-bold text-white md:text-lg">
+                                                    {item.title}
+                                                </h4>
+                                            </div>
                                         </div>
-                                    </div>
-                                </motion.div>
-                            ))}
+                                    </animated.div>
+                                );
+                            })}
                             <div className="w-6 shrink-0 md:w-12" />
                         </div>
-                    </motion.div>
-                )}
-            </AnimatePresence>
+                    </animated.div>
+                )
+            )}
 
             {/* Complete Card Modal */}
-            <AnimatePresence>
-                {selectedOther && (
-                    <motion.div
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                        transition={{ duration: 0.1 }}
+            {modalTransition((styles, item) =>
+                item && (
+                    <animated.div
+                        style={{ opacity: styles.opacity }}
                         className="fixed inset-0 z-50 flex items-center justify-center bg-black/35 p-4 backdrop-blur-md"
                         onClick={() => setSelectedOther(null)}
                     >
-                        <motion.div
-                            initial={{ scale: 0.9, opacity: 0, y: 20 }}
-                            animate={{ scale: 1, opacity: 1, y: 0 }}
-                            exit={{ scale: 0.9, opacity: 0, y: 20 }}
-                            transition={{
-                                type: 'spring',
-                                stiffness: 220,
-                                damping: 26,
+                        <animated.div
+                            style={{
+                                opacity: styles.opacity,
+                                transform: to([styles.scale, styles.y], (s, y) => `scale(${s}) translateY(${y}px)`),
                             }}
                             className="relative flex w-full max-w-5xl flex-col overflow-hidden rounded-2xl border border-white/10 bg-main shadow-2xl backdrop-blur-md md:flex-row"
                             onClick={(e) => e.stopPropagation()}
@@ -233,7 +294,7 @@ export default function OtherSection({ others }: { others: Other[] }) {
                                 {activeImg && (
                                     <img
                                         src={`/storage/${activeImg}`}
-                                        alt={selectedOther.title}
+                                        alt={item.title}
                                         className="max-h-[50vh] max-w-full rounded-lg object-contain shadow-lg md:max-h-[85vh]"
                                         draggable={false}
                                     />
@@ -284,11 +345,11 @@ export default function OtherSection({ others }: { others: Other[] }) {
                             <div className="flex w-full flex-col justify-between border-t border-white/10 p-6 sm:p-8 md:w-2/5 md:border-t-0 md:border-l lg:w-1/3">
                                 <div className="flex flex-col">
                                     <span className="mb-3 w-fit rounded-full border border-bshine/10 bg-bshine/20 px-3 py-1 text-xs font-semibold text-bshine backdrop-blur-sm">
-                                        {selectedOther.category}
+                                        {item.category}
                                     </span>
 
                                     <h3 className="text-xl leading-snug font-bold text-tmain md:text-2xl">
-                                        {selectedOther.title}
+                                        {item.title}
                                     </h3>
 
                                     <div className="my-5 h-px bg-hbshine/20" />
@@ -301,15 +362,15 @@ export default function OtherSection({ others }: { others: Other[] }) {
                                         className="mt-2.5 max-h-[160px] overflow-y-auto pr-2 text-sm leading-relaxed text-tmain md:max-h-[260px]"
                                         style={{ scrollbarWidth: 'thin' }}
                                     >
-                                        {selectedOther.description ||
+                                        {item.description ||
                                             'Tidak ada deskripsi.'}
                                     </div>
                                 </div>
                             </div>
-                        </motion.div>
-                    </motion.div>
-                )}
-            </AnimatePresence>
+                        </animated.div>
+                    </animated.div>
+                )
+            )}
         </section>
     );
 }

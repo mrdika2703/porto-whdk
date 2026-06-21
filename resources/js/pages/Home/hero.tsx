@@ -1,10 +1,5 @@
 import { Head } from '@inertiajs/react';
-import {
-    motion,
-    useScroll,
-    useTransform,
-    AnimatePresence,
-} from 'framer-motion';
+import { useScroll, animated, useSpring, useTransition } from '@react-spring/web';
 import { useState, useEffect } from 'react';
 import { useIsMobile } from '@/hooks/useIsMobile';
 
@@ -14,18 +9,49 @@ export default function PortfolioHero() {
     const [showIntro, setShowIntro] = useState(true);
     const isMobile = useIsMobile();
 
-    // Hook Scroll dari Framer Motion
+    // Hook Scroll dari React-Spring
     const { scrollY } = useScroll();
 
-    // Transformasi Parallax — tanpa blur di mobile (blur sangat berat)
-    const heroY = useTransform(scrollY, [0, 500], [0, isMobile ? 100 : 200]);
-    const heroOpacity = useTransform(scrollY, [0, 400], [1, 0]);
-    // Hanya blur di desktop, mobile pakai opacity saja
-    const heroBlur = useTransform(
-        scrollY,
-        [0, 400],
-        isMobile ? ['blur(0px)', 'blur(0px)'] : ['blur(0px)', 'blur(5px)'],
-    );
+    // Transformasi Parallax dengan interpolation
+    const heroY = scrollY.to(val => {
+        if (val <= 0) {
+return 0;
+}
+
+        if (val >= 500) {
+return isMobile ? 100 : 200;
+}
+
+        return (val / 500) * (isMobile ? 100 : 200);
+    });
+
+    const heroOpacity = scrollY.to(val => {
+        if (val <= 0) {
+return 1;
+}
+
+        if (val >= 400) {
+return 0;
+}
+
+        return 1 - val / 400;
+    });
+
+    const heroBlur = scrollY.to(val => {
+        if (isMobile) {
+return 'blur(0px)';
+}
+
+        if (val <= 0) {
+return 'blur(0px)';
+}
+
+        if (val >= 400) {
+return 'blur(5px)';
+}
+
+        return `blur(${(val / 400) * 5}px)`;
+    });
 
     // 1. Logika Timer untuk durasi teks Intro (3 Detik)
     useEffect(() => {
@@ -38,7 +64,9 @@ export default function PortfolioHero() {
 
     // 2. Logika Efek Ngetik (Hanya berjalan setelah Intro selesai)
     useEffect(() => {
-        if (showIntro) return;
+        if (showIntro) {
+return;
+}
 
         let intervalId: any;
         const timeoutId = setTimeout(() => {
@@ -46,6 +74,7 @@ export default function PortfolioHero() {
             intervalId = setInterval(() => {
                 setTypedText(fullText.slice(0, i + 1));
                 i++;
+
                 if (i >= fullText.length) {
                     clearInterval(intervalId);
                 }
@@ -54,88 +83,90 @@ export default function PortfolioHero() {
 
         return () => {
             clearTimeout(timeoutId);
-            if (intervalId) clearInterval(intervalId);
+
+            if (intervalId) {
+clearInterval(intervalId);
+}
         };
     }, [showIntro, fullText]);
 
-    // Animasi shape: matikan infinite di mobile
-    const shapeAnimation = isMobile
-        ? { opacity: 1 } // Static, no loop
-        : { opacity: [1, 0.7, 1] }; // Infinite pulse di desktop
+    // Spring animations untuk Shapes
+    const shapeSpring1 = useSpring({
+        from: { opacity: 1 },
+        to: { opacity: isMobile ? 1 : 0.7 },
+        loop: isMobile ? false : { reverse: true },
+        config: { duration: 4000 },
+        delay: 1200,
+    });
 
-    const shapeTransition1 = isMobile
-        ? { duration: 0.5 }
-        : {
-              duration: 4,
-              repeat: Infinity,
-              ease: 'easeInOut' as const,
-              delay: 1.2,
-          };
+    const shapeSpring2 = useSpring({
+        from: { opacity: 1 },
+        to: { opacity: isMobile ? 1 : 0.7 },
+        loop: isMobile ? false : { reverse: true },
+        config: { duration: 5000 },
+        delay: 1500,
+    });
 
-    const shapeTransition2 = isMobile
-        ? { duration: 0.5 }
-        : {
-              duration: 5,
-              repeat: Infinity,
-              ease: 'easeInOut' as const,
-              delay: 1.5,
-          };
+    // Spring animations untuk main content elements
+    const titleSpring = useSpring({
+        opacity: showIntro ? 0 : 1,
+        y: showIntro ? -20 : 0,
+        delay: 200,
+        config: { tension: 280, friction: 60 },
+    });
 
-    // textShadow glow: matikan infinite di mobile
-    const textShadowAnimation = isMobile
-        ? {
-              opacity: 1,
-              y: 0,
-              textShadow: '0px 0px 15px rgba(255,255,255,0.2)',
-          }
-        : {
-              opacity: 1,
-              y: 0,
-              textShadow: [
-                  '0px 0px 15px rgba(255,255,255,0.2)',
-                  '0px 0px 45px rgba(255,255,255,0.8)',
-                  '0px 0px 15px rgba(255,255,255,0.2)',
-              ],
-          };
+    const leftLineSpring = useSpring({
+        scaleX: showIntro ? 0 : 1,
+        delay: 500,
+        config: { tension: 280, friction: 60 },
+    });
 
-    const textShadowTransition = isMobile
-        ? {
-              opacity: { duration: 0.8, delay: 0.4 },
-              y: {
-                  duration: 0.8,
-                  delay: 0.4,
-                  type: 'spring' as const,
-                  stiffness: 80,
-              },
-          }
-        : {
-              opacity: { duration: 0.8, delay: 0.4 },
-              y: {
-                  duration: 0.8,
-                  delay: 0.4,
-                  type: 'spring' as const,
-                  stiffness: 80,
-              },
-              textShadow: {
-                  duration: 5,
-                  repeat: Infinity,
-                  ease: 'easeInOut' as const,
-                  delay: 1.5,
-              },
-          };
+    const rightLineSpring = useSpring({
+        scaleX: showIntro ? 0 : 1,
+        delay: 500,
+        config: { tension: 280, friction: 60 },
+    });
 
-    // Cursor blink: matikan infinite di mobile setelah awal
-    const cursorAnimation = isMobile
-        ? { opacity: [0, 1] }
-        : { opacity: 1 };
+    const textGlowSpring = useSpring({
+        opacity: showIntro ? 0 : 1,
+        y: showIntro ? 30 : 0,
+        shadowGlow: isMobile ? 15 : 45,
+        from: { opacity: 0, y: 30, shadowGlow: 15 },
+        loop: isMobile ? false : { reverse: true },
+        config: { duration: 2500 },
+        delay: 400,
+    });
 
-    const cursorTransition = isMobile
-        ? { duration: 0.8 }
-        : {
-              repeat: Infinity,
-              duration: 0.8,
-              repeatType: 'reverse' as const,
-          };
+    const descSpring = useSpring({
+        opacity: showIntro ? 0 : 1,
+        y: showIntro ? 20 : 0,
+        delay: 600,
+        config: { tension: 280, friction: 60 },
+    });
+
+    const cursorSpring = useSpring({
+        from: { opacity: 0 },
+        to: { opacity: 1 },
+        loop: { reverse: true },
+        config: { duration: 400 },
+    });
+
+    // Transition untuk intro vs main content
+    const introTransition = useTransition(showIntro, {
+        from: { opacity: 0, y: 15 },
+        enter: { opacity: 1, y: 0 },
+        leave: { opacity: 0, y: -15 },
+        config: { duration: 800 },
+    });
+
+    // Transition untuk Scroll Down Indicator
+    const scrollIndicatorTransition = useTransition(!showIntro, {
+        from: { opacity: 0 },
+        enter: { opacity: 1 },
+        leave: { opacity: 0 },
+        config: { duration: 1000 },
+        delay: 1200,
+    });
 
     return (
         <>
@@ -143,69 +174,60 @@ export default function PortfolioHero() {
 
             {/* Tambahan overflow-hidden agar elemen SVG absolut tidak tembus/scroll ke samping */}
             <div id="home" className="bg-bg-sec relative min-h-screen w-full">
-                <motion.div
+                <animated.div
                     style={
                         isMobile
-                            ? { y: heroY, opacity: heroOpacity }
-                            : { y: heroY, opacity: heroOpacity, filter: heroBlur }
+                            ? {
+                                  transform: heroY.to(y => `translateY(${y}px)`),
+                                  opacity: heroOpacity,
+                              }
+                            : {
+                                  transform: heroY.to(y => `translateY(${y}px)`),
+                                  opacity: heroOpacity,
+                                  filter: heroBlur,
+                              }
                     }
-                    // Tambahkan overflow-hidden juga di kontainer fixed
                     className="fixed top-0 left-0 flex min-h-screen w-full flex-col items-center justify-center text-tmain will-change-transform"
                 >
                     {/* --- SHAPE 1 (TOP RIGHT) --- */}
-                    <motion.div className="pointer-events-none absolute -top-[150px] -right-[150px] h-[400px] w-[400px] max-w-none mix-blend-screen sm:-top-[400px] sm:-right-[300px] sm:h-[900px] sm:w-[800px] md:-top-[800px] md:-right-[600px] md:h-[1812px] md:w-[1611px]">
-                        <motion.img
-                            animate={shapeAnimation}
-                            transition={shapeTransition1}
+                    <animated.div className="pointer-events-none absolute -top-[150px] -right-[150px] h-[400px] w-[400px] max-w-none mix-blend-screen sm:-top-[400px] sm:-right-[300px] sm:h-[900px] sm:w-[800px] md:-top-[800px] md:-right-[600px] md:h-[1812px] md:w-[1611px]">
+                        <animated.img
+                            style={{ opacity: shapeSpring1.opacity }}
                             src="/assets/shapes/brown_shape_1.svg"
                             alt="Brown Shape Top Right"
                             className="h-full w-full dark:hidden"
                         />
-                        <motion.img
-                            animate={shapeAnimation}
-                            transition={shapeTransition1}
+                        <animated.img
+                            style={{ opacity: shapeSpring1.opacity }}
                             src="/assets/shapes/blue_shape_1.svg"
                             alt="Blue Shape Top Right"
                             className="hidden h-full w-full dark:block"
                         />
-                    </motion.div>
+                    </animated.div>
 
                     {/* --- SHAPE 2 (BOTTOM LEFT) --- */}
-                    <motion.div className="pointer-events-none absolute -bottom-[150px] -left-[100px] h-[350px] w-[350px] max-w-none mix-blend-screen sm:-bottom-[300px] sm:-left-[200px] sm:h-[700px] sm:w-[600px] md:-bottom-[600px] md:-left-[500px] md:h-[1355px] md:w-[1204px]">
-                        <motion.img
-                            animate={shapeAnimation}
-                            transition={shapeTransition2}
+                    <animated.div className="pointer-events-none absolute -bottom-[150px] -left-[100px] h-[350px] w-[350px] max-w-none mix-blend-screen sm:-bottom-[300px] sm:-left-[200px] sm:h-[700px] sm:w-[600px] md:-bottom-[600px] md:-left-[500px] md:h-[1355px] md:w-[1204px]">
+                        <animated.img
+                            style={{ opacity: shapeSpring2.opacity }}
                             src="/assets/shapes/brown_shape_2.svg"
                             alt="Brown Shape Bottom Left"
                             className="h-full w-full dark:hidden"
                         />
-                        <motion.img
-                            animate={shapeAnimation}
-                            transition={shapeTransition2}
+                        <animated.img
+                            style={{ opacity: shapeSpring2.opacity }}
                             src="/assets/shapes/blue_shape_2.svg"
                             alt="Blue Shape Bottom Left"
                             className="hidden h-full w-full dark:block"
                         />
-                    </motion.div>
+                    </animated.div>
 
-                    {/* --- KONTEN TEKS DENGAN ANIMATE PRESENCE --- */}
+                    {/* --- KONTEN TEKS DENGAN ANIMATE PRESENCE (REPLACED WITH USTRANSITION) --- */}
                     <div className="relative z-10 mx-auto flex w-full max-w-5xl flex-col items-center px-6 text-center">
-                        {/* mode="wait" memastikan intro hilang sepenuhnya sebelum konten utama muncul */}
-                        <AnimatePresence mode="wait">
-                            {showIntro ? (
+                        {introTransition((styles, item) =>
+                            item ? (
                                 // TEKS INTRO (Muncul 3 detik)
-                                <motion.div
-                                    key="intro"
-                                    initial={{ opacity: 0, y: 15 }}
-                                    animate={{ opacity: 1, y: 0 }}
-                                    exit={{
-                                        opacity: 0,
-                                        y: -15,
-                                    }}
-                                    transition={{
-                                        duration: 0.8,
-                                        ease: 'easeInOut',
-                                    }}
+                                <animated.div
+                                    style={styles}
                                     className="flex flex-col items-center gap-2 md:gap-3"
                                 >
                                     <span className="text-xs font-light tracking-[0.2em] text-tmain/70 uppercase md:text-sm">
@@ -222,103 +244,85 @@ export default function PortfolioHero() {
                                         </span>{' '}
                                         Full Tailwind
                                     </h1>
-                                </motion.div>
+                                </animated.div>
                             ) : (
                                 // TEKS UTAMA (Muncul setelah intro selesai)
-                                <motion.div
-                                    key="main"
-                                    initial={{ opacity: 0 }}
-                                    animate={{ opacity: 1 }}
+                                <animated.div
+                                    style={{ opacity: styles.opacity }}
                                     className="flex flex-col items-center"
                                 >
                                     {/* Portofolio Title */}
-                                    <motion.div
-                                        initial={{ opacity: 0, y: -20 }}
-                                        animate={{ opacity: 1, y: 0 }}
-                                        transition={{
-                                            duration: 0.8,
-                                            delay: 0.2,
+                                    <animated.div
+                                        style={{
+                                            opacity: titleSpring.opacity,
+                                            transform: titleSpring.y.to(y => `translateY(${y}px)`),
                                         }}
                                         className="mb-4 flex items-center gap-4 md:mb-6"
                                     >
-                                        <motion.div
-                                            initial={{ scaleX: 0 }}
-                                            animate={{ scaleX: 1 }}
-                                            transition={{
-                                                duration: 0.8,
-                                                delay: 0.5,
+                                        <animated.div
+                                            style={{
+                                                transform: leftLineSpring.scaleX.to(s => `scaleX(${s})`),
                                             }}
                                             className="h-[1px] w-8 origin-left bg-tmain md:w-20"
-                                        ></motion.div>
+                                        ></animated.div>
                                         <h2 className="text-xs font-bold tracking-[0.15em] uppercase md:text-base md:tracking-[0.2em]">
                                             Portofolio
                                         </h2>
-                                        <motion.div
-                                            initial={{ scaleX: 0 }}
-                                            animate={{ scaleX: 1 }}
-                                            transition={{
-                                                duration: 0.8,
-                                                delay: 0.5,
+                                        <animated.div
+                                            style={{
+                                                transform: rightLineSpring.scaleX.to(s => `scaleX(${s})`),
                                             }}
                                             className="h-[1px] w-8 origin-right bg-tmain md:w-20"
-                                        ></motion.div>
-                                    </motion.div>
+                                        ></animated.div>
+                                    </animated.div>
 
                                     {/* Nama Animasi Ketik */}
-                                    <motion.h1
-                                        initial={{
-                                            opacity: 0,
-                                            y: 30,
-                                            textShadow:
-                                                '0px 0px 0px rgba(255,255,255,0)',
+                                    <animated.h1
+                                        style={{
+                                            opacity: textGlowSpring.opacity,
+                                            transform: textGlowSpring.y.to(y => `translateY(${y}px)`),
+                                            textShadow: textGlowSpring.shadowGlow.to(g =>
+                                                `0px 0px ${g}px rgba(255,255,255,${isMobile ? 0.2 : 0.2 + ((g - 15) / 30) * 0.6})`
+                                            ),
                                         }}
-                                        animate={textShadowAnimation}
-                                        transition={textShadowTransition}
                                         className="mb-4 px-2 text-4xl leading-tight font-bold sm:text-5xl md:mb-6 md:text-6xl"
                                     >
                                         {typedText}
-                                        <motion.span
-                                            initial={{ opacity: 0 }}
-                                            animate={cursorAnimation}
-                                            transition={cursorTransition}
+                                        <animated.span
+                                            style={{ opacity: cursorSpring.opacity }}
                                             className="font-light"
                                         >
                                             |
-                                        </motion.span>
-                                    </motion.h1>
+                                        </animated.span>
+                                    </animated.h1>
 
                                     {/* Sub-kategori */}
-                                    <motion.p
-                                        initial={{ opacity: 0, y: 20 }}
-                                        animate={{ opacity: 1, y: 0 }}
-                                        transition={{
-                                            duration: 0.8,
-                                            delay: 0.6,
+                                    <animated.p
+                                        style={{
+                                            opacity: descSpring.opacity,
+                                            transform: descSpring.y.to(y => `translateY(${y}px)`),
                                         }}
                                         className="text-[10px] font-light tracking-widest text-tmain sm:text-xs md:text-sm"
                                     >
                                         Design Graphic | Photography | Website
                                         Development
-                                    </motion.p>
-                                </motion.div>
-                            )}
-                        </AnimatePresence>
+                                    </animated.p>
+                                </animated.div>
+                            )
+                        )}
                     </div>
 
-                    {/* Scroll Down Indicator — gunakan CSS animation bukan animate-bounce */}
-                    <AnimatePresence>
-                        {!showIntro && (
-                            <motion.a
+                    {/* Scroll Down Indicator */}
+                    {scrollIndicatorTransition((styles, item) =>
+                        item && (
+                            <animated.a
                                 href="#about"
-                                initial={{ opacity: 0 }}
-                                animate={{ opacity: 1 }}
-                                exit={{ opacity: 0 }}
-                                transition={{ duration: 1, delay: 1.2 }}
-                                className="group absolute bottom-8 z-10 flex cursor-pointer flex-col items-center gap-2 md:bottom-12"
                                 style={{
+                                    ...styles,
                                     animation: 'gentleBounce 2s ease-in-out infinite',
                                     willChange: 'transform',
                                 }}
+                                className="group absolute bottom-8 z-10 flex cursor-pointer flex-col items-center gap-2 md:bottom-12"
                             >
                                 <svg
                                     width="24"
@@ -356,10 +360,10 @@ export default function PortfolioHero() {
                                 >
                                     <path d="M12 5v14M19 12l-7 7-7-7" />
                                 </svg>
-                            </motion.a>
-                        )}
-                    </AnimatePresence>
-                </motion.div>
+                            </animated.a>
+                        )
+                    )}
+                </animated.div>
 
                 {/* Pembatas Scroll */}
                 <div className="min-h-screen w-full"></div>

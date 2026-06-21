@@ -36,6 +36,7 @@ export default function Header({ setSidebarOpen }: HeaderProps) {
 
     const toggleTheme = () => {
         const root = document.documentElement;
+
         if (isDark) {
             root.classList.remove('dark');
             localStorage.setItem('theme', 'light');

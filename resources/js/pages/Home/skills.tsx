@@ -1,8 +1,8 @@
-import { Head } from '@inertiajs/react';
-import { useState, useRef } from 'react';
-import { motion, useInView, Variants } from 'framer-motion';
+import { animated, useSpring, useTrail } from '@react-spring/web';
+import { useRef } from 'react';
 import { PhotoshopIcon, LightroomIcon } from '@/components/icons';
-import { Skill } from './index';
+import { useInView } from '@/hooks/useInView';
+import type { Skill } from './index';
 
 export default function Skills({ skills = [] }: { skills: Skill[] }) {
     const appIcons = [
@@ -16,29 +16,48 @@ export default function Skills({ skills = [] }: { skills: Skill[] }) {
         LightroomIcon,
     ];
 
-    const appRef = useRef(null);
+    const appRef = useRef<HTMLDivElement>(null);
     const isAppInView = useInView(appRef, { margin: '0px 0px -50px 0px' });
 
-    // --- VARIAN ANIMASI UNTUK SKILLS ---
-    const containerVariants: Variants = {
-        hidden: { opacity: 0 },
-        visible: {
-            opacity: 1,
-            transition: {
-                staggerChildren: 0.1, // Memunculkan item berurutan setiap 0.1 detik
-            },
-        },
-    };
+    // Header Skills Animation
+    const headerRef = useRef<HTMLDivElement>(null);
+    const isHeaderInView = useInView(headerRef, { once: true, amount: 0.2 });
+    const headerSpring = useSpring({
+        opacity: isHeaderInView ? 1 : 0,
+        transform: isHeaderInView ? 'translateY(0px)' : 'translateY(30px)',
+        config: { tension: 280, friction: 60 },
+        delay: 200,
+    });
 
-    const itemVariants: Variants = {
-        hidden: { opacity: 0, y: 20, scale: 0.8 },
-        visible: {
-            opacity: 1,
-            y: 0,
-            scale: 1,
-            transition: { type: 'spring', stiffness: 120, damping: 12 },
-        },
-    };
+    // Staggered Skills List Animation
+    const gridRef = useRef<HTMLDivElement>(null);
+    const isGridInView = useInView(gridRef, { once: true, amount: 0.2 });
+    const skillsTrail = useTrail(skills.length, {
+        opacity: isGridInView ? 1 : 0,
+        transform: isGridInView ? 'scale(1) translateY(0px)' : 'scale(0.8) translateY(20px)',
+        config: { mass: 1, tension: 280, friction: 24 },
+    });
+
+    // Application Marquees Animation
+    const marquee1 = useSpring({
+        from: { x: 0 },
+        to: { x: -50 },
+        reset: true,
+        reverse: false,
+        loop: true,
+        config: { duration: 40000 },
+        pause: !isAppInView,
+    });
+
+    const marquee2 = useSpring({
+        from: { x: -50 },
+        to: { x: 0 },
+        reset: true,
+        reverse: false,
+        loop: true,
+        config: { duration: 45000 },
+        pause: !isAppInView,
+    });
 
     return (
         <div
@@ -50,19 +69,9 @@ export default function Skills({ skills = [] }: { skills: Skill[] }) {
             ========================================= */}
             <div className="px-6 md:px-20">
                 {/* Header Skills */}
-                <div className="mb-10 md:mb-12">
-                    <motion.div
-                        initial={{ opacity: 0, y: 30 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{
-                            once: true,
-                            amount: 0.2,
-                        }}
-                        transition={{
-                            duration: 0.6,
-                            ease: 'easeOut',
-                            delay: 0.2,
-                        }}
+                <div ref={headerRef} className="mb-10 md:mb-12">
+                    <animated.div
+                        style={headerSpring}
                         className="flex items-center gap-4"
                     >
                         <h3 className="text-3xl font-semibold text-white">
@@ -78,52 +87,44 @@ export default function Skills({ skills = [] }: { skills: Skill[] }) {
                             alt="Slay light decoration"
                             className="hidden h-8 w-8 dark:block"
                         />
-                    </motion.div>
+                    </animated.div>
                 </div>
 
                 <section>
-                    {/* Grid/Flex Container 
-                        Mobile: grid-cols-2 (2 item memanjang)
-                        Desktop (md): flex wrap menyebar seperti desain asli
-                    */}
-                    <motion.div
-                        variants={containerVariants}
-                        initial="hidden"
-                        whileInView="visible"
-                        viewport={{
-                            once: true,
-                            amount: 0.2,
-                        }}
+                    {/* Grid/Flex Container */}
+                    <div
+                        ref={gridRef}
                         className="mt-4 grid grid-cols-2 gap-3 md:flex md:flex-wrap md:items-center md:justify-between md:gap-x-2 md:gap-y-7 md:after:w-[20%] md:after:flex-auto md:after:content-['']"
                     >
-                        {skills.map((skills, index) => (
-                            <motion.div
-                                variants={itemVariants}
-                                key={index}
-                                // w-full di HP agar mengisi kolom grid, w-auto di Desktop agar memadat
-                                className="relative flex h-[34px] w-full items-center gap-0 md:h-8 md:w-auto"
-                            >
-                                {/* Nama Skill */}
-                                {/* flex-1 ditambahkan agar nama skill memanjang mengambil sisa ruang di HP */}
-                                <span className="flex h-full flex-1 items-center truncate rounded-l-full border-y border-l border-white/50 bg-white/10 px-2 text-white md:backdrop-blur-sm md:px-3.5">
-                                    <span className="mr-1.5 shrink-0 md:mr-2">
-                                        <i className={skills.icon ?? undefined}></i>
-                                    </span>
-                                    <span className="truncate text-[10px] font-normal sm:text-xs">
-                                        {skills.name_skills}
-                                    </span>
-                                </span>
+                        {skillsTrail.map((styles, index) => {
+                            const skillItem = skills[index];
 
-                                {/* Level Skill */}
-                                {/* shrink-0 agar level tidak menyusut tertekan teks nama */}
-                                <span className="flex h-full shrink-0 items-center rounded-r-full border-y border-r border-white/50 bg-white/20 px-2 md:backdrop-blur-sm md:px-3.5">
-                                    <span className="text-[10px] font-medium text-white sm:text-xs">
-                                        {skills.level}
+                            return (
+                                <animated.div
+                                    key={index}
+                                    style={styles}
+                                    className="relative flex h-[34px] w-full items-center gap-0 md:h-8 md:w-auto"
+                                >
+                                    {/* Nama Skill */}
+                                    <span className="flex h-full flex-1 items-center truncate rounded-l-full border-y border-l border-white/50 bg-white/10 px-2 text-white md:backdrop-blur-sm md:px-3.5">
+                                        <span className="mr-1.5 shrink-0 md:mr-2">
+                                            <i className={skillItem.icon ?? undefined}></i>
+                                        </span>
+                                        <span className="truncate text-[10px] font-normal sm:text-xs">
+                                            {skillItem.name_skills}
+                                        </span>
                                     </span>
-                                </span>
-                            </motion.div>
-                        ))}
-                    </motion.div>
+
+                                    {/* Level Skill */}
+                                    <span className="flex h-full shrink-0 items-center rounded-r-full border-y border-r border-white/50 bg-white/20 px-2 md:backdrop-blur-sm md:px-3.5">
+                                        <span className="text-[10px] font-medium text-white sm:text-xs">
+                                            {skillItem.level}
+                                        </span>
+                                    </span>
+                                </animated.div>
+                            );
+                        })}
+                    </div>
                 </section>
             </div>
 
@@ -145,18 +146,11 @@ export default function Skills({ skills = [] }: { skills: Skill[] }) {
                 <div className="mx-auto flex flex-col items-center overflow-hidden">
                     {/* Baris Animasi 1 */}
                     <div className="flex w-full border border-x-transparent border-y-white/15 py-5 md:py-7">
-                        <motion.div
-                            className="flex w-max gap-12 md:gap-20 will-change-transform"
-                            animate={
-                                isAppInView
-                                    ? { x: ['0%', '-50%'] }
-                                    : { x: '0%' }
-                            }
-                            transition={{
-                                repeat: Infinity,
-                                duration: 40,
-                                ease: 'easeIn',
+                        <animated.div
+                            style={{
+                                transform: marquee1.x.to(val => `translateX(${val}%)`),
                             }}
+                            className="flex w-max gap-12 md:gap-20 will-change-transform"
                         >
                             <div className="flex gap-16 px-4 md:gap-25 md:px-6">
                                 {appIcons.map((Icon, index) => (
@@ -178,23 +172,16 @@ export default function Skills({ skills = [] }: { skills: Skill[] }) {
                                     </div>
                                 ))}
                             </div>
-                        </motion.div>
+                        </animated.div>
                     </div>
 
                     {/* Baris Animasi 2 */}
                     <div className="flex w-full border border-x-transparent border-y-white/15 py-5 md:py-7">
-                        <motion.div
-                            className="flex w-max gap-12 md:gap-20 will-change-transform"
-                            animate={
-                                isAppInView
-                                    ? { x: ['-50%', '0%'] }
-                                    : { x: '-50%' }
-                            }
-                            transition={{
-                                repeat: Infinity,
-                                duration: 45,
-                                ease: 'easeIn',
+                        <animated.div
+                            style={{
+                                transform: marquee2.x.to(val => `translateX(${val}%)`),
                             }}
+                            className="flex w-max gap-12 md:gap-20 will-change-transform"
                         >
                             <div className="flex gap-16 px-4 md:gap-25 md:px-6">
                                 {appIcons.map((Icon, index) => (
@@ -216,7 +203,7 @@ export default function Skills({ skills = [] }: { skills: Skill[] }) {
                                     </div>
                                 ))}
                             </div>
-                        </motion.div>
+                        </animated.div>
                     </div>
                 </div>
             </section>

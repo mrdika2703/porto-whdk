@@ -102,6 +102,7 @@ export default function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
                 <nav className="custom-scrollbar h-[calc(100vh-4rem)] space-y-2 overflow-y-auto p-4">
                     {menuItems.map((item, index) => {
                         const isActive = url.startsWith(item.route);
+
                         return (
                             <Link
                                 key={index}

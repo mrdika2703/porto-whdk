@@ -1,25 +1,26 @@
-import { Head } from '@inertiajs/react';
-import { useState, useEffect, useRef } from 'react';
-import { motion, useInView } from 'framer-motion';
-import { Profile } from './index';
-import { useIsMobile } from '@/hooks/useIsMobile';
+import { animated, useSpring } from '@react-spring/web';
+import { useState, useEffect, useRef, useMemo } from 'react';
+import { useInView } from '@/hooks/useInView';
+import type { Profile } from './index';
 
 export default function About({ profiles = [] }: { profiles: Profile[] }) {
     const profile = profiles[0];
-    const isMobile = useIsMobile();
 
-    const words = [
+    const words = useMemo(() => [
         `I'm ${profile?.nickname || 'Nickname'}`,
         profile?.passion || 'Passion',
-    ];
+    ], [profile?.nickname, profile?.passion]);
     const [currentWordIndex, setCurrentWordIndex] = useState(0);
     const [displayedText, setDisplayedText] = useState('');
     const [isDeleting, setIsDeleting] = useState(false);
-    const typingRef = useRef(null);
+    const typingRef = useRef<HTMLDivElement>(null);
     const isTypingInView = useInView(typingRef, { once: true, amount: 0.5 });
 
     useEffect(() => {
-        if (!isTypingInView) return;
+        if (!isTypingInView) {
+            return;
+        }
+
         const currentWord = words[currentWordIndex];
         let timer: NodeJS.Timeout;
 
@@ -42,13 +43,15 @@ export default function About({ profiles = [] }: { profiles: Profile[] }) {
                     setDisplayedText(displayedText.slice(0, -1));
                 }, 60); // Kecepatan menghapus
             } else {
-                setIsDeleting(false);
-                setCurrentWordIndex((prev) => (prev + 1) % words.length);
+                timer = setTimeout(() => {
+                    setIsDeleting(false);
+                    setCurrentWordIndex((prev) => (prev + 1) % words.length);
+                }, 0);
             }
         }
 
         return () => clearTimeout(timer);
-    }, [displayedText, isDeleting, currentWordIndex, isTypingInView]);
+    }, [displayedText, isDeleting, currentWordIndex, isTypingInView, words]);
 
     const renderTypedText = () => {
         if (currentWordIndex === 0) {
@@ -78,6 +81,24 @@ export default function About({ profiles = [] }: { profiles: Profile[] }) {
         }
     };
 
+    // React-Spring for content fade-in and slide-in
+    const contentRef = useRef<HTMLDivElement>(null);
+    const isContentInView = useInView(contentRef, { once: true, amount: 0.3 });
+
+    const leftColSpring = useSpring({
+        opacity: isContentInView ? 1 : 0,
+        transform: isContentInView ? 'translateX(0px)' : 'translateX(-30px)',
+        config: { tension: 280, friction: 60 },
+        delay: 200,
+    });
+
+    const rightColSpring = useSpring({
+        opacity: isContentInView ? 1 : 0,
+        transform: isContentInView ? 'translateX(0px)' : 'translateX(30px)',
+        config: { tension: 280, friction: 60 },
+        delay: 200,
+    });
+
     return (
         <>
         <div id="about" className="w-full">
@@ -104,7 +125,7 @@ export default function About({ profiles = [] }: { profiles: Profile[] }) {
 
                 {/* Konten Utama About */}
                 {/* Padding horizontal disesuaikan px-6 untuk HP, px-12 untuk desktop */}
-                <div className="relative z-10 mx-auto flex w-full max-w-7xl flex-col items-center px-6 md:px-12">
+                <div ref={contentRef} className="relative z-10 mx-auto flex w-full max-w-7xl flex-col items-center px-6 md:px-12">
                     {/* Header & Sapaan */}
                     <div
                         ref={typingRef}
@@ -140,11 +161,8 @@ export default function About({ profiles = [] }: { profiles: Profile[] }) {
                     {/* Layout 2 Kolom (Teks & Foto) */}
                     <div className="flex w-full flex-col items-center justify-between gap-16 lg:flex-row lg:items-start lg:gap-8">
                         {/* Kolom Kiri: Deskripsi */}
-                        <motion.div
-                            initial={{ opacity: 0, x: -30 }}
-                            whileInView={{ opacity: 1, x: 0 }}
-                            viewport={{ once: true, amount: 0.3 }}
-                            transition={{ duration: 0.8, delay: 0.2 }}
+                        <animated.div
+                            style={leftColSpring}
                             // Memastikan alignment rata kiri-tengah agar rapi
                             className="flex w-full flex-col items-start gap-5 md:gap-6 lg:w-[60%]"
                         >
@@ -170,14 +188,11 @@ export default function About({ profiles = [] }: { profiles: Profile[] }) {
                                     <i className="fa-solid fa-arrow-up-right-from-square ml-2"></i>
                                 </a>
                             </div>
-                        </motion.div>
+                        </animated.div>
 
                         {/* Kolom Kanan: Foto Dika */}
-                        <motion.div
-                            initial={{ opacity: 0, x: 30 }}
-                            whileInView={{ opacity: 1, x: 0 }}
-                            viewport={{ once: true, amount: 0.3 }}
-                            transition={{ duration: 0.8, delay: 0.2 }}
+                        <animated.div
+                            style={rightColSpring}
                             className="relative mt-8 flex w-full justify-center lg:mt-0 lg:w-[40%]"
                         >
                             {/* Max-width mencegah elemen tumpah di layar HP yang sempit */}
@@ -204,7 +219,7 @@ export default function About({ profiles = [] }: { profiles: Profile[] }) {
                                     </p>
                                 </div>
                             </div>
-                        </motion.div>
+                        </animated.div>
                     </div>
                 </div>
             </section>

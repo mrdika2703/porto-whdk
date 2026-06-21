@@ -1,7 +1,8 @@
 import { Head, Link, useForm } from '@inertiajs/react';
-import LayoutAdmin from '../Layout/AdminLayout';
-import { FormEvent, useState, useEffect } from 'react';
+import type { FormEvent} from 'react';
+import { useState, useEffect } from 'react';
 import Swal from 'sweetalert2';
+import LayoutAdmin from '../Layout/AdminLayout';
 
 interface CertificateData {
     id?: number;
@@ -87,6 +88,7 @@ export default function Form({
                         timer: 3000,
                         timerProgressBar: true,
                     });
+
                     if (page.props.flash?.error) {
                         Swal.fire({
                             icon: 'error',

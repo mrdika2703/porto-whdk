@@ -1,7 +1,8 @@
 import { Head, Link, useForm } from '@inertiajs/react';
-import LayoutAdmin from '../Layout/AdminLayout';
-import { FormEvent, useEffect } from 'react';
+import type { FormEvent} from 'react';
+import { useEffect } from 'react';
 import Swal from 'sweetalert2';
+import LayoutAdmin from '../Layout/AdminLayout';
 
 interface EducationData {
     id?: number;
@@ -18,21 +19,30 @@ interface FormProps {
 }
 
 const formatDurationDisplay = (durationStr: string | null) => {
-    if (!durationStr) return '';
+    if (!durationStr) {
+return '';
+}
+
     const match = durationStr.match(/^(\d+)\s+hari$/);
-    if (!match) return durationStr;
+
+    if (!match) {
+return durationStr;
+}
 
     const days = parseInt(match[1], 10);
+
     if (days < 30) {
         return `${days} hari`;
     }
 
     const months = Math.round(days / 30);
+
     if (months < 12) {
         return `${months} bulan`;
     }
 
     const years = parseFloat((days / 365).toFixed(1));
+
     return `${years} tahun`;
 };
 

@@ -6,7 +6,10 @@ import { useState, useEffect } from 'react';
  */
 export function useIsMobile(breakpoint = 768): boolean {
     const [isMobile, setIsMobile] = useState(() => {
-        if (typeof window === 'undefined') return false;
+        if (typeof window === 'undefined') {
+return false;
+}
+
         return window.innerWidth < breakpoint;
     });
 
@@ -14,9 +17,16 @@ export function useIsMobile(breakpoint = 768): boolean {
         const mql = window.matchMedia(`(max-width: ${breakpoint - 1}px)`);
         const handler = (e: MediaQueryListEvent) => setIsMobile(e.matches);
 
-        setIsMobile(mql.matches);
+        const timer = setTimeout(() => {
+            setIsMobile(mql.matches);
+        }, 0);
+
         mql.addEventListener('change', handler);
-        return () => mql.removeEventListener('change', handler);
+
+        return () => {
+            clearTimeout(timer);
+            mql.removeEventListener('change', handler);
+        };
     }, [breakpoint]);
 
     return isMobile;

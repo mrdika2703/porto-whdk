@@ -1,16 +1,16 @@
-import { Head } from '@inertiajs/react';
-import Layout from '@/layouts/layout';
-import Hero from './hero';
-import About from './about';
-import Skills from './skills';
-import Experience from './experience';
-import DirectSection from './direct';
-import DesignGraphicSection from './grapich';
-import PhotoVideoSection from './photography';
-import WebsiteSection from './website';
-import CertificateSection from './certificate';
-import OtherSection from './other';
+import { useRef } from 'react';
 import { useLazySection } from '@/hooks/useLazySection';
+import Layout from '@/layouts/layout';
+import About from './about';
+import CertificateSection from './certificate';
+import DirectSection from './direct';
+import Experience from './experience';
+import DesignGraphicSection from './grapich';
+import Hero from './hero';
+import OtherSection from './other';
+import PhotoVideoSection from './photography';
+import Skills from './skills';
+import WebsiteSection from './website';
 
 export interface Profile {
     id: number;
@@ -143,10 +143,17 @@ export default function Home({
     footers = [],
 }: HomeProps) {
     // Lazy load section berat — hanya render saat mendekati viewport (200px sebelum terlihat)
-    const designSection = useLazySection('300px');
-    const photoSection = useLazySection('300px');
-    const websiteSection = useLazySection('300px');
-    const otherSection = useLazySection('300px');
+    const designRef = useRef<HTMLDivElement>(null);
+    const designShouldRender = useLazySection(designRef, '300px');
+
+    const photoRef = useRef<HTMLDivElement>(null);
+    const photoShouldRender = useLazySection(photoRef, '300px');
+
+    const websiteRef = useRef<HTMLDivElement>(null);
+    const websiteShouldRender = useLazySection(websiteRef, '300px');
+
+    const otherRef = useRef<HTMLDivElement>(null);
+    const otherShouldRender = useLazySection(otherRef, '300px');
 
     return (
         <>
@@ -166,32 +173,32 @@ export default function Home({
                         <DirectSection />
 
                         {/* Lazy-loaded sections — placeholder div tetap ada agar scroll position benar */}
-                        <div ref={designSection.ref}>
-                            {designSection.shouldRender ? (
+                        <div ref={designRef}>
+                            {designShouldRender ? (
                                 <DesignGraphicSection designs={designs} />
                             ) : (
                                 <div className="min-h-[500px]" />
                             )}
                         </div>
 
-                        <div className="bg-bphotograph" ref={photoSection.ref}>
-                            {photoSection.shouldRender ? (
+                        <div className="bg-bphotograph" ref={photoRef}>
+                            {photoShouldRender ? (
                                 <PhotoVideoSection photovideos={photovideos} />
                             ) : (
                                 <div className="min-h-[500px]" />
                             )}
                         </div>
 
-                        <div ref={websiteSection.ref}>
-                            {websiteSection.shouldRender ? (
+                        <div ref={websiteRef}>
+                            {websiteShouldRender ? (
                                 <WebsiteSection websites={websites} />
                             ) : (
                                 <div className="min-h-[650px]" />
                             )}
                         </div>
 
-                        <div ref={otherSection.ref}>
-                            {otherSection.shouldRender ? (
+                        <div ref={otherRef}>
+                            {otherShouldRender ? (
                                 <OtherSection others={others} />
                             ) : (
                                 <div className="min-h-[200px]" />

@@ -1,20 +1,22 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 
 /**
  * Hook untuk lazy-render section berat.
  * Section hanya di-mount saat mendekati viewport (dengan rootMargin).
  * Sekali terlihat, section tetap di-mount (tidak di-unmount).
  */
-export function useLazySection(rootMargin = '200px'): {
-    ref: React.RefObject<HTMLDivElement | null>;
-    shouldRender: boolean;
-} {
-    const ref = useRef<HTMLDivElement | null>(null);
+export function useLazySection(
+    ref: React.RefObject<Element | null>,
+    rootMargin = '200px'
+): boolean {
     const [shouldRender, setShouldRender] = useState(false);
 
     useEffect(() => {
         const el = ref.current;
-        if (!el || shouldRender) return;
+
+        if (!el || shouldRender) {
+            return;
+        }
 
         const observer = new IntersectionObserver(
             ([entry]) => {
@@ -27,8 +29,9 @@ export function useLazySection(rootMargin = '200px'): {
         );
 
         observer.observe(el);
-        return () => observer.disconnect();
-    }, [rootMargin, shouldRender]);
 
-    return { ref, shouldRender };
+        return () => observer.disconnect();
+    }, [ref, rootMargin, shouldRender]);
+
+    return shouldRender;
 }

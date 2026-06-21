@@ -1,7 +1,7 @@
 import { Head, Link, useForm } from '@inertiajs/react';
-import LayoutAdmin from '../Layout/AdminLayout';
-import { FormEvent } from 'react';
+import type { FormEvent } from 'react';
 import Swal from 'sweetalert2';
+import LayoutAdmin from '../Layout/AdminLayout';
 
 interface SkillData {
     id?: number;

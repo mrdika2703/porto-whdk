@@ -1,7 +1,7 @@
 import { Head, Link, router } from '@inertiajs/react';
-import LayoutAdmin from '../Layout/AdminLayout';
 import { useEffect } from 'react';
 import Swal from 'sweetalert2';
+import LayoutAdmin from '../Layout/AdminLayout';
 
 interface PhotoVideoData {
     id: number;
@@ -33,6 +33,7 @@ export default function Index({ photovideos, hasProfile, flash }: IndexProps) {
                 timerProgressBar: true,
             });
         }
+
         if (flash.error) {
             Swal.fire({
                 icon: 'error',

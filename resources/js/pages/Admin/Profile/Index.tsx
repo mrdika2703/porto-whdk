@@ -1,8 +1,9 @@
 import { Head, useForm } from '@inertiajs/react';
-import LayoutAdmin from '../Layout/AdminLayout';
-import { FormEvent, useEffect } from 'react';
-import { store, update } from '@/routes/admin/profiles';
+import type { FormEvent} from 'react';
+import { useEffect } from 'react';
 import Swal from 'sweetalert2';
+import { store, update } from '@/routes/admin/profiles';
+import LayoutAdmin from '../Layout/AdminLayout';
 
 interface ProfileData {
     id?: number;
@@ -64,6 +65,7 @@ export default function Index({ profile, flash }: IndexProps) {
                 timerProgressBar: true,
             });
         }
+
         if (flash.error) {
             Swal.fire({
                 icon: 'error',
@@ -93,6 +95,7 @@ export default function Index({ profile, flash }: IndexProps) {
                         timerProgressBar: true,
                     });
                 }
+
                 if (page.props.flash?.error) {
                     Swal.fire({
                         icon: 'error',
