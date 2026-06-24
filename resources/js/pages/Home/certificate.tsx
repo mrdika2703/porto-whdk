@@ -1,6 +1,7 @@
-import { useState, useRef } from 'react';
+import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import type { Certificate } from './index';
+import { Underline } from '@/components/underline';
 
 const getMonthYear = (dateString: string | null) => {
     if (!dateString) return '';
@@ -13,34 +14,15 @@ export default function CertificateSection({
 }: {
     certificates: Certificate[];
 }) {
-    const [isOpen, setIsOpen] = useState(false);
     const [selectedCert, setSelectedCert] = useState<Certificate | null>(null);
     const [activeImg, setActiveImg] = useState<string | null>(null);
 
-    const scrollRef = useRef<HTMLDivElement>(null);
-    const [isDragging, setIsDragging] = useState(false);
-    const [startX, setStartX] = useState(0);
-    const [scrollLeft, setScrollLeft] = useState(0);
-
-    const handleMouseDown = (e: React.MouseEvent) => {
-        setIsDragging(true);
-        setStartX(e.pageX - (scrollRef.current?.offsetLeft ?? 0));
-        setScrollLeft(scrollRef.current?.scrollLeft ?? 0);
-    };
-
-    const handleMouseMove = (e: React.MouseEvent) => {
-        if (!isDragging) return;
-        e.preventDefault();
-        const x = e.pageX - (scrollRef.current?.offsetLeft ?? 0);
-        const walk = (x - startX) * 1.5;
-        if (scrollRef.current) {
-            scrollRef.current.scrollLeft = scrollLeft - walk;
-        }
-    };
-
-    const handleMouseUp = () => {
-        setIsDragging(false);
-    };
+    const softSkills = certificates.filter((cert) =>
+        cert.category.toLowerCase().includes('soft'),
+    );
+    const hardSkills = certificates.filter(
+        (cert) => !cert.category.toLowerCase().includes('soft'),
+    );
 
     const openModal = (cert: Certificate) => {
         setSelectedCert(cert);
@@ -50,7 +32,7 @@ export default function CertificateSection({
     return (
         <section
             id="certificate"
-            className="relative w-full overflow-hidden py-16 text-white"
+            className="relative mt-15 w-full overflow-hidden py-16 text-white"
         >
             {/* Glow */}
             <div className="pointer-events-none absolute top-1/2 left-1/4 hidden h-[400px] w-[400px] -translate-y-1/2 rounded-full bg-bshine/5 blur-[120px] md:block"></div>
@@ -65,131 +47,102 @@ export default function CertificateSection({
                     className="flex flex-col items-center gap-5 text-center md:flex-row md:justify-between md:text-left"
                 >
                     <div className="relative flex items-center">
-                        <h2 className="text-3xl font-bold tracking-wide text-tmain">
-                            My <span className="text-bshine">Certificates</span>
+                        <h2 className="font-regular relative font-montserrat-alt text-3xl text-tmain">
+                            My{' '}
+                            <span className="font-bold text-bshine">
+                                Certificates
+                            </span>
+                            <Underline className="absolute -right-1 -bottom-1 text-bshine" />
                         </h2>
-                        <img
-                            src="/assets/icons/slay_light.svg"
-                            alt="Deco light"
-                            className="absolute top-0 -right-12 h-8 w-8 rotate-12 transform dark:hidden"
-                        />
-                        <img
-                            src="/assets/icons/slay_dark.svg"
-                            alt="Deco dark"
-                            className="absolute top-0 -right-12 hidden h-8 w-8 rotate-12 transform dark:block"
-                        />
                     </div>
-
-                    <motion.button
-                        onClick={() => setIsOpen(!isOpen)}
-                        whileHover={{ scale: 1.02 }}
-                        whileTap={{ scale: 0.95 }}
-                        className="group flex items-center gap-2 rounded-full border border-bshine/50 bg-bshine/10 px-6 py-2.5 text-sm font-medium text-bshine md:backdrop-blur-sm transition-all duration-300 hover:border-bshine hover:bg-bshine/20 hover:shadow-[0_0_20px_rgba(192,104,0,0.3)]"
-                    >
-                        <i
-                            className={`fa-solid ${isOpen ? 'fa-xmark' : 'fa-certificate'} transition-transform duration-300`}
-                        />
-                        {isOpen ? 'Tutup Sertifikasi' : 'Lihat Sertifikasi'}
-                        <motion.i
-                            className="fa-solid fa-chevron-down text-xs text-bshine"
-                            animate={{ rotate: isOpen ? 180 : 0 }}
-                            transition={{ duration: 0.1 }}
-                        />
-                    </motion.button>
                 </motion.div>
 
-                {/* Badge count */}
-                <AnimatePresence>
-                    {isOpen && (
-                        <motion.p
-                            initial={{ opacity: 0, y: -10 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            exit={{ opacity: 0, y: -10 }}
-                            transition={{ duration: 0.2 }}
-                            className="text-center text-sm text-gray-400 md:text-left"
-                        >
-                            Geser ke kanan untuk lihat selengkapnya
-                        </motion.p>
-                    )}
-                </AnimatePresence>
-            </div>
-
-            {/* Horizontal scroll */}
-            <AnimatePresence>
-                {isOpen && (
-                    <motion.div
-                        initial={{ height: 0, opacity: 0 }}
-                        animate={{ height: 'auto', opacity: 1 }}
-                        exit={{ height: 0, opacity: 0 }}
-                        transition={{ duration: 0.4, ease: 'easeInOut' }}
-                        className="overflow-hidden"
-                    >
-                        <div
-                            ref={scrollRef}
-                            className={`mt-6 flex gap-6 overflow-x-auto px-6 pb-8 md:px-12 ${isDragging ? 'cursor-grabbing' : 'cursor-grab'}`}
-                            style={{
-                                scrollbarWidth: 'none',
-                                msOverflowStyle: 'none',
-                                WebkitOverflowScrolling: 'touch',
-                            }}
-                            onMouseDown={handleMouseDown}
-                            onMouseMove={handleMouseMove}
-                            onMouseUp={handleMouseUp}
-                            onMouseLeave={handleMouseUp}
-                        >
-                            {certificates.map((cert, index) => (
-                                <motion.div
-                                    key={cert.id}
-                                    initial={{ opacity: 0, x: 50 }}
-                                    animate={{ opacity: 1, x: 0 }}
-                                    transition={{
-                                        duration: 0.4,
-                                        delay: index * 0.08,
-                                    }}
-                                    className="group relative w-[320px] shrink-0 sm:w-[420px] md:w-[480px]"
-                                >
-                                    <div
-                                        className="relative aspect-[16/10] w-full overflow-hidden rounded-2xl border border-white/5 bg-white/[0.02] md:backdrop-blur-sm transition-all duration-300 hover:border-bshine/30 hover:shadow-[0_4px_30px_rgba(192,104,0,0.15)]"
-                                        onClick={() => {
-                                            if (!isDragging) {
-                                                openModal(cert);
-                                            }
-                                        }}
-                                    >
-                                        {/* Category Tag */}
-                                        <div className="absolute top-4 left-4 z-10 rounded-full border border-white/10 bg-black/60 px-3 py-1 text-[11px] font-semibold text-white/95 md:backdrop-blur-md transition-colors duration-300 group-hover:bg-bshine/90">
-                                            {cert.category}
-                                        </div>
-
-                                        {/* Image */}
-                                        <img
-                                            src={`/storage/${cert.url_1}`}
-                                            alt={cert.title}
-                                            className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-                                            draggable={false}
-                                        />
-
-                                        {/* Hover Overlay with Gradient info */}
-                                        <div className="absolute inset-x-0 bottom-0 flex translate-y-3 flex-col justify-end bg-gradient-to-t from-black/95 via-black/60 to-transparent p-6 pt-20 opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100">
-                                            <h4 className="text-base font-bold text-white md:text-lg">
-                                                {cert.title}
-                                            </h4>
-                                            <p className="mt-1.5 flex items-center gap-1.5 text-xs font-medium text-gray-300">
-                                                <i className="fa-regular fa-calendar-days text-bshine" />
-                                                {getMonthYear(cert.start_date)}
-                                                {cert.end_date
-                                                    ? ` - ${getMonthYear(cert.end_date)}`
-                                                    : ''}
-                                            </p>
-                                        </div>
-                                    </div>
-                                </motion.div>
-                            ))}
-                            <div className="w-6 shrink-0 md:w-12" />
+                {/* List of Certificate Names */}
+                <motion.div
+                    initial={{ opacity: 0 }}
+                    whileInView={{ opacity: 1 }}
+                    viewport={{ once: true, amount: 0.1 }}
+                    transition={{ duration: 0.5 }}
+                    className="grid grid-cols-1 gap-8 md:grid-cols-2"
+                >
+                    {/* Soft Skills Section */}
+                    <div className="flex flex-col gap-4 rounded-2xl border border-hbshine/10 bg-bshine/1.5 px-10 py-6">
+                        <div className="flex items-center justify-between border-b border-white/5 pb-4">
+                            <h3 className="flex items-center font-montserrat-alt text-lg font-bold text-tmain">
+                                <i className="fa-solid fa-brain mr-2.5 text-bshine" />
+                                Soft Skills
+                            </h3>
+                            <span className="rounded-full border border-bshine/25 bg-bshine/10 px-2.5 py-0.5 text-xs font-bold text-bshine">
+                                {softSkills.length}
+                            </span>
                         </div>
-                    </motion.div>
-                )}
-            </AnimatePresence>
+                        {softSkills.length > 0 ? (
+                            <ul className="flex flex-col gap-1">
+                                {softSkills.map((cert) => (
+                                    <li
+                                        key={cert.id}
+                                        onClick={() => openModal(cert)}
+                                        className="group flex w-full cursor-pointer items-center justify-between gap-3 rounded-xl border border-transparent bg-transparent px-3 py-3 transition-all duration-300 hover:border-bshine/30 hover:bg-white/[0.04]"
+                                    >
+                                        <div className="flex items-center gap-3 overflow-hidden">
+                                            <div className="flex flex-col overflow-hidden">
+                                                <span className="truncate text-sm font-semibold text-tmain transition-colors duration-300 group-hover:text-bshine">
+                                                    {cert.title}
+                                                </span>
+                                                <span className="text-[11px] text-gray-400">
+                                                    {cert.category}
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <i className="fa-solid fa-chevron-right shrink-0 text-xs text-gray-500 transition-colors duration-300 group-hover:translate-x-0.5 group-hover:text-bshine" />
+                                    </li>
+                                ))}
+                            </ul>
+                        ) : (
+                            <p className="py-4 text-center text-sm text-gray-500 italic">
+                                Belum ada sertifikat.
+                            </p>
+                        )}
+                    </div>
+
+                    {/* Hard Skills Section */}
+                    <div className="flex flex-col gap-4 rounded-2xl border border-hbshine/10 bg-bshine/1.5 px-10 py-6">
+                        <div className="flex items-center justify-between border-b border-white/5 pb-4">
+                            <h3 className="flex items-center font-montserrat-alt text-lg font-bold text-tmain">
+                                <i className="fa-solid fa-code mr-2.5 text-bshine" />
+                                Hard Skills
+                            </h3>
+                            <span className="rounded-full border border-bshine/25 bg-bshine/10 px-2.5 py-0.5 text-xs font-bold text-bshine">
+                                {hardSkills.length}
+                            </span>
+                        </div>
+                        {hardSkills.length > 0 ? (
+                            <ul className="flex flex-col gap-1">
+                                {hardSkills.map((cert) => (
+                                    <li
+                                        key={cert.id}
+                                        onClick={() => openModal(cert)}
+                                        className="group flex w-full cursor-pointer items-center justify-between gap-3 rounded-xl border border-transparent bg-transparent px-2 py-2 transition-all duration-300 hover:border-bshine/30 hover:bg-white/[0.04]"
+                                    >
+                                        <div className="flex items-center gap-3 overflow-hidden">
+                                            <div className="flex flex-col overflow-hidden">
+                                                <span className="truncate text-sm font-semibold text-tmain transition-colors duration-300 group-hover:text-bshine">
+                                                    {cert.title}
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <i className="fa-solid fa-chevron-right shrink-0 text-xs text-gray-500 transition-colors duration-300 group-hover:translate-x-0.5 group-hover:text-bshine" />
+                                    </li>
+                                ))}
+                            </ul>
+                        ) : (
+                            <p className="py-4 text-center text-sm text-gray-500 italic">
+                                Belum ada sertifikat.
+                            </p>
+                        )}
+                    </div>
+                </motion.div>
+            </div>
 
             {/* Complete Card Modal */}
             <AnimatePresence>
@@ -199,18 +152,14 @@ export default function CertificateSection({
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
                         transition={{ duration: 0.1 }}
-                        className="fixed inset-0 z-50 flex items-center justify-center bg-black/35 p-4 backdrop-blur-md"
+                        className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
                         onClick={() => setSelectedCert(null)}
                     >
                         <motion.div
-                            initial={{ scale: 0.9, opacity: 0, y: 20 }}
+                            initial={{ scale: 0.95, opacity: 0, y: 10 }}
                             animate={{ scale: 1, opacity: 1, y: 0 }}
-                            exit={{ scale: 0.9, opacity: 0, y: 20 }}
-                            transition={{
-                                type: 'spring',
-                                stiffness: 220,
-                                damping: 26,
-                            }}
+                            exit={{ scale: 0.95, opacity: 0, y: 10 }}
+                            transition={{ ease: 'easeOut', duration: 0.1 }}
                             className="relative flex w-full max-w-5xl flex-col overflow-hidden rounded-2xl border border-white/10 bg-main shadow-2xl backdrop-blur-md md:flex-row"
                             onClick={(e) => e.stopPropagation()}
                         >

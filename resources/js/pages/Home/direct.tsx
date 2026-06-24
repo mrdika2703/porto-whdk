@@ -7,28 +7,28 @@ const direct = [
         href: '#design',
         icon: 'fa-regular fa-circle-right',
         color: 'text-bshine',
-        bg: 'bg-main shadow-bshine hover:bg-bshine/5',
+        bg: 'bg-main shadow-bshine hover:bg-bshine/5 border-bshine',
     },
     {
         name: 'Photo Video',
         href: '#photo',
         icon: 'fa-regular fa-circle-right',
         color: 'text-white',
-        bg: 'bg-bshine shadow-hbshine hover:brightness-105',
+        bg: 'bg-bshine dark:bg-hbshine shadow-hbshine dark:shadow-[#078293] hover:brightness-105 border-hbshine dark:border-[#078293]',
     },
     {
         name: 'Website',
         href: '#website',
         icon: 'fa-regular fa-circle-right',
         color: 'text-bshine',
-        bg: 'bg-main shadow-bshine hover:bg-bshine/5',
+        bg: 'bg-main shadow-bshine hover:bg-bshine/5 border-bshine',
     },
     {
         name: 'Others',
-        href: '#others',
+        href: '#other',
         icon: 'fa-regular fa-circle-right',
         color: 'text-white',
-        bg: 'bg-bshine shadow-hbshine hover:brightness-105',
+        bg: 'bg-bshine dark:bg-hbshine shadow-hbshine dark:shadow-[#078293] hover:brightness-105 border-hbshine dark:border-[#078293]',
     },
 ];
 
@@ -37,7 +37,7 @@ export default function DirectSection() {
         <>
             <section
                 id="direct"
-                className="min-h-5xl relative my-10 w-full py-30"
+                className="min-h-5xl relative my-25 w-full py-30"
             >
                 <div className="pointer-events-none absolute top-0.5 left-0 hidden h-[500px] w-[500px] -translate-x-1/2 rounded-full bg-bshine/10 blur-[120px] md:block"></div>
                 <div className="pointer-events-none absolute top-3/4 right-0 hidden h-[400px] w-[400px] translate-x-1/3 rounded-full bg-bshine/10 blur-[100px] md:block"></div>
@@ -50,7 +50,7 @@ export default function DirectSection() {
                         transition={{ duration: 0.5 }}
                         className="flex justify-center text-center"
                     >
-                        <h2 className="text-2xl font-bold text-bshine">
+                        <h2 className="font-montserrat-alt text-5xl font-bold text-bshine">
                             <span className="text-tmain">Quick Direct </span>
                             Portofolio
                         </h2>
@@ -67,9 +67,7 @@ export default function DirectSection() {
                                     duration: 0.5,
                                     delay: index * 0.1,
                                 }}
-                                whileHover={{ scale: 1.05, y: -2 }}
-                                whileTap={{ scale: 0.98 }}
-                                className={`${item.bg} flex cursor-pointer rounded-xl border-2 border-bshine px-4 py-3 shadow-[2px_5px_0px_rgba(0,0,0,1)] transition-all`}
+                                className={`${item.bg} flex cursor-pointer rounded-xl border-2 px-4 py-3 shadow-[2px_5px_0px_rgba(0,0,0,1)] transition-all hover:scale-102`}
                             >
                                 <a
                                     href={item.href}

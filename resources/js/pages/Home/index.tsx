@@ -152,7 +152,9 @@ export default function Home({
         <>
             <Layout footers={footers}>
                 <div className="relative w-full overflow-x-hidden">
-                    <Hero />
+                    <div className="relative z-0">
+                        <Hero />
+                    </div>
                     <div className="relative z-20">
                         <About profiles={profiles} />
                         <div className="bg-sectiondark">
@@ -166,7 +168,7 @@ export default function Home({
                         <DirectSection />
 
                         {/* Lazy-loaded sections — placeholder div tetap ada agar scroll position benar */}
-                        <div ref={designSection.ref}>
+                        <div id="design" ref={designSection.ref}>
                             {designSection.shouldRender ? (
                                 <DesignGraphicSection designs={designs} />
                             ) : (
@@ -174,7 +176,7 @@ export default function Home({
                             )}
                         </div>
 
-                        <div className="bg-bphotograph" ref={photoSection.ref}>
+                        <div id="photo" className="bg-bphotograph" ref={photoSection.ref}>
                             {photoSection.shouldRender ? (
                                 <PhotoVideoSection photovideos={photovideos} />
                             ) : (
@@ -182,7 +184,7 @@ export default function Home({
                             )}
                         </div>
 
-                        <div ref={websiteSection.ref}>
+                        <div id="website" ref={websiteSection.ref}>
                             {websiteSection.shouldRender ? (
                                 <WebsiteSection websites={websites} />
                             ) : (

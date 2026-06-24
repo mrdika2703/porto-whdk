@@ -1,6 +1,7 @@
 import { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import type { Other } from './index';
+import { Underline } from '@/components/underline';
 
 export default function OtherSection({ others }: { others: Other[] }) {
     const [isOpen, setIsOpen] = useState(false);
@@ -40,9 +41,13 @@ export default function OtherSection({ others }: { others: Other[] }) {
     // Helper to get all valid images for slider
     const getImages = (item: Other | null) => {
         if (!item) return [];
-        return [item.url_1, item.url_2, item.url_3, item.url_4, item.url_5].filter(
-            Boolean
-        ) as string[];
+        return [
+            item.url_1,
+            item.url_2,
+            item.url_3,
+            item.url_4,
+            item.url_5,
+        ].filter(Boolean) as string[];
     };
 
     const activeImages = getImages(selectedOther);
@@ -50,7 +55,8 @@ export default function OtherSection({ others }: { others: Other[] }) {
 
     const handlePrev = () => {
         if (activeImages.length <= 1) return;
-        const newIndex = (activeIndex - 1 + activeImages.length) % activeImages.length;
+        const newIndex =
+            (activeIndex - 1 + activeImages.length) % activeImages.length;
         setActiveImg(activeImages[newIndex]);
     };
 
@@ -78,26 +84,20 @@ export default function OtherSection({ others }: { others: Other[] }) {
                     className="flex flex-col items-center gap-5 text-center md:flex-row md:justify-between md:text-left"
                 >
                     <div className="relative flex items-center">
-                        <h2 className="text-3xl font-bold tracking-wide text-tmain">
-                            Other <span className="text-bshine">Creations</span>
+                        <h2 className="font-regular relative font-montserrat-alt text-3xl tracking-wide text-tmain">
+                            Other{' '}
+                            <span className="font-bold text-bshine">
+                                Creations
+                            </span>
                         </h2>
-                        <img
-                            src="/assets/icons/slay_light.svg"
-                            alt="Deco light"
-                            className="absolute top-0 -right-12 h-8 w-8 rotate-12 transform dark:hidden"
-                        />
-                        <img
-                            src="/assets/icons/slay_dark.svg"
-                            alt="Deco dark"
-                            className="absolute top-0 -right-12 hidden h-8 w-8 rotate-12 transform dark:block"
-                        />
+                        <Underline className="absolute -right-2 -bottom-1 text-bshine" />
                     </div>
 
                     <motion.button
                         onClick={() => setIsOpen(!isOpen)}
                         whileHover={{ scale: 1.02 }}
                         whileTap={{ scale: 0.95 }}
-                        className="group flex items-center gap-2 rounded-full border border-bshine/50 bg-bshine/10 px-6 py-2.5 text-sm font-medium text-bshine md:backdrop-blur-sm transition-all duration-300 hover:border-bshine hover:bg-bshine/20 hover:shadow-[0_0_20px_rgba(192,104,0,0.3)]"
+                        className="group flex items-center gap-2 rounded-full border border-bshine/50 bg-bshine/10 px-6 py-2.5 text-sm font-medium text-bshine transition-all duration-300 hover:border-bshine hover:bg-bshine/20 hover:shadow-[0_0_20px_rgba(192,104,0,0.3)] md:backdrop-blur-sm"
                     >
                         <i
                             className={`fa-solid ${isOpen ? 'fa-xmark' : 'fa-folder-open'} transition-transform duration-300`}
@@ -162,7 +162,7 @@ export default function OtherSection({ others }: { others: Other[] }) {
                                     className="group relative w-[320px] shrink-0 sm:w-[420px] md:w-[480px]"
                                 >
                                     <div
-                                        className="relative aspect-[16/10] w-full overflow-hidden rounded-2xl border border-white/5 bg-white/[0.02] md:backdrop-blur-sm transition-all duration-300 hover:border-bshine/30 hover:shadow-[0_4px_30px_rgba(192,104,0,0.15)]"
+                                        className="relative aspect-[16/10] w-full overflow-hidden rounded-2xl border border-white/5 bg-white/[0.02] transition-all duration-300 hover:border-bshine/30 hover:shadow-[0_4px_30px_rgba(192,104,0,0.15)] md:backdrop-blur-sm"
                                         onClick={() => {
                                             if (!isDragging) {
                                                 openModal(item);
@@ -170,7 +170,7 @@ export default function OtherSection({ others }: { others: Other[] }) {
                                         }}
                                     >
                                         {/* Category Tag */}
-                                        <div className="absolute top-4 left-4 z-10 rounded-full border border-white/10 bg-black/60 px-3 py-1 text-[11px] font-semibold text-white/95 md:backdrop-blur-md transition-colors duration-300 group-hover:bg-bshine/90">
+                                        <div className="absolute top-4 left-4 z-10 rounded-full border border-white/10 bg-black/60 px-3 py-1 text-[11px] font-semibold text-white/95 transition-colors duration-300 group-hover:bg-bshine/90 md:backdrop-blur-md">
                                             {item.category}
                                         </div>
 
@@ -205,18 +205,14 @@ export default function OtherSection({ others }: { others: Other[] }) {
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
                         transition={{ duration: 0.1 }}
-                        className="fixed inset-0 z-50 flex items-center justify-center bg-black/35 p-4 backdrop-blur-md"
+                        className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
                         onClick={() => setSelectedOther(null)}
                     >
                         <motion.div
-                            initial={{ scale: 0.9, opacity: 0, y: 20 }}
+                            initial={{ scale: 0.95, opacity: 0, y: 10 }}
                             animate={{ scale: 1, opacity: 1, y: 0 }}
-                            exit={{ scale: 0.9, opacity: 0, y: 20 }}
-                            transition={{
-                                type: 'spring',
-                                stiffness: 220,
-                                damping: 26,
-                            }}
+                            exit={{ scale: 0.95, opacity: 0, y: 10 }}
+                            transition={{ ease: 'easeOut', duration: 0.1 }}
                             className="relative flex w-full max-w-5xl flex-col overflow-hidden rounded-2xl border border-white/10 bg-main shadow-2xl backdrop-blur-md md:flex-row"
                             onClick={(e) => e.stopPropagation()}
                         >
@@ -263,7 +259,9 @@ export default function OtherSection({ others }: { others: Other[] }) {
                                         {activeImages.map((img, idx) => (
                                             <button
                                                 key={idx}
-                                                onClick={() => setActiveImg(img)}
+                                                onClick={() =>
+                                                    setActiveImg(img)
+                                                }
                                                 className={`h-10 w-14 overflow-hidden rounded border transition-all ${
                                                     activeImg === img
                                                         ? 'scale-105 border-bshine'

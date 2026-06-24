@@ -1,8 +1,127 @@
 import { Head } from '@inertiajs/react';
-import { useState, useRef } from 'react';
-import { motion, useInView, Variants } from 'framer-motion';
+import { useState, useRef, useEffect } from 'react';
+import {
+    motion,
+    useInView,
+    Variants,
+    useMotionValue,
+    animate,
+} from 'framer-motion';
 import { PhotoshopIcon, LightroomIcon } from '@/components/icons';
 import { Skill } from './index';
+import { Underline } from '@/components/underline';
+
+function MarqueeRow({
+    children,
+    direction = 'left',
+    speed = 40,
+    isAppInView,
+}: {
+    children: React.ReactNode;
+    direction?: 'left' | 'right';
+    speed?: number;
+    isAppInView: boolean;
+}) {
+    const containerRef = useRef<HTMLDivElement>(null);
+    const x = useMotionValue(0);
+    const [isHovered, setIsHovered] = useState(false);
+    const [isDragging, setIsDragging] = useState(false);
+    const [loopWidth, setLoopWidth] = useState(0);
+    const activeAnimation = useRef<any>(null);
+
+    useEffect(() => {
+        const updateWidth = () => {
+            if (containerRef.current) {
+                // Lebar satu loop adalah setengah dari total lebar container (karena ada 2 set data)
+                setLoopWidth(containerRef.current.offsetWidth / 2);
+            }
+        };
+        updateWidth();
+        window.addEventListener('resize', updateWidth);
+        return () => window.removeEventListener('resize', updateWidth);
+    }, []);
+
+    const normalizeX = (val: number, width: number) => {
+        if (width === 0) return val;
+        const mod = val % width;
+        return mod > 0 ? mod - width : mod;
+    };
+
+    useEffect(() => {
+        if (!isAppInView || isHovered || isDragging || loopWidth === 0) {
+            if (activeAnimation.current) {
+                activeAnimation.current.stop();
+                activeAnimation.current = null;
+            }
+            return;
+        }
+
+        const target = direction === 'left' ? -loopWidth : 0;
+        const startVal = x.get();
+
+        let currentX = startVal;
+        if (direction === 'left' && currentX <= -loopWidth) {
+            currentX = 0;
+            x.set(0);
+        } else if (direction === 'right' && currentX >= 0) {
+            currentX = -loopWidth;
+            x.set(-loopWidth);
+        }
+
+        const distance = Math.abs(target - currentX);
+        const currentDuration = speed * (distance / loopWidth);
+
+        activeAnimation.current = animate(x, [currentX, target], {
+            ease: 'linear',
+            duration: currentDuration,
+            onComplete: () => {
+                const resetVal = direction === 'left' ? 0 : -loopWidth;
+                const nextTarget = direction === 'left' ? -loopWidth : 0;
+                x.set(resetVal);
+
+                activeAnimation.current = animate(x, [resetVal, nextTarget], {
+                    ease: 'linear',
+                    duration: speed,
+                    repeat: Infinity,
+                    repeatType: 'loop',
+                });
+            },
+        });
+
+        return () => {
+            if (activeAnimation.current) {
+                activeAnimation.current.stop();
+            }
+        };
+    }, [isAppInView, isHovered, isDragging, loopWidth, direction, speed]);
+
+    const handleDragEnd = () => {
+        setIsDragging(false);
+        if (loopWidth > 0) {
+            const currentX = x.get();
+            const normalized = normalizeX(currentX, loopWidth);
+            x.set(normalized);
+        }
+    };
+
+    return (
+        <div className="flex w-full overflow-hidden select-none">
+            <motion.div
+                ref={containerRef}
+                className="flex w-max cursor-grab gap-12 will-change-transform active:cursor-grabbing md:gap-20"
+                style={{ x }}
+                drag="x"
+                dragConstraints={{ left: -loopWidth, right: 0 }}
+                onDragStart={() => setIsDragging(true)}
+                onDragEnd={handleDragEnd}
+                onHoverStart={() => setIsHovered(true)}
+                onHoverEnd={() => setIsHovered(false)}
+            >
+                {children}
+            </motion.div>
+        </div>
+    );
+}
 
 export default function Skills({ skills = [] }: { skills: Skill[] }) {
     const appIcons = [
@@ -63,29 +182,16 @@ export default function Skills({ skills = [] }: { skills: Skill[] }) {
                             ease: 'easeOut',
                             delay: 0.2,
                         }}
-                        className="flex items-center gap-4"
+                        className="relative flex items-center gap-4"
                     >
-                        <h3 className="text-3xl font-semibold text-white">
+                        <h3 className="relative font-montserrat-alt text-3xl font-semibold text-white">
                             Skills
+                            <Underline className="absolute -right-2 -bottom-1 text-bshine" />
                         </h3>
-                        <img
-                            src="/assets/icons/slay_light.svg"
-                            alt="Slay dark decoration"
-                            className="h-8 w-8 dark:hidden"
-                        />
-                        <img
-                            src="/assets/icons/slay_dark.svg"
-                            alt="Slay light decoration"
-                            className="hidden h-8 w-8 dark:block"
-                        />
                     </motion.div>
                 </div>
 
                 <section>
-                    {/* Grid/Flex Container 
-                        Mobile: grid-cols-2 (2 item memanjang)
-                        Desktop (md): flex wrap menyebar seperti desain asli
-                    */}
                     <motion.div
                         variants={containerVariants}
                         initial="hidden"
@@ -105,9 +211,11 @@ export default function Skills({ skills = [] }: { skills: Skill[] }) {
                             >
                                 {/* Nama Skill */}
                                 {/* flex-1 ditambahkan agar nama skill memanjang mengambil sisa ruang di HP */}
-                                <span className="flex h-full flex-1 items-center truncate rounded-l-full border-y border-l border-white/50 bg-white/10 px-2 text-white md:backdrop-blur-sm md:px-3.5">
+                                <span className="flex h-full flex-1 items-center truncate rounded-l-full border-y border-l border-white/50 bg-white/10 px-2 text-white md:px-3.5 md:backdrop-blur-sm">
                                     <span className="mr-1.5 shrink-0 md:mr-2">
-                                        <i className={skills.icon ?? undefined}></i>
+                                        <i
+                                            className={skills.icon ?? undefined}
+                                        ></i>
                                     </span>
                                     <span className="truncate text-[10px] font-normal sm:text-xs">
                                         {skills.name_skills}
@@ -116,7 +224,7 @@ export default function Skills({ skills = [] }: { skills: Skill[] }) {
 
                                 {/* Level Skill */}
                                 {/* shrink-0 agar level tidak menyusut tertekan teks nama */}
-                                <span className="flex h-full shrink-0 items-center rounded-r-full border-y border-r border-white/50 bg-white/20 px-2 md:backdrop-blur-sm md:px-3.5">
+                                <span className="flex h-full shrink-0 items-center rounded-r-full border-y border-r border-white/50 bg-white/20 px-2 md:px-3.5 md:backdrop-blur-sm">
                                     <span className="text-[10px] font-medium text-white sm:text-xs">
                                         {skills.level}
                                     </span>
@@ -134,29 +242,16 @@ export default function Skills({ skills = [] }: { skills: Skill[] }) {
                 ref={appRef}
                 className="mt-14 overflow-hidden px-6 py-7 md:mt-10 md:px-15"
             >
-                <div className="flex flex-wrap py-4 md:py-7">
-                    <div className="flex w-full justify-start md:justify-end">
-                        <p className="font-regular text-sm text-white md:text-base">
-                            Application in use
-                        </p>
-                    </div>
-                </div>
-
-                <div className="mx-auto flex flex-col items-center overflow-hidden">
+                <div className="mx-auto flex flex-col items-center">
                     {/* Baris Animasi 1 */}
-                    <div className="flex w-full border border-x-transparent border-y-white/15 py-5 md:py-7">
-                        <motion.div
-                            className="flex w-max gap-12 md:gap-20 will-change-transform"
-                            animate={
-                                isAppInView
-                                    ? { x: ['0%', '-50%'] }
-                                    : { x: '0%' }
-                            }
-                            transition={{
-                                repeat: Infinity,
-                                duration: 40,
-                                ease: 'easeIn',
-                            }}
+                    <div className="relative mt-10 flex w-full border border-x-transparent border-y-white/15 py-8 md:py-12">
+                        <p className="absolute -top-3.5 right-0 bg-sectiondark px-4 text-xs font-light tracking-wide text-white italic md:text-base">
+                            Multimedia Apps
+                        </p>
+                        <MarqueeRow
+                            direction="left"
+                            speed={40}
+                            isAppInView={isAppInView}
                         >
                             <div className="flex gap-16 px-4 md:gap-25 md:px-6">
                                 {appIcons.map((Icon, index) => (
@@ -178,23 +273,18 @@ export default function Skills({ skills = [] }: { skills: Skill[] }) {
                                     </div>
                                 ))}
                             </div>
-                        </motion.div>
+                        </MarqueeRow>
                     </div>
 
                     {/* Baris Animasi 2 */}
-                    <div className="flex w-full border border-x-transparent border-y-white/15 py-5 md:py-7">
-                        <motion.div
-                            className="flex w-max gap-12 md:gap-20 will-change-transform"
-                            animate={
-                                isAppInView
-                                    ? { x: ['-50%', '0%'] }
-                                    : { x: '-50%' }
-                            }
-                            transition={{
-                                repeat: Infinity,
-                                duration: 45,
-                                ease: 'easeIn',
-                            }}
+                    <div className="relative flex w-full border border-x-transparent border-y-white/15 py-8 md:py-12">
+                        <p className="absolute -top-3.5 left-0 bg-sectiondark px-4 text-xs font-light tracking-wide text-white italic md:text-base">
+                            Coding Apps
+                        </p>
+                        <MarqueeRow
+                            direction="right"
+                            speed={45}
+                            isAppInView={isAppInView}
                         >
                             <div className="flex gap-16 px-4 md:gap-25 md:px-6">
                                 {appIcons.map((Icon, index) => (
@@ -216,7 +306,7 @@ export default function Skills({ skills = [] }: { skills: Skill[] }) {
                                     </div>
                                 ))}
                             </div>
-                        </motion.div>
+                        </MarqueeRow>
                     </div>
                 </div>
             </section>
