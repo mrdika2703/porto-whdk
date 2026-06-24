@@ -4,6 +4,7 @@ import {
     useScroll,
     useTransform,
     AnimatePresence,
+    delay,
 } from 'framer-motion';
 import { useState, useEffect } from 'react';
 import { useIsMobile } from '@/hooks/useIsMobile';
@@ -17,15 +18,8 @@ export default function PortfolioHero() {
     // Hook Scroll dari Framer Motion
     const { scrollY } = useScroll();
 
-    // Transformasi Parallax — tanpa blur di mobile (blur sangat berat)
     const heroY = useTransform(scrollY, [0, 500], [0, isMobile ? 100 : 200]);
     const heroOpacity = useTransform(scrollY, [0, 400], [1, 0]);
-    // Hanya blur di desktop, mobile pakai opacity saja
-    const heroBlur = useTransform(
-        scrollY,
-        [0, 400],
-        isMobile ? ['blur(0px)', 'blur(0px)'] : ['blur(0px)', 'blur(5px)'],
-    );
 
     // 1. Logika Timer untuk durasi teks Intro (3 Detik)
     useEffect(() => {
@@ -125,17 +119,13 @@ export default function PortfolioHero() {
           };
 
     // Cursor blink: matikan infinite di mobile setelah awal
-    const cursorAnimation = isMobile
-        ? { opacity: [0, 1] }
-        : { opacity: 1 };
+    const cursorAnimation = { opacity: [0, 1, 1, 1, 0] };
 
-    const cursorTransition = isMobile
-        ? { duration: 0.8 }
-        : {
-              repeat: Infinity,
-              duration: 0.8,
-              repeatType: 'reverse' as const,
-          };
+    const cursorTransition = {
+        repeat: Infinity,
+        duration: 1,
+        ease: 'easeInOut' as const,
+    };
 
     return (
         <>
@@ -147,13 +137,16 @@ export default function PortfolioHero() {
                     style={
                         isMobile
                             ? { y: heroY, opacity: heroOpacity }
-                            : { y: heroY, opacity: heroOpacity, filter: heroBlur }
+                            : {
+                                  y: heroY,
+                                  opacity: heroOpacity,
+                              }
                     }
                     // Tambahkan overflow-hidden juga di kontainer fixed
                     className="fixed top-0 left-0 flex min-h-screen w-full flex-col items-center justify-center text-tmain will-change-transform"
                 >
                     {/* --- SHAPE 1 (TOP RIGHT) --- */}
-                    <motion.div className="pointer-events-none absolute -top-[150px] -right-[150px] h-[400px] w-[400px] max-w-none mix-blend-screen sm:-top-[400px] sm:-right-[300px] sm:h-[900px] sm:w-[800px] md:-top-[800px] md:-right-[600px] md:h-[1812px] md:w-[1611px]">
+                    <motion.div className="pointer-events-none absolute -top-[200px] -right-[150px] h-[600px] w-[600px] max-w-none mix-blend-screen md:-top-[800px] md:-right-[600px] md:h-[1812px] md:w-[1611px]">
                         <motion.img
                             animate={shapeAnimation}
                             transition={shapeTransition1}
@@ -171,7 +164,7 @@ export default function PortfolioHero() {
                     </motion.div>
 
                     {/* --- SHAPE 2 (BOTTOM LEFT) --- */}
-                    <motion.div className="pointer-events-none absolute -bottom-[150px] -left-[100px] h-[350px] w-[350px] max-w-none mix-blend-screen sm:-bottom-[300px] sm:-left-[200px] sm:h-[700px] sm:w-[600px] md:-bottom-[600px] md:-left-[500px] md:h-[1355px] md:w-[1204px]">
+                    <motion.div className="pointer-events-none absolute -bottom-[100px] -left-[150px] h-[500px] w-[500px] max-w-none mix-blend-screen md:-bottom-[600px] md:-left-[500px] md:h-[1355px] md:w-[1204px]">
                         <motion.img
                             animate={shapeAnimation}
                             transition={shapeTransition2}
@@ -274,7 +267,7 @@ export default function PortfolioHero() {
                                         }}
                                         animate={textShadowAnimation}
                                         transition={textShadowTransition}
-                                        className="mb-4 px-2 text-4xl leading-tight font-bold sm:text-5xl md:mb-6 md:text-6xl"
+                                        className="mb-4 px-2 font-montserrat-alt text-[60px] leading-tight font-bold md:mb-6 md:text-6xl"
                                     >
                                         {typedText}
                                         <motion.span
@@ -295,7 +288,7 @@ export default function PortfolioHero() {
                                             duration: 0.8,
                                             delay: 0.6,
                                         }}
-                                        className="text-[10px] font-light tracking-widest text-tmain sm:text-xs md:text-sm"
+                                        className="text-xs font-light tracking-widest text-tmain md:text-sm"
                                     >
                                         Design Graphic | Photography | Website
                                         Development
@@ -314,9 +307,10 @@ export default function PortfolioHero() {
                                 animate={{ opacity: 1 }}
                                 exit={{ opacity: 0 }}
                                 transition={{ duration: 1, delay: 1.2 }}
-                                className="group absolute bottom-8 z-10 flex cursor-pointer flex-col items-center gap-2 md:bottom-12"
+                                className="group absolute bottom-25 z-10 flex cursor-pointer flex-col items-center gap-2 md:bottom-12"
                                 style={{
-                                    animation: 'gentleBounce 2s ease-in-out infinite',
+                                    animation:
+                                        'gentleBounce 2s ease-in-out infinite',
                                     willChange: 'transform',
                                 }}
                             >

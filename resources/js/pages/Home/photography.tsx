@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { BgPhotograph } from '@/components/bg-photograph';
 import { PhotoVideo } from './index';
 import { useIsMobile } from '@/hooks/useIsMobile';
+import { Underline } from '@/components/underline';
 
 export default function PhotoVideoSection({
     photovideos = [],
@@ -95,12 +96,9 @@ export default function PhotoVideoSection({
     };
 
     return (
-        <section
-            id="photo"
-            className="relative flex min-h-[500px] w-full flex-col items-center overflow-hidden py-16 pb-14 md:py-24 md:pb-32"
-        >
+        <section className="relative flex min-h-[500px] w-full flex-col items-center overflow-hidden py-16 pb-14 md:py-24 md:pb-32">
             {/* BgPhotograph SVG (71KB, 400 path) — skip di mobile untuk performa */}
-            <div className="absolute top-0 left-0 z-0 h-full w-full">
+            <div className="absolute top-0 left-0 z-1 h-full w-full">
                 {!isMobile && (
                     <BgPhotograph className="text-amber-900 dark:text-cyan-600" />
                 )}
@@ -118,22 +116,20 @@ export default function PhotoVideoSection({
                     transition={{ duration: 0.6, ease: 'easeOut', delay: 0.2 }}
                     className="relative z-20 flex flex-col items-center gap-2 text-center md:gap-4"
                 >
-                    <div className="relative inline-flex items-center gap-3 md:gap-4">
+                    <div className="relative flex w-full flex-wrap justify-center gap-1 font-montserrat-alt md:gap-4">
                         {/* Ukuran font disesuaikan di HP */}
-                        <h2 className="text-xl font-bold text-tmain sm:text-2xl md:text-3xl">
-                            Photography &{' '}
-                            <span className="text-bshine">Videography</span>
+                        <h2 className="font-regular relative flex text-3xl text-tmain md:text-3xl">
+                            Photography{' '}
+                            <span className="hidden font-bold text-bshine md:block">
+                                {' '}
+                                & Videography
+                                <Underline className="absolute -right-2 -bottom-2 text-bshine" />
+                            </span>
                         </h2>
-                        <img
-                            src="/assets/icons/slay_light.svg"
-                            alt="Decoration light"
-                            className="absolute top-0 -right-8 h-6 w-6 rotate-12 transform md:-right-10 md:h-8 md:w-8 dark:hidden"
-                        />
-                        <img
-                            src="/assets/icons/slay_dark.svg"
-                            alt="Decoration dark"
-                            className="absolute top-0 -right-8 hidden h-6 w-6 rotate-12 transform md:-right-10 md:h-8 md:w-8 dark:block"
-                        />
+                        <h2 className="relative text-3xl font-bold text-bshine md:hidden md:text-3xl">
+                            Videography
+                            <Underline className="absolute -right-2 -bottom-2 text-bshine" />
+                        </h2>
                     </div>
                     {/* Teks preview disembunyikan di layar HP paling kecil agar bersih */}
                     <p className="hidden text-sm font-light text-tmain sm:block md:text-base">
@@ -182,7 +178,7 @@ export default function PhotoVideoSection({
                         {/* Digeser agak ke dalam (left-1) untuk HP agar tombol bisa diklik */}
                         <button
                             onClick={() => scroll('left')}
-                            className="absolute top-1/2 left-1 z-30 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full bg-gray-400/60 text-white opacity-0 shadow-lg md:backdrop-blur-md transition-all duration-300 group-hover/nav:opacity-100 md:-left-4 md:h-12 md:w-12 md:-translate-x-6 dark:bg-black/60"
+                            className="absolute top-1/2 left-1 z-30 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full bg-gray-400/60 text-white opacity-0 shadow-lg transition-all duration-300 group-hover/nav:opacity-100 md:-left-4 md:h-12 md:w-12 md:-translate-x-6 md:backdrop-blur-md dark:bg-black/60"
                             aria-label="Previous"
                         >
                             <svg
@@ -216,7 +212,7 @@ export default function PhotoVideoSection({
                                     <div
                                         key={colIndex}
                                         // Lebar kolom responsif (220px di HP, membesar di tablet/desktop)
-                                        className="flex w-[120px] shrink-0 snap-start flex-col gap-4 sm:w-[260px] md:w-[320px] md:gap-6"
+                                        className="flex w-[180px] shrink-0 snap-start flex-col gap-4 md:w-[320px] md:gap-6"
                                     >
                                         {column.map((project) => (
                                             <div
@@ -251,7 +247,7 @@ export default function PhotoVideoSection({
                         {/* Tombol Panah Kanan */}
                         <button
                             onClick={() => scroll('right')}
-                            className="absolute top-1/2 right-1 z-30 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full bg-gray-400/60 text-white opacity-0 shadow-lg md:backdrop-blur-md transition-all duration-300 group-hover/nav:opacity-100 md:-right-4 md:h-12 md:w-12 md:translate-x-6 dark:bg-black/60"
+                            className="absolute top-1/2 right-1 z-30 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full bg-gray-400/60 text-white opacity-0 shadow-lg transition-all duration-300 group-hover/nav:opacity-100 md:-right-4 md:h-12 md:w-12 md:translate-x-6 md:backdrop-blur-md dark:bg-black/60"
                             aria-label="Next"
                         >
                             <svg
@@ -293,18 +289,14 @@ export default function PhotoVideoSection({
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
                         transition={{ duration: 0.1 }}
-                        className="fixed inset-0 z-50 flex items-center justify-center bg-black/35 p-4 backdrop-blur-md"
+                        className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
                         onClick={() => setSelectedPhotoVideo(null)}
                     >
                         <motion.div
-                            initial={{ scale: 0.9, opacity: 0, y: 20 }}
+                            initial={{ scale: 0.95, opacity: 0, y: 10 }}
                             animate={{ scale: 1, opacity: 1, y: 0 }}
-                            exit={{ scale: 0.9, opacity: 0, y: 20 }}
-                            transition={{
-                                type: 'spring',
-                                stiffness: 220,
-                                damping: 26,
-                            }}
+                            exit={{ scale: 0.95, opacity: 0, y: 10 }}
+                            transition={{ ease: 'easeOut', duration: 0.1 }}
                             className="relative flex w-full max-w-5xl flex-col overflow-hidden rounded-2xl border border-white/10 bg-main shadow-2xl backdrop-blur-md md:flex-row"
                             onClick={(e) => e.stopPropagation()}
                         >

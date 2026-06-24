@@ -2,6 +2,7 @@ import { useState, useRef } from 'react';
 import { Link } from '@inertiajs/react';
 import { motion, AnimatePresence } from 'framer-motion'; // Tambahkan import framer-motion
 import { Design } from './index';
+import { Underline } from '@/components/underline';
 
 const categories = ['Sosmed', 'Poster', 'Banner'];
 
@@ -65,10 +66,7 @@ export default function DesignGraphicSection({ designs = [] }: GrapichProps) {
     };
 
     return (
-        <section
-            id="design"
-            className="relative min-h-[500px] w-full overflow-hidden py-16 md:py-24"
-        >
+        <section className="relative min-h-[500px] w-full overflow-hidden py-16 md:py-24">
             <div className="mx-auto flex w-full max-w-7xl flex-col gap-10 px-4 sm:px-8 md:gap-12 md:px-12">
                 {/* --- HEADER DENGAN ANIMASI --- */}
                 <motion.div
@@ -78,26 +76,20 @@ export default function DesignGraphicSection({ designs = [] }: GrapichProps) {
                     transition={{ duration: 0.6, ease: 'easeOut', delay: 0.2 }}
                     className="relative z-20 flex flex-row items-center justify-between gap-4 md:gap-6"
                 >
-                    <div className="flex items-center gap-3 md:gap-4">
+                    <div className="flex w-full justify-center gap-3 md:justify-between md:gap-4">
                         {/* Ukuran teks disesuaikan untuk HP */}
-                        <h2 className="text-xl font-bold text-tmain sm:text-2xl md:text-3xl">
-                            Design <span className="text-bshine">Graphic</span>
+                        <h2 className="font-regular relative font-montserrat-alt text-4xl text-tmain md:text-3xl">
+                            Design{' '}
+                            <span className="font-bold text-bshine">
+                                Graphic
+                            </span>
+                            <Underline className="absolute -right-3 -bottom-1 text-bshine" />
                         </h2>
-                        <img
-                            src="/assets/icons/slay_light.svg"
-                            alt="Decoration light"
-                            className="h-6 w-6 rotate-12 transform text-blue-300 sm:h-8 sm:w-8 dark:hidden"
-                        />
-                        <img
-                            src="/assets/icons/slay_dark.svg"
-                            alt="Decoration dark"
-                            className="hidden h-6 w-6 rotate-12 transform text-blue-300 sm:h-8 sm:w-8 dark:block"
-                        />
+                        {/* Teks preview disembunyikan di layar sangat kecil agar tidak bertabrakan */}
+                        <p className="hidden text-sm font-light text-tmain sm:block md:text-base">
+                            Preview Project
+                        </p>
                     </div>
-                    {/* Teks preview disembunyikan di layar sangat kecil agar tidak bertabrakan */}
-                    <p className="hidden text-sm font-light text-tmain sm:block md:text-base">
-                        Preview Project
-                    </p>
                 </motion.div>
 
                 {/* --- MAIN CONTENT (Tabs & Slider) --- */}
@@ -133,7 +125,7 @@ export default function DesignGraphicSection({ designs = [] }: GrapichProps) {
                         {/* Posisi digeser ke dalam di HP (left-1) agar tidak terpotong, dan ukurannya diperkecil */}
                         <button
                             onClick={() => scroll('left')}
-                            className="absolute top-1/2 left-1 z-30 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full bg-gray-400/60 text-white opacity-0 shadow-lg md:backdrop-blur-sm transition-opacity group-hover/nav:opacity-100 md:-left-4 md:h-12 md:w-12 md:-translate-x-1/2 dark:bg-black/60"
+                            className="absolute top-1/2 left-1 z-30 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full bg-gray-400/60 text-white opacity-0 shadow-lg transition-opacity group-hover/nav:opacity-100 md:-left-4 md:h-12 md:w-12 md:-translate-x-1/2 md:backdrop-blur-sm dark:bg-black/60"
                             aria-label="Previous"
                         >
                             <svg
@@ -167,7 +159,7 @@ export default function DesignGraphicSection({ designs = [] }: GrapichProps) {
                                     <div
                                         key={colIndex}
                                         // Lebar kolom di HP diperkecil menjadi 220px agar nyaman dilihat
-                                        className="flex w-[120px] shrink-0 snap-start flex-col gap-4 sm:w-[160px] md:w-[320px] md:gap-6"
+                                        className="flex w-[180px] shrink-0 snap-start flex-col gap-4 sm:w-[180px] md:w-[320px] md:gap-6"
                                     >
                                         {column.map((designs) => (
                                             <div
@@ -178,7 +170,7 @@ export default function DesignGraphicSection({ designs = [] }: GrapichProps) {
                                                 }
                                             >
                                                 {/* Badge Hover */}
-                                                <div className="absolute top-2 right-2 z-10 rounded-full bg-bshine/90 px-3 py-1 opacity-0 md:backdrop-blur-md transition-opacity duration-300 group-hover/card:opacity-100 md:top-3 md:right-3 md:px-4 md:py-1.5 dark:bg-cyan-500/90">
+                                                <div className="absolute top-2 right-2 z-10 rounded-full bg-bshine/90 px-3 py-1 opacity-0 transition-opacity duration-300 group-hover/card:opacity-100 md:top-3 md:right-3 md:px-4 md:py-1.5 md:backdrop-blur-md dark:bg-cyan-500/90">
                                                     <span className="text-[10px] font-semibold tracking-wide text-white md:text-xs">
                                                         {designs.title}
                                                     </span>
@@ -203,7 +195,7 @@ export default function DesignGraphicSection({ designs = [] }: GrapichProps) {
                         {/* Tombol Kanan */}
                         <button
                             onClick={() => scroll('right')}
-                            className="absolute top-1/2 right-1 z-30 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full bg-gray-400/60 text-white opacity-0 shadow-lg md:backdrop-blur-sm transition-opacity group-hover/nav:opacity-100 md:-right-4 md:h-12 md:w-12 md:translate-x-1/2 dark:bg-black/60"
+                            className="absolute top-1/2 right-1 z-30 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full bg-gray-400/60 text-white opacity-0 shadow-lg transition-opacity group-hover/nav:opacity-100 md:-right-4 md:h-12 md:w-12 md:translate-x-1/2 md:backdrop-blur-sm dark:bg-black/60"
                             aria-label="Next"
                         >
                             <svg
@@ -245,18 +237,14 @@ export default function DesignGraphicSection({ designs = [] }: GrapichProps) {
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
                         transition={{ duration: 0.1 }}
-                        className="fixed inset-0 z-50 flex items-center justify-center bg-black/35 p-4 backdrop-blur-md"
+                        className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
                         onClick={() => setSelectedDesign(null)}
                     >
                         <motion.div
-                            initial={{ scale: 0.9, opacity: 0, y: 20 }}
+                            initial={{ scale: 0.95, opacity: 0, y: 10 }}
                             animate={{ scale: 1, opacity: 1, y: 0 }}
-                            exit={{ scale: 0.9, opacity: 0, y: 20 }}
-                            transition={{
-                                type: 'spring',
-                                stiffness: 220,
-                                damping: 26,
-                            }}
+                            exit={{ scale: 0.95, opacity: 0, y: 10 }}
+                            transition={{ ease: 'easeOut', duration: 0.1 }}
                             className="relative flex w-full max-w-5xl flex-col overflow-hidden rounded-2xl border border-white/10 bg-main shadow-2xl backdrop-blur-md md:flex-row"
                             onClick={(e) => e.stopPropagation()}
                         >

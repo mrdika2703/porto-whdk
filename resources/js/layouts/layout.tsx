@@ -11,7 +11,7 @@ export default function Layout({
     footers: Footers[];
 }) {
     return (
-        <div className="flex min-h-screen flex-col bg-main font-poppins transition-colors duration-200 ease-in">
+        <div className="flex min-h-screen flex-col bg-main font-inter transition-colors duration-200 ease-in">
             <Header />
 
             {/* Main content area */}

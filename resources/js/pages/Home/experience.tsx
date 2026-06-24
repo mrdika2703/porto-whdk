@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import type { Experience, Education } from './index';
+import { Underline } from '@/components/underline';
 
 // --- VARIAN ANIMASI FRAMER MOTION ---
 const containerVariants = {
@@ -45,8 +46,6 @@ export default function ExperienceEducationSection({
 }) {
     const [expandedExp, setExpandedExp] = useState<number | null>(null);
     const [expandedEdu, setExpandedEdu] = useState<number | null>(null);
-    const [hoveredExp, setHoveredExp] = useState<number | null>(null);
-    const [hoveredEdu, setHoveredEdu] = useState<number | null>(null);
 
     return (
         <section
@@ -67,22 +66,13 @@ export default function ExperienceEducationSection({
                     className="flex flex-row items-center justify-center gap-4 text-center md:justify-between md:text-left"
                 >
                     <div className="relative flex items-center">
-                        <h2 className="text-3xl font-bold tracking-wide">
+                        <h2 className="font-regular relative font-montserrat-alt text-3xl text-white">
                             My{' '}
-                            <span className="bg-bshine bg-clip-text text-transparent">
+                            <span className="font-bold text-bshine">
                                 Journey
                             </span>
+                            <Underline className="absolute -right-2 -bottom-2 text-bshine" />
                         </h2>
-                        <img
-                            src="/assets/icons/slay_light.svg"
-                            alt="Decoration light"
-                            className="absolute top-0 -right-12 h-8 w-8 rotate-12 transform dark:hidden"
-                        />
-                        <img
-                            src="/assets/icons/slay_dark.svg"
-                            alt="Decoration dark"
-                            className="absolute top-0 -right-12 hidden h-8 w-8 rotate-12 transform dark:block"
-                        />
                     </div>
                     <p className="hidden text-base font-light text-gray-300 md:block">
                         Experience & Education
@@ -127,7 +117,7 @@ export default function ExperienceEducationSection({
 
                                     {/* Konten Card */}
                                     <div
-                                        className="flex cursor-pointer flex-col gap-2 rounded-2xl border border-white/5 bg-white/[0.02] p-6 md:backdrop-blur-sm transition-all duration-300 group-hover:border-white/10 group-hover:bg-white/[0.04] group-hover:shadow-xl"
+                                        className="flex cursor-pointer flex-col gap-2 rounded-2xl border border-white/5 bg-white/[0.02] p-6 transition-all duration-300 group-hover:border-white/10 group-hover:bg-white/[0.04] group-hover:shadow-xl md:backdrop-blur-sm"
                                         onClick={() =>
                                             setExpandedExp(
                                                 expandedExp === item.id
@@ -135,8 +125,6 @@ export default function ExperienceEducationSection({
                                                     : item.id,
                                             )
                                         }
-                                        onMouseEnter={() => setHoveredExp(item.id)}
-                                        onMouseLeave={() => setHoveredExp(null)}
                                     >
                                         <span className="inline-block w-fit rounded-full bg-bshine/20 px-3 py-1 text-xs font-medium text-white/80">
                                             {getMonthYear(item.start_date)}
@@ -153,7 +141,7 @@ export default function ExperienceEducationSection({
                                                 className="inline-block"
                                                 animate={{
                                                     rotate:
-                                                        expandedExp === item.id || hoveredExp === item.id
+                                                        expandedExp === item.id
                                                             ? 180
                                                             : 0,
                                                 }}
@@ -166,7 +154,7 @@ export default function ExperienceEducationSection({
                                             {item.origin}
                                         </h5>
                                         <AnimatePresence>
-                                            {(expandedExp === item.id || hoveredExp === item.id) && (
+                                            {expandedExp === item.id && (
                                                 <motion.div
                                                     initial={{
                                                         height: 0,
@@ -234,7 +222,7 @@ export default function ExperienceEducationSection({
 
                                     {/* Konten Card */}
                                     <div
-                                        className="flex cursor-pointer flex-col gap-2 rounded-2xl border border-white/5 bg-white/[0.02] p-6 md:backdrop-blur-sm transition-all duration-300 group-hover:border-white/10 group-hover:bg-white/[0.04] group-hover:shadow-xl"
+                                        className="flex cursor-pointer flex-col gap-2 rounded-2xl border border-white/5 bg-white/[0.02] p-6 transition-all duration-300 group-hover:border-white/10 group-hover:bg-white/[0.04] group-hover:shadow-xl md:backdrop-blur-sm"
                                         onClick={() =>
                                             setExpandedEdu(
                                                 expandedEdu === item.id
@@ -242,8 +230,6 @@ export default function ExperienceEducationSection({
                                                     : item.id,
                                             )
                                         }
-                                        onMouseEnter={() => setHoveredEdu(item.id)}
-                                        onMouseLeave={() => setHoveredEdu(null)}
                                     >
                                         <span className="inline-block w-fit rounded-full bg-bshine/20 px-3 py-1 text-xs font-medium text-white/80">
                                             {getMonthYear(item.start_date)}
@@ -260,7 +246,7 @@ export default function ExperienceEducationSection({
                                                 className="inline-block"
                                                 animate={{
                                                     rotate:
-                                                        expandedEdu === item.id || hoveredEdu === item.id
+                                                        expandedEdu === item.id
                                                             ? 180
                                                             : 0,
                                                 }}
@@ -273,7 +259,7 @@ export default function ExperienceEducationSection({
                                             {item.origin}
                                         </h5>
                                         <AnimatePresence>
-                                            {(expandedEdu === item.id || hoveredEdu === item.id) && (
+                                            {expandedEdu === item.id && (
                                                 <motion.div
                                                     initial={{
                                                         height: 0,
