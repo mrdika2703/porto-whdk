@@ -90,12 +90,12 @@ export default function About({ profiles = [] }: { profiles: Profile[] }) {
                     {/* Background Foto Gunung */}
                     <div className="pointer-events-none absolute top-0 left-0 h-[582px] w-full overflow-hidden opacity-40">
                         <img
-                            src="/assets/background/beach.jpg"
+                            src="/assets/background/beach.webp"
                             alt="Beach Background"
                             className="h-full w-full object-cover dark:hidden"
                         />
                         <img
-                            src="/assets/background/mountain.jpg"
+                            src="/assets/background/mountain.webp"
                             alt="Mountain Background"
                             className="hidden h-full w-full object-cover dark:block"
                         />

@@ -288,7 +288,7 @@ export default function PortfolioHero() {
                                             duration: 0.8,
                                             delay: 0.6,
                                         }}
-                                        className="text-[10px] font-light tracking-widest text-tmain sm:text-xs md:text-sm"
+                                        className="text-xs font-light tracking-widest text-tmain md:text-sm"
                                     >
                                         Design Graphic | Photography | Website
                                         Development
