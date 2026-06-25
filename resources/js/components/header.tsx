@@ -93,6 +93,7 @@ export default function Header() {
             'design',
             'photo',
             'website',
+            'other',
             'contact-footer',
         ];
         sections.forEach((id) => {
@@ -104,7 +105,7 @@ export default function Header() {
     }, []);
 
     // Helper untuk mengecek apakah salah satu isi Portofolio sedang aktif
-    const isPortfolioActive = ['design', 'photo', 'website'].includes(
+    const isPortfolioActive = ['design', 'photo', 'website', 'other'].includes(
         activeSection,
     );
 
@@ -278,6 +279,17 @@ export default function Header() {
                             className={`px-4 py-2.5 text-xs hover:bg-gray-100 hover:text-hbshine md:px-5 md:py-3 md:text-sm ${activeSection === 'website' ? 'bg-gray-50 font-semibold text-hbshine' : 'text-gray-700'}`}
                         >
                             Websites
+                        </a>
+                        <a
+                            href="#other"
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                setActiveSection('other');
+                                setIsDropdownOpen(false);
+                            }}
+                            className={`px-4 py-2.5 text-xs hover:bg-gray-100 hover:text-hbshine md:px-5 md:py-3 md:text-sm ${activeSection === 'other' ? 'bg-gray-50 font-semibold text-hbshine' : 'text-gray-700'}`}
+                        >
+                            Other
                         </a>
                     </div>
                 </div>

@@ -1,6 +1,7 @@
 import React, { ReactNode } from 'react';
 import Header from '@/components/header';
 import Footer from '@/components/footer';
+import FloatingNavButton from '@/components/floating-nav-button';
 import { Footers } from '../pages/Home';
 
 export default function Layout({
@@ -18,6 +19,7 @@ export default function Layout({
             <main className="flex-grow">{children}</main>
 
             <Footer footers={footers} />
+            <FloatingNavButton />
         </div>
     );
 }

@@ -120,7 +120,7 @@ export default function About({ profiles = [] }: { profiles: Profile[] }) {
                             </div>
 
                             {/* Ukuran font teks animasi disesuaikan di HP */}
-                            <h2 className="flex min-h-[80px] items-center justify-center text-3xl leading-tight font-medium text-tmain sm:min-h-[60px] sm:text-4xl md:text-5xl">
+                            <h2 className="flex min-h-[80px] items-center justify-center font-montserrat-alt text-3xl leading-tight font-medium tracking-tighter text-tmain sm:min-h-[60px] sm:text-4xl md:text-5xl">
                                 <span className="inline-block max-w-full text-center">
                                     {renderTypedText()}
                                     <motion.span
