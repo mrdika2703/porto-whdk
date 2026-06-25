@@ -176,7 +176,11 @@ export default function Home({
                             )}
                         </div>
 
-                        <div id="photo" className="bg-bphotograph" ref={photoSection.ref}>
+                        <div
+                            id="photo"
+                            className="bg-bphotograph"
+                            ref={photoSection.ref}
+                        >
                             {photoSection.shouldRender ? (
                                 <PhotoVideoSection photovideos={photovideos} />
                             ) : (
@@ -192,7 +196,7 @@ export default function Home({
                             )}
                         </div>
 
-                        <div ref={otherSection.ref}>
+                        <div id="other" ref={otherSection.ref}>
                             {otherSection.shouldRender ? (
                                 <OtherSection others={others} />
                             ) : (

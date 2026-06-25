@@ -67,14 +67,11 @@ export default function OtherSection({ others }: { others: Other[] }) {
     };
 
     return (
-        <section
-            id="other"
-            className="relative w-full overflow-hidden py-16 text-white"
-        >
+        <section className="relative w-full overflow-hidden py-16 text-white">
             {/* Glow */}
             <div className="pointer-events-none absolute top-1/2 left-1/4 hidden h-[400px] w-[400px] -translate-y-1/2 rounded-full bg-bshine/5 blur-[120px] md:block"></div>
 
-            <div className="mx-auto flex w-full max-w-[1440px] flex-col gap-8 px-6 md:px-12">
+            <div className="mx-auto flex w-full max-w-[1440px] flex-col gap-5 px-6 md:px-12">
                 {/* Header */}
                 <motion.div
                     initial={{ opacity: 0, y: 30 }}
@@ -83,26 +80,32 @@ export default function OtherSection({ others }: { others: Other[] }) {
                     transition={{ duration: 0.6, delay: 0.2 }}
                     className="flex flex-col items-center gap-5 text-center md:flex-row md:justify-between md:text-left"
                 >
-                    <div className="relative flex items-center">
-                        <h2 className="font-regular relative font-montserrat-alt text-3xl tracking-wide text-tmain">
+                    <div className="flex flex-col gap-2">
+                        <h2 className="font-regular relative items-center font-montserrat-alt text-3xl tracking-wide text-tmain">
                             Other{' '}
                             <span className="font-bold text-bshine">
                                 Creations
                             </span>
+                            <Underline className="absolute -right-2 -bottom-1 text-bshine" />
                         </h2>
-                        <Underline className="absolute -right-2 -bottom-1 text-bshine" />
+
+                        <p
+                            className={`font-regular text-center text-xs text-gray-500 transition-opacity duration-100 md:text-left md:text-sm ${isOpen ? 'absolute opacity-0' : 'opacity-100'}`}
+                        >
+                            {others.map((item) => item.category).join(', ')}
+                        </p>
                     </div>
 
                     <motion.button
                         onClick={() => setIsOpen(!isOpen)}
                         whileHover={{ scale: 1.02 }}
                         whileTap={{ scale: 0.95 }}
-                        className="group flex items-center gap-2 rounded-full border border-bshine/50 bg-bshine/10 px-6 py-2.5 text-sm font-medium text-bshine transition-all duration-300 hover:border-bshine hover:bg-bshine/20 hover:shadow-[0_0_20px_rgba(192,104,0,0.3)] md:backdrop-blur-sm"
+                        className="group flex items-center gap-2 rounded-full border border-bshine/50 bg-bshine/10 px-6 py-2.5 text-sm font-medium text-bshine transition-all duration-300 hover:border-bshine hover:bg-bshine/20 md:backdrop-blur-sm"
                     >
                         <i
                             className={`fa-solid ${isOpen ? 'fa-xmark' : 'fa-folder-open'} transition-transform duration-300`}
                         />
-                        {isOpen ? 'Tutup Lainnya' : 'Lihat Lainnya'}
+                        {isOpen ? 'Tutup' : 'Lihat'} {others.length}
                         <motion.i
                             className="fa-solid fa-chevron-down text-xs text-bshine"
                             animate={{ rotate: isOpen ? 180 : 0 }}

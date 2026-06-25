@@ -7,7 +7,33 @@ import {
     useMotionValue,
     animate,
 } from 'framer-motion';
-import { PhotoshopIcon, LightroomIcon } from '@/components/icons';
+import {
+    PhotoshopIcon,
+    LightroomIcon,
+    AfterEffctIcon,
+    IllustratorIcon,
+    CanvaIcon,
+    CorellIcon,
+    PremiereIcon,
+    OfficeIcon,
+    ExcelIcon,
+    PowerpointIcon,
+    FigmaIcon,
+    TailwindIcon,
+    GitIcon,
+    GithubIcon,
+    ReactIcon,
+    PhpIcon,
+    JsIcon,
+    LaravelIcon,
+    HtmlIcon,
+    CssIcon,
+    MysqlIcon,
+    PgsqlIcon,
+    PythonIcon,
+    NodeJsIcon,
+    ApiIcon,
+} from '@/components/icons';
 import { Skill } from './index';
 import { Underline } from '@/components/underline';
 
@@ -124,15 +150,34 @@ function MarqueeRow({
 }
 
 export default function Skills({ skills = [] }: { skills: Skill[] }) {
-    const appIcons = [
+    const MultiIcons = [
         PhotoshopIcon,
         LightroomIcon,
-        PhotoshopIcon,
-        LightroomIcon,
-        PhotoshopIcon,
-        LightroomIcon,
-        PhotoshopIcon,
-        LightroomIcon,
+        AfterEffctIcon,
+        IllustratorIcon,
+        CanvaIcon,
+        CorellIcon,
+        PremiereIcon,
+        OfficeIcon,
+        ExcelIcon,
+        PowerpointIcon,
+    ];
+
+    const CodeIcons = [
+        FigmaIcon,
+        TailwindIcon,
+        GitIcon,
+        GithubIcon,
+        ReactIcon,
+        PhpIcon,
+        JsIcon,
+        LaravelIcon,
+        HtmlIcon,
+        CssIcon,
+        MysqlIcon,
+        PgsqlIcon,
+        PythonIcon,
+        NodeJsIcon,
     ];
 
     const appRef = useRef(null);
@@ -240,7 +285,7 @@ export default function Skills({ skills = [] }: { skills: Skill[] }) {
             ========================================= */}
             <section
                 ref={appRef}
-                className="mt-14 overflow-hidden px-6 py-7 md:mt-10 md:px-15"
+                className="mt-14 overflow-hidden px-6 py-7 md:mt-25 md:px-15"
             >
                 <div className="mx-auto flex flex-col items-center">
                     {/* Baris Animasi 1 */}
@@ -253,21 +298,21 @@ export default function Skills({ skills = [] }: { skills: Skill[] }) {
                             speed={40}
                             isAppInView={isAppInView}
                         >
-                            <div className="flex gap-16 px-4 md:gap-25 md:px-6">
-                                {appIcons.map((Icon, index) => (
+                            <div className="flex gap-16 px-4 md:gap-30 md:px-6">
+                                {MultiIcons.map((Icon, index) => (
                                     <div
                                         key={`set1-${index}`}
-                                        className="flex size-16 items-center justify-center md:size-24"
+                                        className="flex size-8 items-center justify-center md:size-16"
                                     >
                                         <Icon />
                                     </div>
                                 ))}
                             </div>
-                            <div className="flex gap-16 px-4 md:gap-25 md:px-6">
-                                {appIcons.map((Icon, index) => (
+                            <div className="flex gap-16 px-4 md:gap-30 md:px-6">
+                                {MultiIcons.map((Icon, index) => (
                                     <div
                                         key={`set2-${index}`}
-                                        className="flex size-16 items-center justify-center md:size-24"
+                                        className="flex size-8 items-center justify-center md:size-16"
                                     >
                                         <Icon />
                                     </div>
@@ -286,21 +331,21 @@ export default function Skills({ skills = [] }: { skills: Skill[] }) {
                             speed={45}
                             isAppInView={isAppInView}
                         >
-                            <div className="flex gap-16 px-4 md:gap-25 md:px-6">
-                                {appIcons.map((Icon, index) => (
+                            <div className="pointer-none flex gap-16 px-4 md:gap-30 md:px-6">
+                                {CodeIcons.map((Icon, index) => (
                                     <div
                                         key={`set3-${index}`}
-                                        className="flex size-16 items-center justify-center md:size-24"
+                                        className="flex size-8 items-center justify-center md:size-16"
                                     >
                                         <Icon />
                                     </div>
                                 ))}
                             </div>
-                            <div className="flex gap-16 px-4 md:gap-25 md:px-6">
-                                {appIcons.map((Icon, index) => (
+                            <div className="pointer-none flex gap-16 px-4 md:gap-30 md:px-6">
+                                {CodeIcons.map((Icon, index) => (
                                     <div
                                         key={`set4-${index}`}
-                                        className="flex size-16 items-center justify-center md:size-24"
+                                        className="flex size-8 items-center justify-center md:size-16"
                                     >
                                         <Icon />
                                     </div>

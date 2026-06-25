@@ -50,7 +50,7 @@ export default function ExperienceEducationSection({
     return (
         <section
             id="journey"
-            className="relative overflow-hidden pb-24 text-white"
+            className="relative overflow-hidden pt-15 pb-35 text-white"
         >
             {/* Latar Belakang Glow Ambient — hidden di mobile untuk performa */}
             <div className="pointer-events-none absolute top-1/4 left-0 hidden h-[500px] w-[500px] -translate-x-1/2 rounded-full bg-bshine/10 blur-[120px] md:block"></div>

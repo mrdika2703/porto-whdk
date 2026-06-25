@@ -18,10 +18,10 @@ export default function CertificateSection({
     const [activeImg, setActiveImg] = useState<string | null>(null);
 
     const softSkills = certificates.filter((cert) =>
-        cert.category.toLowerCase().includes('soft'),
+        cert.category.includes('Soft Skill'),
     );
-    const hardSkills = certificates.filter(
-        (cert) => !cert.category.toLowerCase().includes('soft'),
+    const hardSkills = certificates.filter((cert) =>
+        cert.category.includes('Hard Skill'),
     );
 
     const openModal = (cert: Certificate) => {
@@ -82,15 +82,12 @@ export default function CertificateSection({
                                     <li
                                         key={cert.id}
                                         onClick={() => openModal(cert)}
-                                        className="group flex w-full cursor-pointer items-center justify-between gap-3 rounded-xl border border-transparent bg-transparent px-3 py-3 transition-all duration-300 hover:border-bshine/30 hover:bg-white/[0.04]"
+                                        className="group flex w-full cursor-pointer items-center justify-between gap-3 rounded-xl border border-transparent bg-transparent px-2 py-2 transition-all duration-300 hover:border-bshine/30 hover:bg-white/[0.04]"
                                     >
                                         <div className="flex items-center gap-3 overflow-hidden">
                                             <div className="flex flex-col overflow-hidden">
                                                 <span className="truncate text-sm font-semibold text-tmain transition-colors duration-300 group-hover:text-bshine">
                                                     {cert.title}
-                                                </span>
-                                                <span className="text-[11px] text-gray-400">
-                                                    {cert.category}
                                                 </span>
                                             </div>
                                         </div>
