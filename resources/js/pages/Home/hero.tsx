@@ -129,8 +129,6 @@ export default function PortfolioHero() {
 
     return (
         <>
-            <Head title="Portofolio - Wahyu Adam Anandika" />
-
             {/* Tambahan overflow-hidden agar elemen SVG absolut tidak tembus/scroll ke samping */}
             <div id="home" className="bg-bg-sec relative min-h-screen w-full">
                 <motion.div

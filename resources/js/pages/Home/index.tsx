@@ -150,6 +150,7 @@ export default function Home({
 
     return (
         <>
+            <Head title="Portofolio - Wahyu Adam Anandika" />
             <Layout footers={footers}>
                 <div className="relative w-full overflow-x-hidden">
                     <div className="relative z-0">
