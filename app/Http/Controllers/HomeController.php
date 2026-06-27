@@ -27,7 +27,6 @@ class HomeController extends Controller
 
         // Cek apakah pengunjung ini sudah terekam pada hari yang sama
         $hasVisitedToday = Visitor::where('ip_address', $ip)
-            ->where('user_agent', $userAgent)
             ->whereDate('visited_at', Carbon::today())
             ->exists();
 
