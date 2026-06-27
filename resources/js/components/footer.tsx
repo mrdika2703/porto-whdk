@@ -74,8 +74,8 @@ export default function Footer({ footers }: { footers: Footers[] }) {
                     </div>
 
                     {/* Perbaikan ikon: menggunakan flex agar tidak bertabrakan dengan teks jika teks panjang dan turun baris */}
-                    <div className="flex items-start text-white transition-colors md:items-center">
-                        <span className="mt-0.5 mr-3 w-5 text-center text-base tracking-wide md:mt-0 md:mr-4 md:text-lg">
+                    <div className="flex items-center text-white transition-colors">
+                        <span className="mr-3 w-5 text-center text-base tracking-wide md:mt-0 md:mr-4 md:text-lg">
                             <i className="fa-brands fa-whatsapp"></i>
                         </span>
                         <span className="text-xs font-light tracking-wide break-all sm:text-sm">
@@ -83,8 +83,8 @@ export default function Footer({ footers }: { footers: Footers[] }) {
                         </span>
                     </div>
 
-                    <div className="flex items-start text-white transition-colors md:items-center">
-                        <span className="mt-0.5 mr-3 w-5 text-center text-base tracking-wide md:mt-0 md:mr-4 md:text-lg">
+                    <div className="flex items-center text-white transition-colors">
+                        <span className="mr-3 w-5 text-center text-base tracking-wide md:mt-0 md:mr-4 md:text-lg">
                             {/* Icon Instagram yang benar */}
                             <i className="fa-brands fa-instagram"></i>
                         </span>
@@ -93,8 +93,8 @@ export default function Footer({ footers }: { footers: Footers[] }) {
                         </span>
                     </div>
 
-                    <div className="flex items-start text-white transition-colors md:items-center">
-                        <span className="mt-0.5 mr-3 w-5 text-center text-base tracking-wide md:mt-0 md:mr-4 md:text-lg">
+                    <div className="flex items-center text-white transition-colors">
+                        <span className="mr-3 w-5 text-center text-base tracking-wide md:mt-0 md:mr-4 md:text-lg">
                             <i className="fa-regular fa-envelope"></i>
                         </span>
                         <span className="text-xs font-light tracking-wide break-all sm:text-sm">
@@ -102,8 +102,8 @@ export default function Footer({ footers }: { footers: Footers[] }) {
                         </span>
                     </div>
 
-                    <div className="flex items-start text-white transition-colors md:items-center">
-                        <span className="mt-0.5 mr-3 w-5 text-center text-base tracking-wide md:mt-0 md:mr-4 md:text-lg">
+                    <div className="flex items-center text-white transition-colors">
+                        <span className="mr-3 w-5 text-center text-base tracking-wide md:mt-0 md:mr-4 md:text-lg">
                             <i className="fa-brands fa-linkedin-in"></i>
                         </span>
                         <span className="text-xs font-light tracking-wide sm:text-sm">

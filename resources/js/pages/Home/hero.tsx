@@ -202,9 +202,9 @@ export default function PortfolioHero() {
                                     className="flex flex-col items-center gap-2 md:gap-3"
                                 >
                                     <span className="text-xs font-light tracking-[0.2em] text-tmain/70 uppercase md:text-sm">
-                                        Made With
+                                        Build With
                                     </span>
-                                    <h1 className="text-lg font-semibold text-tmain sm:text-xl md:text-4xl">
+                                    <h1 className="hidden font-montserrat-alt text-3xl font-semibold text-tmain md:block md:text-5xl">
                                         Laravel 13{' '}
                                         <span className="mx-1 text-bshine md:mx-2">
                                             |
@@ -214,6 +214,11 @@ export default function PortfolioHero() {
                                             |
                                         </span>{' '}
                                         Full Tailwind
+                                    </h1>
+                                    <h1 className="flex flex-col gap-5 text-center font-montserrat-alt text-3xl font-semibold text-tmain md:hidden">
+                                        <p className="mx-auto">Laravel 13</p>
+                                        <p className="mx-auto">React</p>
+                                        <p className="mx-auto">Full Tailwind</p>
                                     </h1>
                                 </motion.div>
                             ) : (
@@ -267,7 +272,7 @@ export default function PortfolioHero() {
                                         }}
                                         animate={textShadowAnimation}
                                         transition={textShadowTransition}
-                                        className="mb-4 px-2 font-montserrat-alt text-[60px] leading-tight font-bold md:mb-6 md:text-6xl"
+                                        className="mb-4 px-2 font-montserrat-alt text-[55px] leading-tight font-bold md:mb-6 md:text-6xl"
                                     >
                                         {typedText}
                                         <motion.span
@@ -307,7 +312,7 @@ export default function PortfolioHero() {
                                 animate={{ opacity: 1 }}
                                 exit={{ opacity: 0 }}
                                 transition={{ duration: 1, delay: 1.2 }}
-                                className="group absolute bottom-25 z-10 flex cursor-pointer flex-col items-center gap-2 md:bottom-12"
+                                className="group absolute bottom-20 z-10 flex cursor-pointer flex-col items-center gap-2 md:bottom-12"
                                 style={{
                                     animation:
                                         'gentleBounce 2s ease-in-out infinite',

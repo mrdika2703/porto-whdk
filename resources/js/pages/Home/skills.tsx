@@ -252,25 +252,25 @@ export default function Skills({ skills = [] }: { skills: Skill[] }) {
                                 variants={itemVariants}
                                 key={index}
                                 // w-full di HP agar mengisi kolom grid, w-auto di Desktop agar memadat
-                                className="relative flex h-[34px] w-full items-center gap-0 md:h-8 md:w-auto"
+                                className="relative flex h-[30px] w-full items-center gap-0 md:h-8 md:w-auto"
                             >
                                 {/* Nama Skill */}
                                 {/* flex-1 ditambahkan agar nama skill memanjang mengambil sisa ruang di HP */}
                                 <span className="flex h-full flex-1 items-center truncate rounded-l-full border-y border-l border-white/50 bg-white/10 px-2 text-white md:px-3.5 md:backdrop-blur-sm">
-                                    <span className="mr-1.5 shrink-0 md:mr-2">
+                                    <span className="mr-1.5 hidden shrink-0 md:mr-2 md:block">
                                         <i
                                             className={skills.icon ?? undefined}
                                         ></i>
                                     </span>
-                                    <span className="truncate text-[10px] font-normal sm:text-xs">
+                                    <span className="shrink-0 text-[9px] font-normal">
                                         {skills.name_skills}
                                     </span>
                                 </span>
 
                                 {/* Level Skill */}
                                 {/* shrink-0 agar level tidak menyusut tertekan teks nama */}
-                                <span className="flex h-full shrink-0 items-center rounded-r-full border-y border-r border-white/50 bg-white/20 px-2 md:px-3.5 md:backdrop-blur-sm">
-                                    <span className="text-[10px] font-medium text-white sm:text-xs">
+                                <span className="flex h-full items-center rounded-r-full border-y border-r border-white/50 bg-white/20 px-2 md:px-3.5 md:backdrop-blur-sm">
+                                    <span className="font-regular truncate text-[9px] text-white md:font-medium">
                                         {skills.level}
                                     </span>
                                 </span>
@@ -298,7 +298,7 @@ export default function Skills({ skills = [] }: { skills: Skill[] }) {
                             speed={40}
                             isAppInView={isAppInView}
                         >
-                            <div className="flex gap-16 px-4 md:gap-30 md:px-6">
+                            <div className="flex gap-10 px-4 md:gap-30 md:px-6">
                                 {MultiIcons.map((Icon, index) => (
                                     <div
                                         key={`set1-${index}`}
@@ -308,7 +308,7 @@ export default function Skills({ skills = [] }: { skills: Skill[] }) {
                                     </div>
                                 ))}
                             </div>
-                            <div className="flex gap-16 px-4 md:gap-30 md:px-6">
+                            <div className="flex gap-10 px-4 md:gap-30 md:px-6">
                                 {MultiIcons.map((Icon, index) => (
                                     <div
                                         key={`set2-${index}`}
@@ -331,7 +331,7 @@ export default function Skills({ skills = [] }: { skills: Skill[] }) {
                             speed={45}
                             isAppInView={isAppInView}
                         >
-                            <div className="pointer-none flex gap-16 px-4 md:gap-30 md:px-6">
+                            <div className="pointer-none flex gap-10 px-4 md:gap-30 md:px-6">
                                 {CodeIcons.map((Icon, index) => (
                                     <div
                                         key={`set3-${index}`}
@@ -341,7 +341,7 @@ export default function Skills({ skills = [] }: { skills: Skill[] }) {
                                     </div>
                                 ))}
                             </div>
-                            <div className="pointer-none flex gap-16 px-4 md:gap-30 md:px-6">
+                            <div className="pointer-none flex gap-10 px-4 md:gap-30 md:px-6">
                                 {CodeIcons.map((Icon, index) => (
                                     <div
                                         key={`set4-${index}`}

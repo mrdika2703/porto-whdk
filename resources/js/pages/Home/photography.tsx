@@ -119,8 +119,8 @@ export default function PhotoVideoSection({
                     <div className="relative flex w-full flex-wrap justify-center gap-1 font-montserrat-alt md:gap-4">
                         {/* Ukuran font disesuaikan di HP */}
                         <h2 className="font-regular relative flex text-3xl text-tmain md:text-3xl">
-                            Photography{' '}
-                            <span className="hidden font-bold text-bshine md:block">
+                            Photography
+                            <span className="ml-2.5 hidden font-bold text-bshine md:block">
                                 {' '}
                                 & Videography
                                 <Underline className="absolute -right-2 -bottom-2 text-bshine" />

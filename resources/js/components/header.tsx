@@ -226,23 +226,25 @@ export default function Header() {
                             }}
                         />
                     )}
-                    <span className="relative z-10 text-xs font-medium md:text-sm">
-                        Portofolio
-                    </span>
-                    <svg
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        viewBox="0 0 24 24"
-                        className={`relative z-10 mt-0.5 h-3 w-3 transition-transform md:mt-1 md:h-3.5 md:w-3.5 ${isDropdownOpen ? 'rotate-180' : ''}`}
-                    >
-                        <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            d="M19 9l-7 7-7-7"
-                        />
-                    </svg>
 
+                    <span className="flex items-center gap-0.5">
+                        <span className="relative z-10 text-xs font-medium md:text-sm">
+                            Portofolio
+                        </span>
+                        <svg
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            viewBox="0 0 24 24"
+                            className={`relative z-10 h-3 w-3 transition-transform md:mt-0.5 ${isDropdownOpen ? 'rotate-180' : ''}`}
+                        >
+                            <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                d="M19 9l-7 7-7-7"
+                            />
+                        </svg>
+                    </span>
                     {/* Menu Dropdown */}
                     <div
                         className={`absolute top-full left-1/2 mt-2 flex w-40 -translate-x-1/2 flex-col overflow-hidden rounded-xl border border-gray-100 bg-white shadow-xl transition-all duration-300 md:w-48 md:rounded-2xl ${isDropdownOpen ? 'visible opacity-100' : 'invisible opacity-0'}`}
@@ -298,7 +300,7 @@ export default function Header() {
             {/* Tombol Tema (Sun / Moon Icon) */}
             <button
                 onClick={toggleTheme}
-                className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-white/50 bg-white/20 text-bsecond shadow-lg backdrop-blur-md transition-all hover:bg-white/30 sm:h-10 sm:w-10 md:h-[52px] md:w-[52px] dark:border-white/50 dark:text-white"
+                className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-white/80 bg-white/50 text-bsecond shadow-lg backdrop-blur-md transition-all hover:bg-white/70 sm:h-10 sm:w-10 md:h-[52px] md:w-[52px] dark:border-white/50 dark:bg-white/10 dark:text-white dark:hover:bg-white/20"
             >
                 {isDark ? (
                     <svg
@@ -331,7 +333,7 @@ export default function Header() {
             {/* Tombol Chat */}
             <a
                 href="#contact-footer"
-                className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full ${activeSection === 'contact-footer' ? 'border-2 border-bshine/50 bg-bshine/10' : 'border border-white/50 bg-white/20 dark:border-white/50'} text-bsecond shadow-lg backdrop-blur-md transition-all hover:bg-white/30 sm:h-10 sm:w-10 md:h-[52px] md:w-[52px] dark:text-white`}
+                className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full ${activeSection === 'contact-footer' ? 'border-2 border-bshine/50 bg-bshine/10' : 'border border-white/80 bg-white/50 dark:border-white/50 dark:bg-white/10'} text-bsecond shadow-lg backdrop-blur-md transition-all hover:bg-white/70 sm:h-10 sm:w-10 md:h-[52px] md:w-[52px] dark:text-white dark:hover:bg-white/20`}
             >
                 <svg
                     fill="currentColor"

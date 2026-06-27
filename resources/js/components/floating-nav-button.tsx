@@ -94,7 +94,7 @@ export default function FloatingNavButton() {
             id="floating-nav-btn"
             onClick={handleClick}
             aria-label={isAtFooter ? 'Scroll to top' : 'Scroll to next section'}
-            className={`fixed right-5 bottom-12 z-50 flex h-12 w-12 items-center justify-center rounded-full border border-tmain/20 bg-white/10 backdrop-blur-md transition-all duration-300 ease-in-out hover:bg-white/25 md:right-8 md:bottom-8 md:h-14 md:w-14 ${
+            className={`fixed right-5 bottom-12 z-50 flex h-12 w-12 items-center justify-center rounded-full border border-tmain/20 bg-white/50 backdrop-blur-md transition-all duration-300 ease-in-out hover:bg-white/75 md:right-8 md:bottom-8 md:h-14 md:w-14 ${
                 visible
                     ? 'translate-y-0 opacity-100'
                     : 'pointer-events-none translate-y-2 opacity-0'
