@@ -5,19 +5,44 @@ import { Profile } from './index';
 import { useIsMobile } from '@/hooks/useIsMobile';
 import { Underline } from '@/components/underline';
 
-export default function About({ profiles = [] }: { profiles: Profile[] }) {
+export default function About({
+    profiles = [],
+    viewMode = 'All',
+}: {
+    profiles: Profile[];
+    viewMode?: 'All' | 'Multimedia' | 'Programming';
+}) {
     const profile = profiles[0];
     const isMobile = useIsMobile();
 
+    const currentPassion = viewMode === 'Multimedia'
+        ? (profile?.passion_multimedia || profile?.passion)
+        : viewMode === 'Programming'
+        ? (profile?.passion_coding || profile?.passion)
+        : profile?.passion;
+
+    const currentAbout = viewMode === 'Multimedia'
+        ? (profile?.description_multimedia || profile?.about)
+        : viewMode === 'Programming'
+        ? (profile?.description_coding || profile?.about)
+        : profile?.about;
+
     const words = [
         `I'm ${profile?.nickname || 'Nickname'}`,
-        profile?.passion || 'Passion',
+        currentPassion || 'Passion',
     ];
     const [currentWordIndex, setCurrentWordIndex] = useState(0);
     const [displayedText, setDisplayedText] = useState('');
     const [isDeleting, setIsDeleting] = useState(false);
     const typingRef = useRef(null);
     const isTypingInView = useInView(typingRef, { once: true, amount: 0.5 });
+
+    // Reset typing effect when viewMode changes
+    useEffect(() => {
+        setCurrentWordIndex(0);
+        setDisplayedText('');
+        setIsDeleting(false);
+    }, [viewMode]);
 
     useEffect(() => {
         if (!isTypingInView) return;
@@ -49,7 +74,7 @@ export default function About({ profiles = [] }: { profiles: Profile[] }) {
         }
 
         return () => clearTimeout(timer);
-    }, [displayedText, isDeleting, currentWordIndex, isTypingInView]);
+    }, [displayedText, isDeleting, currentWordIndex, isTypingInView, words]);
 
     const renderTypedText = () => {
         if (currentWordIndex === 0) {
@@ -156,7 +181,7 @@ export default function About({ profiles = [] }: { profiles: Profile[] }) {
                                     {profile?.name || 'Nama Lengkap'}
                                 </h2>
                                 <p className="font-regular max-w-2xl text-sm leading-relaxed text-tmain md:text-lg lg:w-[70%]">
-                                    {profile?.about || 'About'}
+                                    {currentAbout || 'About'}
                                 </p>
                                 <div className="mt-4 flex flex-wrap gap-4 md:mt-8 md:gap-5">
                                     <a

@@ -51,6 +51,7 @@ class SkillController extends Controller
             'category'    => 'required|in:Soft Skill,Hard Skill',
             'level'       => 'nullable|in:Beginner,Intermediate,Expert',
             'icon'        => 'nullable|string|max:255',
+            'viewmode'    => 'nullable|in:All,Programming,Multimedia',
         ]);
 
         $validated['profile_id'] = $profile->id;
@@ -77,6 +78,7 @@ class SkillController extends Controller
             'category'    => 'required|in:Soft Skill,Hard Skill',
             'level'       => 'nullable|in:Beginner,Intermediate,Expert',
             'icon'        => 'nullable|string|max:255',
+            'viewmode'    => 'nullable|in:All,Programming,Multimedia',
         ]);
 
         $skill->update($validated);

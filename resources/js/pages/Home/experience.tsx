@@ -67,12 +67,23 @@ const renderDescription = (text: string | null) => {
 export default function ExperienceEducationSection({
     experiences,
     educations,
+    viewMode = 'All',
 }: {
     experiences: Experience[];
     educations: Education[];
+    viewMode?: 'All' | 'Multimedia' | 'Programming';
 }) {
     const [expandedExp, setExpandedExp] = useState<number | null>(null);
     const [expandedEdu, setExpandedEdu] = useState<number | null>(null);
+
+    // Filter experiences based on viewMode
+    const filteredExperiences = experiences.filter(
+        (exp) =>
+            viewMode === 'All' ||
+            !exp.viewmode ||
+            exp.viewmode === 'All' ||
+            exp.viewmode === viewMode
+    );
 
     return (
         <section
@@ -96,7 +107,7 @@ export default function ExperienceEducationSection({
                         <h2 className="font-regular relative font-montserrat-alt text-3xl text-white">
                             My{' '}
                             <span className="font-bold text-bshine">
-                                Journey
+                                Journey {viewMode !== 'All' ? `- ${viewMode}` : ''}
                             </span>
                             <Underline className="absolute -right-2 -bottom-2 text-bshine" />
                         </h2>
@@ -122,7 +133,7 @@ export default function ExperienceEducationSection({
                     >
                         <h3 className="flex items-center gap-3 text-xl font-semibold text-white">
                             <i className="fa-solid fa-briefcase text-bshine"></i>{' '}
-                            Experience
+                            Experience {viewMode !== 'All' ? `- ${viewMode}` : ''}
                         </h3>
 
                         <div className="relative pl-4 md:pl-6">
@@ -133,7 +144,7 @@ export default function ExperienceEducationSection({
                             />
 
                             {/* Item Timeline */}
-                            {experiences.map((item) => (
+                            {filteredExperiences.map((item) => (
                                 <motion.div
                                     key={item.id}
                                     variants={itemVariants}

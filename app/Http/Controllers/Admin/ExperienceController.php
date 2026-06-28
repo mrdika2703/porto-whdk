@@ -53,6 +53,7 @@ class ExperienceController extends Controller
             'start_date' => 'required|date',
             'end_date' => 'nullable|date',
             'duration' => 'nullable|string|max:255',
+            'viewmode'    => 'nullable|in:All,Programming,Multimedia',
         ]);
 
         $validated['profile_id'] = $profile->id;
@@ -82,6 +83,7 @@ class ExperienceController extends Controller
             'start_date' => 'required|date',
             'end_date' => 'nullable|date',
             'duration' => 'nullable|string|max:255',
+            'viewmode'    => 'nullable|in:All,Programming,Multimedia',
         ]);
 
         $experience->update($validated);

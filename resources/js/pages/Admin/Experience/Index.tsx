@@ -11,6 +11,7 @@ interface ExperienceData {
     status: string;
     start_date: string;
     end_date: string | null;
+    viewmode: 'All' | 'Programming' | 'Multimedia';
 }
 
 interface IndexProps {
@@ -102,6 +103,7 @@ export default function Index({ experience, hasProfile, flash }: IndexProps) {
                             <th className="px-4 py-3">Asal</th>
                             <th className="px-4 py-3">Satus</th>
                             <th className="px-4 py-3">Tanggal Mulai</th>
+                            <th className="px-4 py-3">View Mode</th>
                             <th className="px-4 py-3 text-right">Aksi</th>
                         </tr>
                     </thead>
@@ -130,6 +132,13 @@ export default function Index({ experience, hasProfile, flash }: IndexProps) {
                                             className={`rounded-md border px-2 py-1 text-xs font-semibold ${item.end_date !== null ? 'border-emerald-500/20 bg-emerald-500/10 text-emerald-500' : 'border-blue-500/20 bg-blue-500/10 text-blue-500'}`}
                                         >
                                             {item.start_date}
+                                        </span>
+                                    </td>
+                                    <td className="px-4 py-3">
+                                        <span
+                                            className={`rounded-md border px-2 py-1 text-xs font-semibold ${item.viewmode === 'Programming' ? 'border-blue-500/20 bg-blue-500/10 text-blue-500' : item.viewmode === 'Multimedia' ? 'border-purple-500/20 bg-purple-500/10 text-purple-500' : 'border-orange-500/20 bg-orange-500/10 text-orange-500'}`}
+                                        >
+                                            {item.viewmode}
                                         </span>
                                     </td>
                                     <td className="px-4 py-3 text-right">

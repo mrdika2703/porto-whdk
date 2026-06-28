@@ -10,9 +10,13 @@ interface ProfileData {
     name: string;
     nickname: string;
     passion: string;
+    passion_coding: string | null;
+    passion_multimedia: string | null;
     about: string;
     caption: string;
     description: string | null;
+    description_coding: string | null;
+    description_multimedia: string | null;
     ttl: string;
     photo: string | File | null;
     whatsapp: string;
@@ -38,9 +42,13 @@ export default function Index({ profile, flash }: IndexProps) {
             name: profile?.name ?? '',
             nickname: profile?.nickname ?? '',
             passion: profile?.passion ?? '',
+            passion_coding: profile?.passion_coding ?? '',
+            passion_multimedia: profile?.passion_multimedia ?? '',
             about: profile?.about ?? '',
             caption: profile?.caption ?? '',
             description: profile?.description ?? '',
+            description_coding: profile?.description_coding ?? '',
+            description_multimedia: profile?.description_multimedia ?? '',
             ttl: profile?.ttl ?? '',
             photo: null, // Dikirim ulang hanya jika user mengganti file foto
             whatsapp: profile?.whatsapp ?? '',
@@ -284,6 +292,52 @@ export default function Index({ profile, flash }: IndexProps) {
                                     </p>
                                 )}
                             </div>
+
+                            <div>
+                                <label className="mb-2 block text-xs font-semibold tracking-wider text-tmuted uppercase">
+                                    Passion (MULTIMEDIA)
+                                </label>
+                                <input
+                                    type="text"
+                                    value={data.passion_multimedia || ''}
+                                    onChange={(e) =>
+                                        setData(
+                                            'passion_multimedia',
+                                            e.target.value,
+                                        )
+                                    }
+                                    className="w-full rounded-xl border border-bmain/30 bg-main/40 px-4 py-3 text-sm text-htext transition-colors focus:border-accent focus:outline-none dark:text-tmain"
+                                    placeholder="Contoh: Web Developer & UI Designer"
+                                />
+                                {errors.passion_multimedia && (
+                                    <p className="mt-1 text-xs text-red-500">
+                                        {errors.passion_multimedia}
+                                    </p>
+                                )}
+                            </div>
+
+                            <div>
+                                <label className="mb-2 block text-xs font-semibold tracking-wider text-tmuted uppercase">
+                                    Passion (CODING)
+                                </label>
+                                <input
+                                    type="text"
+                                    value={data.passion_coding || ''}
+                                    onChange={(e) =>
+                                        setData(
+                                            'passion_coding',
+                                            e.target.value,
+                                        )
+                                    }
+                                    className="w-full rounded-xl border border-bmain/30 bg-main/40 px-4 py-3 text-sm text-htext transition-colors focus:border-accent focus:outline-none dark:text-tmain"
+                                    placeholder="Contoh: Web Developer & UI Designer"
+                                />
+                                {errors.passion_coding && (
+                                    <p className="mt-1 text-xs text-red-500">
+                                        {errors.passion_coding}
+                                    </p>
+                                )}
+                            </div>
                         </div>
                     </div>
 
@@ -332,6 +386,52 @@ export default function Index({ profile, flash }: IndexProps) {
                                 {errors.about && (
                                     <p className="mt-1 text-xs text-red-500">
                                         {errors.about}
+                                    </p>
+                                )}
+                            </div>
+
+                            <div>
+                                <label className="mb-2 block text-xs font-semibold tracking-wider text-tmuted uppercase">
+                                    Deskripsi Multimedia
+                                </label>
+                                <textarea
+                                    rows={3}
+                                    value={data.description_multimedia || ''}
+                                    onChange={(e) =>
+                                        setData(
+                                            'description_multimedia',
+                                            e.target.value,
+                                        )
+                                    }
+                                    className="w-full resize-none rounded-xl border border-bmain/30 bg-main/40 px-4 py-3 text-sm text-htext transition-colors focus:border-accent focus:outline-none dark:text-tmain"
+                                    placeholder="Jelaskan ringkasan diri Anda..."
+                                />
+                                {errors.description_multimedia && (
+                                    <p className="mt-1 text-xs text-red-500">
+                                        {errors.description_multimedia}
+                                    </p>
+                                )}
+                            </div>
+
+                            <div>
+                                <label className="mb-2 block text-xs font-semibold tracking-wider text-tmuted uppercase">
+                                    Deskripsi Coding
+                                </label>
+                                <textarea
+                                    rows={3}
+                                    value={data.description_coding || ''}
+                                    onChange={(e) =>
+                                        setData(
+                                            'description_coding',
+                                            e.target.value,
+                                        )
+                                    }
+                                    className="w-full resize-none rounded-xl border border-bmain/30 bg-main/40 px-4 py-3 text-sm text-htext transition-colors focus:border-accent focus:outline-none dark:text-tmain"
+                                    placeholder="Jelaskan ringkasan diri Anda..."
+                                />
+                                {errors.description_coding && (
+                                    <p className="mt-1 text-xs text-red-500">
+                                        {errors.description_coding}
                                     </p>
                                 )}
                             </div>

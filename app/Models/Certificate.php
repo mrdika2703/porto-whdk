@@ -15,6 +15,7 @@ class Certificate extends Model
         'end_date',
         'url_1',
         'url_2',
+        'viewmode',
     ];
     public function profile()
     {

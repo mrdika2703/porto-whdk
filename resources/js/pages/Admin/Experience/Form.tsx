@@ -12,6 +12,7 @@ interface ExperienceData {
     start_date: string;
     end_date: string | null;
     duration: string | null;
+    viewmode: 'All' | 'Programming' | 'Multimedia';
 }
 
 interface FormProps {
@@ -22,17 +23,17 @@ const formatDurationDisplay = (durationStr: string | null) => {
     if (!durationStr) return '';
     const match = durationStr.match(/^(\d+)\s+hari$/);
     if (!match) return durationStr;
-    
+
     const days = parseInt(match[1], 10);
     if (days < 30) {
         return `${days} hari`;
     }
-    
+
     const months = Math.round(days / 30);
     if (months < 12) {
         return `${months} bulan`;
     }
-    
+
     const years = parseFloat((days / 365).toFixed(1));
     return `${years} tahun`;
 };
@@ -50,6 +51,7 @@ export default function Form({ experience }: FormProps) {
             start_date: experience?.start_date ?? '',
             end_date: experience?.end_date ?? null,
             duration: experience?.duration ?? null,
+            viewmode: experience?.viewmode ?? 'All',
         });
 
     const handleStatusChange = (statusVal: 'Selesai' | 'Sekarang') => {
@@ -79,7 +81,10 @@ export default function Form({ experience }: FormProps) {
         }
 
         const start = new Date(data.start_date);
-        const end = (data.status === 'Sekarang' || data.end_date === null) ? new Date() : new Date(data.end_date);
+        const end =
+            data.status === 'Sekarang' || data.end_date === null
+                ? new Date()
+                : new Date(data.end_date);
 
         // Reset hours for precise day count
         start.setHours(0, 0, 0, 0);
@@ -249,6 +254,37 @@ export default function Form({ experience }: FormProps) {
                                 )}
                             </div>
                         </div>
+
+                        <div>
+                            <label className="mb-2 block text-xs font-semibold tracking-wider text-tmuted uppercase">
+                                View Mode
+                            </label>
+                            <select
+                                value={data.viewmode}
+                                onChange={(e) =>
+                                    setData(
+                                        'viewmode',
+                                        e.target.value as
+                                            | 'All'
+                                            | 'Programming'
+                                            | 'Multimedia',
+                                    )
+                                }
+                                className="w-full rounded-xl border border-bmain/30 bg-main/40 px-4 py-3 text-sm text-htext transition-colors focus:border-accent focus:outline-none dark:text-tmain"
+                            >
+                                <option value="" disabled>
+                                    Pilih Kategori...
+                                </option>
+                                <option value="All">All</option>
+                                <option value="Programming">Programming</option>
+                                <option value="Multimedia">Multimedia</option>
+                            </select>
+                            {errors.viewmode && (
+                                <p className="mt-1 text-xs text-red-500">
+                                    {errors.viewmode}
+                                </p>
+                            )}
+                        </div>
                     </div>
 
                     <div className="space-y-4 rounded-2xl border border-bmain/20 bg-bcard p-6 shadow-sm">
@@ -316,7 +352,7 @@ export default function Form({ experience }: FormProps) {
                                 disabled={data.status === 'Sekarang'}
                                 className={`w-full rounded-xl border border-bmain/30 px-4 py-3 text-sm text-htext transition-colors focus:border-accent focus:outline-none dark:text-tmain ${
                                     data.status === 'Sekarang'
-                                        ? 'bg-main/20 cursor-not-allowed opacity-50'
+                                        ? 'cursor-not-allowed bg-main/20 opacity-50'
                                         : 'bg-main/40'
                                 }`}
                             />
@@ -335,7 +371,7 @@ export default function Form({ experience }: FormProps) {
                                 type="text"
                                 value={formatDurationDisplay(data.duration)}
                                 readOnly
-                                className="w-full rounded-xl border border-bmain/30 bg-main/20 px-4 py-3 text-sm text-htext/60 transition-colors focus:outline-none cursor-not-allowed dark:text-tmain/60"
+                                className="w-full cursor-not-allowed rounded-xl border border-bmain/30 bg-main/20 px-4 py-3 text-sm text-htext/60 transition-colors focus:outline-none dark:text-tmain/60"
                                 placeholder="Dihitung otomatis berdasarkan tanggal..."
                             />
                             <div className="mt-1 flex items-center justify-between">

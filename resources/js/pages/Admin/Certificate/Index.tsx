@@ -8,6 +8,7 @@ interface CertificateData {
     category: string;
     title: string;
     url_1: string;
+    viewmode: 'All' | 'Programming' | 'Multimedia';
 }
 
 interface IndexProps {
@@ -99,6 +100,7 @@ export default function Index({ certificates, hasProfile, flash }: IndexProps) {
                             <th className="px-4 py-3">Media</th>
                             <th className="px-4 py-3">Judul Karya</th>
                             <th className="px-4 py-3">Kategori</th>
+                            <th className="px-4 py-3">View Mode</th>
                             <th className="px-4 py-3 text-right">Aksi</th>
                         </tr>
                     </thead>
@@ -124,6 +126,13 @@ export default function Index({ certificates, hasProfile, flash }: IndexProps) {
                                     <td className="px-4 py-3">
                                         <span className="rounded-md border border-accent/20 bg-accent/10 px-2 py-1 text-xs text-accent">
                                             {item.category}
+                                        </span>
+                                    </td>
+                                    <td className="px-4 py-3">
+                                        <span
+                                            className={`rounded-md border px-2 py-1 text-xs font-semibold ${item.viewmode === 'Programming' ? 'border-blue-500/20 bg-blue-500/10 text-blue-500' : item.viewmode === 'Multimedia' ? 'border-purple-500/20 bg-purple-500/10 text-purple-500' : 'border-orange-500/20 bg-orange-500/10 text-orange-500'}`}
+                                        >
+                                            {item.viewmode}
                                         </span>
                                     </td>
                                     <td className="px-4 py-3 text-right">

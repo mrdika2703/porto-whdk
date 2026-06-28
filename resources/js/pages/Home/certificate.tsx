@@ -11,19 +11,32 @@ const getMonthYear = (dateString: string | null) => {
 
 export default function CertificateSection({
     certificates,
+    viewMode = 'All',
 }: {
     certificates: Certificate[];
+    viewMode?: 'All' | 'Multimedia' | 'Programming';
 }) {
     const [selectedCert, setSelectedCert] = useState<Certificate | null>(null);
     const [activeImg, setActiveImg] = useState<string | null>(null);
 
+    const filteredCertificates = useMemo(
+        () => certificates.filter(
+            (cert) =>
+                viewMode === 'All' ||
+                !cert.viewmode ||
+                cert.viewmode === 'All' ||
+                cert.viewmode === viewMode
+        ),
+        [certificates, viewMode]
+    );
+
     const softSkills = useMemo(
-        () => certificates.filter((cert) => cert.category.includes('Soft Skill')),
-        [certificates],
+        () => filteredCertificates.filter((cert) => cert.category.includes('Soft Skill')),
+        [filteredCertificates],
     );
     const hardSkills = useMemo(
-        () => certificates.filter((cert) => cert.category.includes('Hard Skill')),
-        [certificates],
+        () => filteredCertificates.filter((cert) => cert.category.includes('Hard Skill')),
+        [filteredCertificates],
     );
 
     const openModal = (cert: Certificate) => {
@@ -52,7 +65,7 @@ export default function CertificateSection({
                         <h2 className="font-regular relative font-montserrat-alt text-3xl text-tmain">
                             My{' '}
                             <span className="font-bold text-bshine">
-                                Certificates
+                                Certificates {viewMode !== 'All' ? `- ${viewMode}` : ''}
                             </span>
                             <Underline className="absolute -right-1 -bottom-1 text-bshine" />
                         </h2>

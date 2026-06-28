@@ -9,6 +9,7 @@ interface SkillData {
     category: 'Soft Skill' | 'Hard Skill' | '';
     level: 'Beginner' | 'Intermediate' | 'Expert' | '';
     icon: string;
+    viewmode: 'All' | 'Programming' | 'Multimedia';
 }
 
 interface FormProps {
@@ -25,6 +26,7 @@ export default function Form({ skill }: FormProps) {
             category: skill?.category ?? 'Hard Skill',
             level: skill?.level ?? 'Intermediate',
             icon: skill?.icon ?? '',
+            viewmode: skill?.viewmode ?? 'All',
         },
     );
 
@@ -233,6 +235,37 @@ export default function Form({ skill }: FormProps) {
                         {errors.icon && (
                             <p className="mt-1 text-xs text-red-500">
                                 {errors.icon}
+                            </p>
+                        )}
+                    </div>
+
+                    <div>
+                        <label className="mb-2 block text-xs font-semibold tracking-wider text-tmuted uppercase">
+                            View Mode
+                        </label>
+                        <select
+                            value={data.viewmode}
+                            onChange={(e) =>
+                                setData(
+                                    'viewmode',
+                                    e.target.value as
+                                        | 'All'
+                                        | 'Programming'
+                                        | 'Multimedia',
+                                )
+                            }
+                            className="w-full rounded-xl border border-bmain/30 bg-main/40 px-4 py-3 text-sm text-htext transition-colors focus:border-accent focus:outline-none dark:text-tmain"
+                        >
+                            <option value="" disabled>
+                                Pilih Kategori...
+                            </option>
+                            <option value="All">All</option>
+                            <option value="Programming">Programming</option>
+                            <option value="Multimedia">Multimedia</option>
+                        </select>
+                        {errors.viewmode && (
+                            <p className="mt-1 text-xs text-red-500">
+                                {errors.viewmode}
                             </p>
                         )}
                     </div>

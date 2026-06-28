@@ -1,34 +1,47 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useCallback, useRef, useEffect } from 'react';
 
 /**
  * Hook untuk lazy-render section berat.
- * Section hanya di-mount saat mendekati viewport (dengan rootMargin).
- * Sekali terlihat, section tetap di-mount (tidak di-unmount).
+ * Menggunakan callback ref agar IntersectionObserver dapat dilekatkan ulang
+ * ketika komponen unmount/remount (misal akibat pergantian viewMode).
  */
-export function useLazySection(rootMargin = '200px'): {
-    ref: React.RefObject<HTMLDivElement | null>;
-    shouldRender: boolean;
-} {
-    const ref = useRef<HTMLDivElement | null>(null);
+export function useLazySection(rootMargin = '200px') {
     const [shouldRender, setShouldRender] = useState(false);
+    const observerRef = useRef<IntersectionObserver | null>(null);
 
-    useEffect(() => {
-        const el = ref.current;
-        if (!el || shouldRender) return;
+    const refCallback = useCallback((node: HTMLDivElement | null) => {
+        // Putuskan koneksi observer sebelumnya jika ada
+        if (observerRef.current) {
+            observerRef.current.disconnect();
+            observerRef.current = null;
+        }
+
+        // Jika node kosong atau section sudah dirender, abaikan
+        if (!node || shouldRender) return;
 
         const observer = new IntersectionObserver(
             ([entry]) => {
                 if (entry.isIntersecting) {
                     setShouldRender(true);
                     observer.disconnect();
+                    observerRef.current = null;
                 }
             },
             { rootMargin },
         );
 
-        observer.observe(el);
-        return () => observer.disconnect();
+        observer.observe(node);
+        observerRef.current = observer;
     }, [rootMargin, shouldRender]);
 
-    return { ref, shouldRender };
+    // Bersihkan observer saat komponen utama benar-benar unmount
+    useEffect(() => {
+        return () => {
+            if (observerRef.current) {
+                observerRef.current.disconnect();
+            }
+        };
+    }, []);
+
+    return { ref: refCallback, shouldRender };
 }

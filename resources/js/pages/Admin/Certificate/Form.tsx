@@ -12,15 +12,14 @@ interface CertificateData {
     end_date: string | null;
     url_1: string | File | null;
     url_2: string | File | null;
+    viewmode: 'All' | 'Programming' | 'Multimedia';
 }
 
 interface FormProps {
     certificates?: CertificateData;
 }
 
-export default function Form({
-    certificates,
-}: FormProps) {
+export default function Form({ certificates }: FormProps) {
     const isEdit = !!certificates;
 
     const { data, setData, post, processing, errors } =
@@ -32,6 +31,7 @@ export default function Form({
             end_date: certificates?.end_date ?? null,
             url_1: null,
             url_2: null,
+            viewmode: certificates?.viewmode ?? 'All',
         });
 
     const [previews, setPreviews] = useState<{ [key: string]: string | null }>({
@@ -40,7 +40,6 @@ export default function Form({
     });
 
     const [modalMedia, setModalMedia] = useState<string | null>(null);
-
 
     useEffect(() => {
         return () => {
@@ -112,7 +111,6 @@ export default function Form({
         }
     };
 
-
     return (
         <LayoutAdmin>
             <Head title={isEdit ? 'Edit Sertifikat' : 'Tambah Sertifikat'} />
@@ -182,12 +180,8 @@ export default function Form({
                                 <option value="" disabled>
                                     Pilih Kategori...
                                 </option>
-                                <option value="Hard Skill">
-                                    Hard Skill
-                                </option>
-                                <option value="Soft Skill">
-                                    Soft Skill
-                                </option>
+                                <option value="Hard Skill">Hard Skill</option>
+                                <option value="Soft Skill">Soft Skill</option>
                             </select>
                             {errors.category && (
                                 <p className="mt-1 text-xs text-red-500">
@@ -250,6 +244,37 @@ export default function Form({
                             {errors.end_date && (
                                 <p className="mt-1 text-xs text-red-500">
                                     {errors.end_date}
+                                </p>
+                            )}
+                        </div>
+
+                        <div>
+                            <label className="mb-2 block text-xs font-semibold tracking-wider text-tmuted uppercase">
+                                View Mode
+                            </label>
+                            <select
+                                value={data.viewmode}
+                                onChange={(e) =>
+                                    setData(
+                                        'viewmode',
+                                        e.target.value as
+                                            | 'All'
+                                            | 'Programming'
+                                            | 'Multimedia',
+                                    )
+                                }
+                                className="w-full rounded-xl border border-bmain/30 bg-main/40 px-4 py-3 text-sm text-htext transition-colors focus:border-accent focus:outline-none dark:text-tmain"
+                            >
+                                <option value="" disabled>
+                                    Pilih Kategori...
+                                </option>
+                                <option value="All">All</option>
+                                <option value="Programming">Programming</option>
+                                <option value="Multimedia">Multimedia</option>
+                            </select>
+                            {errors.viewmode && (
+                                <p className="mt-1 text-xs text-red-500">
+                                    {errors.viewmode}
                                 </p>
                             )}
                         </div>

@@ -179,9 +179,24 @@ const CodeIcons = [
     NodeJsIcon,
 ];
 
-export default function Skills({ skills = [] }: { skills: Skill[] }) {
+export default function Skills({
+    skills = [],
+    viewMode = 'All',
+}: {
+    skills: Skill[];
+    viewMode?: 'All' | 'Multimedia' | 'Programming';
+}) {
     const appRef = useRef(null);
     const isAppInView = useInView(appRef, { margin: '0px 0px -50px 0px' });
+
+    // Filter skills based on viewMode
+    const filteredSkills = skills.filter(
+        (skill) =>
+            viewMode === 'All' ||
+            !skill.viewmode ||
+            skill.viewmode === 'All' ||
+            skill.viewmode === viewMode
+    );
 
     // --- VARIAN ANIMASI UNTUK SKILLS ---
     const containerVariants: Variants = {
@@ -230,7 +245,7 @@ export default function Skills({ skills = [] }: { skills: Skill[] }) {
                         className="relative flex items-center gap-4"
                     >
                         <h3 className="relative font-montserrat-alt text-3xl font-semibold text-white">
-                            Skills
+                            Skills {viewMode !== 'All' ? `- ${viewMode}` : ''}
                             <Underline className="absolute -right-2 -bottom-1 text-bshine" />
                         </h3>
                     </motion.div>
@@ -247,7 +262,7 @@ export default function Skills({ skills = [] }: { skills: Skill[] }) {
                         }}
                         className="mt-4 grid grid-cols-2 gap-3 md:flex md:flex-wrap md:items-center md:justify-between md:gap-x-2 md:gap-y-7 md:after:w-[20%] md:after:flex-auto md:after:content-['']"
                     >
-                        {skills.map((skills, index) => (
+                        {filteredSkills.map((skills, index) => (
                             <motion.div
                                 variants={itemVariants}
                                 key={index}
@@ -297,70 +312,74 @@ export default function Skills({ skills = [] }: { skills: Skill[] }) {
             >
                 <div className="mx-auto flex flex-col items-center">
                     {/* Baris Animasi 1 */}
-                    <div className="relative mt-10 flex w-full border border-x-transparent border-y-white/15 py-8 md:py-12">
-                        <p className="absolute -top-3.5 right-0 bg-sectiondark px-4 text-xs font-light tracking-wide text-white italic md:text-base">
-                            Multimedia Apps
-                        </p>
-                        <MarqueeRow
-                            direction="left"
-                            speed={40}
-                            isAppInView={isAppInView}
-                        >
-                            <div className="flex gap-10 px-4 md:gap-30 md:px-6">
-                                {MultiIcons.map((Icon, index) => (
-                                    <div
-                                        key={`set1-${index}`}
-                                        className="flex size-8 items-center justify-center md:size-16"
-                                    >
-                                        <Icon />
-                                    </div>
-                                ))}
-                            </div>
-                            <div className="flex gap-10 px-4 md:gap-30 md:px-6">
-                                {MultiIcons.map((Icon, index) => (
-                                    <div
-                                        key={`set2-${index}`}
-                                        className="flex size-8 items-center justify-center md:size-16"
-                                    >
-                                        <Icon />
-                                    </div>
-                                ))}
-                            </div>
-                        </MarqueeRow>
-                    </div>
+                    {(viewMode === 'All' || viewMode === 'Multimedia') && (
+                        <div className="relative mt-10 flex w-full border border-x-transparent border-y-white/15 py-8 md:py-12">
+                            <p className="absolute -top-3.5 right-0 bg-sectiondark px-4 text-xs font-light tracking-wide text-white italic md:text-base">
+                                Multimedia Apps
+                            </p>
+                            <MarqueeRow
+                                direction="left"
+                                speed={40}
+                                isAppInView={isAppInView}
+                            >
+                                <div className="flex gap-10 px-4 md:gap-30 md:px-6">
+                                    {MultiIcons.map((Icon, index) => (
+                                        <div
+                                            key={`set1-${index}`}
+                                            className="flex size-8 items-center justify-center md:size-16"
+                                        >
+                                            <Icon />
+                                        </div>
+                                    ))}
+                                </div>
+                                <div className="flex gap-10 px-4 md:gap-30 md:px-6">
+                                    {MultiIcons.map((Icon, index) => (
+                                        <div
+                                            key={`set2-${index}`}
+                                            className="flex size-8 items-center justify-center md:size-16"
+                                        >
+                                            <Icon />
+                                        </div>
+                                    ))}
+                                </div>
+                            </MarqueeRow>
+                        </div>
+                    )}
 
                     {/* Baris Animasi 2 */}
-                    <div className="relative flex w-full border border-x-transparent border-y-white/15 py-8 md:py-12">
-                        <p className="absolute -top-3.5 left-0 bg-sectiondark px-4 text-xs font-light tracking-wide text-white italic md:text-base">
-                            Coding Apps
-                        </p>
-                        <MarqueeRow
-                            direction="right"
-                            speed={45}
-                            isAppInView={isAppInView}
-                        >
-                            <div className="pointer-none flex gap-10 px-4 md:gap-30 md:px-6">
-                                {CodeIcons.map((Icon, index) => (
-                                    <div
-                                        key={`set3-${index}`}
-                                        className="flex size-8 items-center justify-center md:size-16"
-                                    >
-                                        <Icon />
-                                    </div>
-                                ))}
-                            </div>
-                            <div className="pointer-none flex gap-10 px-4 md:gap-30 md:px-6">
-                                {CodeIcons.map((Icon, index) => (
-                                    <div
-                                        key={`set4-${index}`}
-                                        className="flex size-8 items-center justify-center md:size-16"
-                                    >
-                                        <Icon />
-                                    </div>
-                                ))}
-                            </div>
-                        </MarqueeRow>
-                    </div>
+                    {(viewMode === 'All' || viewMode === 'Programming') && (
+                        <div className="relative flex w-full border border-x-transparent border-y-white/15 py-8 md:py-12">
+                            <p className="absolute -top-3.5 left-0 bg-sectiondark px-4 text-xs font-light tracking-wide text-white italic md:text-base">
+                                Coding Apps
+                            </p>
+                            <MarqueeRow
+                                direction="right"
+                                speed={45}
+                                isAppInView={isAppInView}
+                            >
+                                <div className="pointer-none flex gap-10 px-4 md:gap-30 md:px-6">
+                                    {CodeIcons.map((Icon, index) => (
+                                        <div
+                                            key={`set3-${index}`}
+                                            className="flex size-8 items-center justify-center md:size-16"
+                                        >
+                                            <Icon />
+                                        </div>
+                                    ))}
+                                </div>
+                                <div className="pointer-none flex gap-10 px-4 md:gap-30 md:px-6">
+                                    {CodeIcons.map((Icon, index) => (
+                                        <div
+                                            key={`set4-${index}`}
+                                            className="flex size-8 items-center justify-center md:size-16"
+                                        >
+                                            <Icon />
+                                        </div>
+                                    ))}
+                                </div>
+                            </MarqueeRow>
+                        </div>
+                    )}
                 </div>
             </section>
         </div>

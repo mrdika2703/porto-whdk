@@ -9,6 +9,7 @@ interface SkillData {
     category: 'Soft Skill' | 'Hard Skill';
     level: 'Beginner' | 'Intermediate' | 'Expert' | null;
     icon: string | null;
+    viewmode: 'All' | 'Programming' | 'Multimedia';
 }
 
 interface IndexProps {
@@ -115,6 +116,7 @@ export default function Index({ skills, hasProfile, flash }: IndexProps) {
                             <th className="px-4 py-3">Nama Keahlian</th>
                             <th className="px-4 py-3">Kategori</th>
                             <th className="px-4 py-3">Level Penguasaan</th>
+                            <th className="px-4 py-3">View Mode</th>
                             <th className="px-4 py-3 text-right">Aksi</th>
                         </tr>
                     </thead>
@@ -156,6 +158,13 @@ export default function Index({ skills, hasProfile, flash }: IndexProps) {
                                                 Belum diukur
                                             </span>
                                         )}
+                                    </td>
+                                    <td className="px-4 py-3">
+                                        <span
+                                            className={`rounded-md border px-2 py-1 text-xs font-semibold ${item.viewmode === 'Programming' ? 'border-blue-500/20 bg-blue-500/10 text-blue-500' : item.viewmode === 'Multimedia' ? 'border-purple-500/20 bg-purple-500/10 text-purple-500' : 'border-orange-500/20 bg-orange-500/10 text-orange-500'}`}
+                                        >
+                                            {item.viewmode}
+                                        </span>
                                     </td>
                                     <td className="px-4 py-3 text-right">
                                         <div className="flex justify-end gap-2">

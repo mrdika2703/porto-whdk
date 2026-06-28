@@ -10,6 +10,37 @@ export default function Header() {
 
     // 2. STATE BARU UNTUK TRACKING MENU AKTIF
     const [activeSection, setActiveSection] = useState('home');
+    const [viewMode, setViewMode] = useState<
+        'All' | 'Multimedia' | 'Programming'
+    >('All');
+
+    useEffect(() => {
+        const handleUpdated = (e: Event) => {
+            const customEvent = e as CustomEvent<
+                'All' | 'Multimedia' | 'Programming'
+            >;
+            setViewMode(customEvent.detail);
+        };
+        window.addEventListener('viewmode-changed', handleUpdated);
+        return () => {
+            window.removeEventListener('viewmode-changed', handleUpdated);
+        };
+    }, []);
+
+    const toggleViewMode = () => {
+        const modes: ('All' | 'Multimedia' | 'Programming')[] = [
+            'All',
+            'Multimedia',
+            'Programming',
+        ];
+        const currentIndex = modes.indexOf(viewMode);
+        const nextIndex = (currentIndex + 1) % modes.length;
+        const nextMode = modes[nextIndex];
+        setViewMode(nextMode);
+        window.dispatchEvent(
+            new CustomEvent('change-viewmode', { detail: nextMode }),
+        );
+    };
 
     useEffect(() => {
         const root = document.documentElement;
@@ -249,39 +280,45 @@ export default function Header() {
                     <div
                         className={`absolute top-full left-1/2 mt-2 flex w-40 -translate-x-1/2 flex-col overflow-hidden rounded-xl border border-gray-100 bg-white shadow-xl transition-all duration-300 md:w-48 md:rounded-2xl ${isDropdownOpen ? 'visible opacity-100' : 'invisible opacity-0'}`}
                     >
-                        <a
-                            href="#design"
-                            onClick={(e) => {
-                                e.stopPropagation();
-                                setActiveSection('design');
-                                setIsDropdownOpen(false);
-                            }}
-                            className={`px-4 py-2.5 text-xs hover:bg-gray-100 hover:text-hbshine md:px-5 md:py-3 md:text-sm ${activeSection === 'design' ? 'bg-gray-50 font-semibold text-hbshine' : 'text-gray-700'}`}
-                        >
-                            Design Graphic
-                        </a>
-                        <a
-                            href="#photo"
-                            onClick={(e) => {
-                                e.stopPropagation();
-                                setActiveSection('photo');
-                                setIsDropdownOpen(false);
-                            }}
-                            className={`px-4 py-2.5 text-xs hover:bg-gray-100 hover:text-hbshine md:px-5 md:py-3 md:text-sm ${activeSection === 'photo' ? 'bg-gray-50 font-semibold text-hbshine' : 'text-gray-700'}`}
-                        >
-                            Photography & Video
-                        </a>
-                        <a
-                            href="#website"
-                            onClick={(e) => {
-                                e.stopPropagation();
-                                setActiveSection('website');
-                                setIsDropdownOpen(false);
-                            }}
-                            className={`px-4 py-2.5 text-xs hover:bg-gray-100 hover:text-hbshine md:px-5 md:py-3 md:text-sm ${activeSection === 'website' ? 'bg-gray-50 font-semibold text-hbshine' : 'text-gray-700'}`}
-                        >
-                            Websites
-                        </a>
+                        {(viewMode === 'All' || viewMode === 'Multimedia') && (
+                            <a
+                                href="#design"
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    setActiveSection('design');
+                                    setIsDropdownOpen(false);
+                                }}
+                                className={`px-4 py-2.5 text-xs hover:bg-gray-100 hover:text-hbshine md:px-5 md:py-3 md:text-sm ${activeSection === 'design' ? 'bg-gray-50 font-semibold text-hbshine' : 'text-gray-700'}`}
+                            >
+                                Design Graphic
+                            </a>
+                        )}
+                        {(viewMode === 'All' || viewMode === 'Multimedia') && (
+                            <a
+                                href="#photo"
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    setActiveSection('photo');
+                                    setIsDropdownOpen(false);
+                                }}
+                                className={`px-4 py-2.5 text-xs hover:bg-gray-100 hover:text-hbshine md:px-5 md:py-3 md:text-sm ${activeSection === 'photo' ? 'bg-gray-50 font-semibold text-hbshine' : 'text-gray-700'}`}
+                            >
+                                Photography & Video
+                            </a>
+                        )}
+                        {(viewMode === 'All' || viewMode === 'Programming') && (
+                            <a
+                                href="#website"
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    setActiveSection('website');
+                                    setIsDropdownOpen(false);
+                                }}
+                                className={`px-4 py-2.5 text-xs hover:bg-gray-100 hover:text-hbshine md:px-5 md:py-3 md:text-sm ${activeSection === 'website' ? 'bg-gray-50 font-semibold text-hbshine' : 'text-gray-700'}`}
+                            >
+                                Websites
+                            </a>
+                        )}
                         <a
                             href="#other"
                             onClick={(e) => {
@@ -300,6 +337,7 @@ export default function Header() {
             {/* Tombol Tema (Sun / Moon Icon) */}
             <button
                 onClick={toggleTheme}
+                title="Mode Theme"
                 className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-white/80 bg-white/50 text-bsecond shadow-lg backdrop-blur-md transition-all hover:bg-white/70 sm:h-10 sm:w-10 md:h-[52px] md:w-[52px] dark:border-white/50 dark:bg-white/10 dark:text-white dark:hover:bg-white/20"
             >
                 {isDark ? (
@@ -330,10 +368,63 @@ export default function Header() {
                 )}
             </button>
 
+            {/* Tombol ViewMode (All / Multimedia / Programming) */}
+            <button
+                onClick={toggleViewMode}
+                title={`Mode: ${viewMode}`}
+                className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-white/80 bg-white/50 text-bsecond shadow-lg backdrop-blur-md transition-all hover:bg-white/70 sm:h-10 sm:w-10 md:h-[52px] md:w-[52px] dark:border-white/50 dark:bg-white/10 dark:text-white dark:hover:bg-white/20"
+            >
+                {viewMode === 'All' && (
+                    <svg
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        viewBox="0 0 24 24"
+                        className="h-4 w-4 md:h-5 md:w-5"
+                    >
+                        <rect x="3" y="3" width="7" height="7" rx="1" />
+                        <rect x="14" y="3" width="7" height="7" rx="1" />
+                        <rect x="3" y="14" width="7" height="7" rx="1" />
+                        <rect x="14" y="14" width="7" height="7" rx="1" />
+                    </svg>
+                )}
+                {viewMode === 'Multimedia' && (
+                    <svg
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        viewBox="0 0 24 24"
+                        className="h-4 w-4 md:h-5 md:w-5"
+                    >
+                        <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"
+                        />
+                    </svg>
+                )}
+                {viewMode === 'Programming' && (
+                    <svg
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        viewBox="0 0 24 24"
+                        className="h-4 w-4 md:h-5 md:w-5"
+                    >
+                        <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"
+                        />
+                    </svg>
+                )}
+            </button>
+
             {/* Tombol Chat */}
             <a
                 href="#contact-footer"
-                className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full ${activeSection === 'contact-footer' ? 'border-2 border-bshine/50 bg-bshine/10' : 'border border-white/80 bg-white/50 dark:border-white/50 dark:bg-white/10'} text-bsecond shadow-lg backdrop-blur-md transition-all hover:bg-white/70 sm:h-10 sm:w-10 md:h-[52px] md:w-[52px] dark:text-white dark:hover:bg-white/20`}
+                title="Contact"
+                className={`hidden h-9 w-9 shrink-0 items-center justify-center rounded-full md:flex ${activeSection === 'contact-footer' ? 'border-2 border-bshine/50 bg-bshine/10' : 'border border-white/80 bg-white/50 dark:border-white/50 dark:bg-white/10'} text-bsecond shadow-lg backdrop-blur-md transition-all hover:bg-white/70 sm:h-10 sm:w-10 md:h-[52px] md:w-[52px] dark:text-white dark:hover:bg-white/20`}
             >
                 <svg
                     fill="currentColor"

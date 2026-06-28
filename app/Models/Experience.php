@@ -19,6 +19,7 @@ class Experience extends Model
         'start_date',
         'end_date',
         'duration',
+        'viewmode',
     ];
 
     public function profile(): BelongsTo

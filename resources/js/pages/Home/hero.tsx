@@ -9,7 +9,12 @@ import {
 import { useState, useEffect } from 'react';
 import { useIsMobile } from '@/hooks/useIsMobile';
 
-export default function PortfolioHero() {
+interface HeroProps {
+    viewMode: 'All' | 'Multimedia' | 'Programming';
+    setViewMode: (mode: 'All' | 'Multimedia' | 'Programming') => void;
+}
+
+export default function PortfolioHero({ viewMode, setViewMode }: HeroProps) {
     const fullText = 'Wahyu Adam Anandika';
     const [typedText, setTypedText] = useState('');
     const [showIntro, setShowIntro] = useState(true);
@@ -300,6 +305,128 @@ export default function PortfolioHero() {
                             )}
                         </AnimatePresence>
                     </div>
+
+                    <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{
+                            duration: 0.8,
+                            delay: 0.7,
+                        }}
+                        className="mt-25 flex flex-col justify-center gap-3"
+                    >
+                        <h2 className="font-regular text-center text-sm text-gray-700 italic md:text-base">
+                            What do you want to see ?
+                        </h2>
+
+                        <div className="relative flex flex-row gap-0 rounded-full border border-bshine bg-white/15 p-0 text-sm font-semibold text-tmain backdrop-blur-2xl md:text-base">
+                            <div
+                                onClick={() => setViewMode('All')}
+                                className={`relative flex cursor-pointer flex-row items-center gap-2 rounded-full border border-transparent px-4 py-2.5 transition-colors duration-200 md:px-5 ${
+                                    viewMode === 'All'
+                                        ? 'text-white dark:text-main'
+                                        : 'text-tmain hover:bg-bshine/10'
+                                }`}
+                            >
+                                {viewMode === 'All' && (
+                                    <motion.div
+                                        layoutId="active-view-mode-pill"
+                                        className="absolute inset-0 -z-10 rounded-full border border-bshine bg-bshine dark:bg-hbshine"
+                                        transition={{
+                                            type: 'spring',
+                                            stiffness: 300,
+                                            damping: 30,
+                                        }}
+                                    />
+                                )}
+                                <input
+                                    type="radio"
+                                    id="All"
+                                    className="peer sr-only cursor-pointer"
+                                    value="All"
+                                    name="viewMode"
+                                    checked={viewMode === 'All'}
+                                    onChange={() => setViewMode('All')}
+                                />
+                                <label
+                                    htmlFor="All"
+                                    className="relative z-10 cursor-pointer"
+                                >
+                                    All
+                                </label>
+                            </div>
+                            <div
+                                onClick={() => setViewMode('Multimedia')}
+                                className={`relative flex cursor-pointer flex-row items-center gap-2 rounded-full border border-transparent px-4 py-2.5 transition-colors duration-200 md:px-5 ${
+                                    viewMode === 'Multimedia'
+                                        ? 'text-white dark:text-main'
+                                        : 'text-tmain hover:bg-bshine/10'
+                                }`}
+                            >
+                                {viewMode === 'Multimedia' && (
+                                    <motion.div
+                                        layoutId="active-view-mode-pill"
+                                        className="absolute inset-0 -z-10 rounded-full border border-bshine bg-bshine dark:bg-hbshine"
+                                        transition={{
+                                            type: 'spring',
+                                            stiffness: 300,
+                                            damping: 30,
+                                        }}
+                                    />
+                                )}
+                                <input
+                                    type="radio"
+                                    id="Multimedia"
+                                    className="peer sr-only cursor-pointer"
+                                    value="Multimedia"
+                                    name="viewMode"
+                                    checked={viewMode === 'Multimedia'}
+                                    onChange={() => setViewMode('Multimedia')}
+                                />
+                                <label
+                                    htmlFor="Multimedia"
+                                    className="relative z-10 cursor-pointer"
+                                >
+                                    Multimedia
+                                </label>
+                            </div>
+                            <div
+                                onClick={() => setViewMode('Programming')}
+                                className={`relative flex cursor-pointer flex-row items-center gap-2 rounded-full border border-transparent px-4 py-2.5 transition-colors duration-200 md:px-5 ${
+                                    viewMode === 'Programming'
+                                        ? 'text-white dark:text-main'
+                                        : 'text-tmain hover:bg-bshine/10'
+                                }`}
+                            >
+                                {viewMode === 'Programming' && (
+                                    <motion.div
+                                        layoutId="active-view-mode-pill"
+                                        className="absolute inset-0 -z-10 rounded-full border border-bshine bg-bshine dark:bg-hbshine"
+                                        transition={{
+                                            type: 'spring',
+                                            stiffness: 300,
+                                            damping: 30,
+                                        }}
+                                    />
+                                )}
+                                <input
+                                    type="radio"
+                                    id="Programming"
+                                    className="peer sr-only cursor-pointer"
+                                    value="Programming"
+                                    name="viewMode"
+                                    checked={viewMode === 'Programming'}
+                                    onChange={() => setViewMode('Programming')}
+                                />
+                                <label
+                                    htmlFor="Programming"
+                                    className="relative z-10 cursor-pointer"
+                                >
+                                    Programming
+                                </label>
+                            </div>
+                        </div>
+                    </motion.div>
 
                     {/* Scroll Down Indicator — gunakan CSS animation bukan animate-bounce */}
                     <AnimatePresence>
