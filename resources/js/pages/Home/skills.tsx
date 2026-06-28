@@ -180,7 +180,6 @@ const CodeIcons = [
 ];
 
 export default function Skills({ skills = [] }: { skills: Skill[] }) {
-
     const appRef = useRef(null);
     const isAppInView = useInView(appRef, { margin: '0px 0px -50px 0px' });
 
@@ -263,7 +262,7 @@ export default function Skills({ skills = [] }: { skills: Skill[] }) {
                                             className={skills.icon ?? undefined}
                                         ></i>
                                     </span>
-                                    <span className="shrink-0 text-[9px] font-normal">
+                                    <span className="shrink-0 text-[9px] font-normal md:text-xs">
                                         {skills.name_skills}
                                     </span>
                                 </span>
@@ -271,7 +270,7 @@ export default function Skills({ skills = [] }: { skills: Skill[] }) {
                                 {/* Level Skill */}
                                 {/* shrink-0 agar level tidak menyusut tertekan teks nama */}
                                 <span className="flex h-full items-center rounded-r-full border-y border-r border-white/50 bg-white/20 px-2 md:px-3.5 md:backdrop-blur-sm">
-                                    <span className="font-regular truncate text-[9px] text-white md:font-medium">
+                                    <span className="font-regular truncate text-[9px] text-white md:text-xs md:font-medium">
                                         {skills.level}
                                     </span>
                                 </span>
