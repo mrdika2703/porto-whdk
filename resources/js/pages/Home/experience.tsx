@@ -41,14 +41,16 @@ const renderDescription = (text: string | null) => {
     if (!text) return null;
 
     const lines = text.split('\n');
-    const hasList = lines.some(l => l.trim().startsWith('-') || l.trim().startsWith('*'));
+    const hasList = lines.some(
+        (l) => l.trim().startsWith('-') || l.trim().startsWith('*'),
+    );
 
     if (!hasList) {
         return <span className="whitespace-pre-line">{text}</span>;
     }
 
     return (
-        <ul className="list-disc list-inside space-y-1">
+        <ul className="list-inside list-disc space-y-1">
             {lines.map((line, idx) => {
                 const trimmed = line.trim();
                 if (trimmed.startsWith('-') || trimmed.startsWith('*')) {
@@ -58,7 +60,11 @@ const renderDescription = (text: string | null) => {
                         </li>
                     );
                 }
-                return <p key={idx} className="mt-1">{line}</p>;
+                return (
+                    <p key={idx} className="mt-1">
+                        {line}
+                    </p>
+                );
             })}
         </ul>
     );
@@ -82,7 +88,7 @@ export default function ExperienceEducationSection({
             viewMode === 'All' ||
             !exp.viewmode ||
             exp.viewmode === 'All' ||
-            exp.viewmode === viewMode
+            exp.viewmode === viewMode,
     );
 
     return (
@@ -107,7 +113,7 @@ export default function ExperienceEducationSection({
                         <h2 className="font-regular relative font-montserrat-alt text-3xl text-white">
                             My{' '}
                             <span className="font-bold text-bshine">
-                                Journey {viewMode !== 'All' ? `- ${viewMode}` : ''}
+                                Journey
                             </span>
                             <Underline className="absolute -right-2 -bottom-2 text-bshine" />
                         </h2>
@@ -133,7 +139,7 @@ export default function ExperienceEducationSection({
                     >
                         <h3 className="flex items-center gap-3 text-xl font-semibold text-white">
                             <i className="fa-solid fa-briefcase text-bshine"></i>{' '}
-                            Experience {viewMode !== 'All' ? `- ${viewMode}` : ''}
+                            Experience{' '}
                         </h3>
 
                         <div className="relative pl-4 md:pl-6">
@@ -213,7 +219,9 @@ export default function ExperienceEducationSection({
                                                     className="overflow-hidden"
                                                 >
                                                     <div className="mt-2 text-sm leading-relaxed text-gray-300">
-                                                        {renderDescription(item.description)}
+                                                        {renderDescription(
+                                                            item.description,
+                                                        )}
                                                     </div>
                                                 </motion.div>
                                             )}
@@ -318,7 +326,9 @@ export default function ExperienceEducationSection({
                                                     className="overflow-hidden"
                                                 >
                                                     <div className="mt-2 text-sm leading-relaxed text-gray-300">
-                                                        {renderDescription(item.description)}
+                                                        {renderDescription(
+                                                            item.description,
+                                                        )}
                                                     </div>
                                                 </motion.div>
                                             )}

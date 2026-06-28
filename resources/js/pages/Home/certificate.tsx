@@ -20,22 +20,29 @@ export default function CertificateSection({
     const [activeImg, setActiveImg] = useState<string | null>(null);
 
     const filteredCertificates = useMemo(
-        () => certificates.filter(
-            (cert) =>
-                viewMode === 'All' ||
-                !cert.viewmode ||
-                cert.viewmode === 'All' ||
-                cert.viewmode === viewMode
-        ),
-        [certificates, viewMode]
+        () =>
+            certificates.filter(
+                (cert) =>
+                    viewMode === 'All' ||
+                    !cert.viewmode ||
+                    cert.viewmode === 'All' ||
+                    cert.viewmode === viewMode,
+            ),
+        [certificates, viewMode],
     );
 
     const softSkills = useMemo(
-        () => filteredCertificates.filter((cert) => cert.category.includes('Soft Skill')),
+        () =>
+            filteredCertificates.filter((cert) =>
+                cert.category.includes('Soft Skill'),
+            ),
         [filteredCertificates],
     );
     const hardSkills = useMemo(
-        () => filteredCertificates.filter((cert) => cert.category.includes('Hard Skill')),
+        () =>
+            filteredCertificates.filter((cert) =>
+                cert.category.includes('Hard Skill'),
+            ),
         [filteredCertificates],
     );
 
@@ -65,7 +72,7 @@ export default function CertificateSection({
                         <h2 className="font-regular relative font-montserrat-alt text-3xl text-tmain">
                             My{' '}
                             <span className="font-bold text-bshine">
-                                Certificates {viewMode !== 'All' ? `- ${viewMode}` : ''}
+                                Certificates
                             </span>
                             <Underline className="absolute -right-1 -bottom-1 text-bshine" />
                         </h2>

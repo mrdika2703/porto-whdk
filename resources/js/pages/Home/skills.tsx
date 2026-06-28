@@ -195,7 +195,7 @@ export default function Skills({
             viewMode === 'All' ||
             !skill.viewmode ||
             skill.viewmode === 'All' ||
-            skill.viewmode === viewMode
+            skill.viewmode === viewMode,
     );
 
     // --- VARIAN ANIMASI UNTUK SKILLS ---
@@ -245,7 +245,7 @@ export default function Skills({
                         className="relative flex items-center gap-4"
                     >
                         <h3 className="relative font-montserrat-alt text-3xl font-semibold text-white">
-                            Skills {viewMode !== 'All' ? `- ${viewMode}` : ''}
+                            Skills
                             <Underline className="absolute -right-2 -bottom-1 text-bshine" />
                         </h3>
                     </motion.div>
@@ -273,8 +273,8 @@ export default function Skills({
                                 <span
                                     className={`flex h-full min-w-0 flex-1 items-center ${
                                         skills.level
-                                            ? 'rounded-l-full border-y border-l justify-start'
-                                            : 'rounded-full border justify-center'
+                                            ? 'justify-start rounded-l-full border-y border-l'
+                                            : 'justify-center rounded-full border'
                                     } border-white/50 bg-white/10 px-2 text-white md:px-3.5 md:backdrop-blur-sm`}
                                 >
                                     {skills.icon && (
@@ -282,9 +282,7 @@ export default function Skills({
                                             <i className={skills.icon}></i>
                                         </span>
                                     )}
-                                    <span
-                                        className="min-w-0 truncate text-[9px] font-normal md:text-xs"
-                                    >
+                                    <span className="min-w-0 truncate text-[9px] font-normal md:text-xs">
                                         {skills.name_skills}
                                     </span>
                                 </span>
