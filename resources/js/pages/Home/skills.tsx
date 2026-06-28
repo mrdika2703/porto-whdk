@@ -255,25 +255,33 @@ export default function Skills({ skills = [] }: { skills: Skill[] }) {
                                 className="relative flex h-[30px] w-full items-center gap-0 md:h-8 md:w-auto"
                             >
                                 {/* Nama Skill */}
-                                {/* flex-1 ditambahkan agar nama skill memanjang mengambil sisa ruang di HP */}
-                                <span className="flex h-full flex-1 items-center truncate rounded-l-full border-y border-l border-white/50 bg-white/10 px-2 text-white md:px-3.5 md:backdrop-blur-sm">
-                                    <span className="mr-1.5 hidden shrink-0 md:mr-2 md:block">
-                                        <i
-                                            className={skills.icon ?? undefined}
-                                        ></i>
-                                    </span>
-                                    <span className="shrink-0 text-[9px] font-normal md:text-xs">
+                                <span
+                                    className={`flex h-full min-w-0 flex-1 items-center ${
+                                        skills.level
+                                            ? 'rounded-l-full border-y border-l justify-start'
+                                            : 'rounded-full border justify-center'
+                                    } border-white/50 bg-white/10 px-2 text-white md:px-3.5 md:backdrop-blur-sm`}
+                                >
+                                    {skills.icon && (
+                                        <span className="mr-1.5 hidden shrink-0 md:mr-2 md:block">
+                                            <i className={skills.icon}></i>
+                                        </span>
+                                    )}
+                                    <span
+                                        className="min-w-0 truncate text-[9px] font-normal md:text-xs"
+                                    >
                                         {skills.name_skills}
                                     </span>
                                 </span>
 
                                 {/* Level Skill */}
-                                {/* shrink-0 agar level tidak menyusut tertekan teks nama */}
-                                <span className="flex h-full items-center rounded-r-full border-y border-r border-white/50 bg-white/20 px-2 md:px-3.5 md:backdrop-blur-sm">
-                                    <span className="font-regular truncate text-[9px] text-white md:text-xs md:font-medium">
-                                        {skills.level}
+                                {skills.level && (
+                                    <span className="flex h-full shrink-0 items-center rounded-r-full border-y border-r border-white/50 bg-white/20 px-2 md:px-3.5 md:backdrop-blur-sm">
+                                        <span className="font-regular truncate text-[9px] text-white md:text-xs md:font-medium">
+                                            {skills.level}
+                                        </span>
                                     </span>
-                                </span>
+                                )}
                             </motion.div>
                         ))}
                     </motion.div>

@@ -44,59 +44,88 @@ class HomeController extends Controller
         });
 
         $skill = Cache::remember('all_skill_array', 3600, function () {
-            return Skill::all()->toArray();
+            return Skill::orderByRaw("CASE WHEN category = 'Soft Skill' THEN 1 ELSE 2 END ASC")
+                ->orderByRaw("CASE WHEN level = 'Expert' THEN 1 WHEN level = 'Intermediate' THEN 2 WHEN level = 'Beginner' THEN 3 ELSE 4 END ASC")
+                ->orderBy('name_skills', 'asc')
+                ->get()
+                ->toArray();
         });
 
         $certificate = Cache::remember('all_certificate_array', 3600, function () {
-            return Certificate::all()->toArray();
+            return Certificate::orderBy('start_date', 'desc')->get()->toArray();
         });
 
         $experience = Cache::remember('all_experience_array', 3600, function () {
-            return Experience::all()->toArray();
+            return Experience::orderBy('start_date', 'desc')->get()->toArray();
         });
 
         $education = Cache::remember('all_education_array', 3600, function () {
-            return Education::all()->toArray();
+            return Education::orderBy('start_date', 'desc')->get()->toArray();
         });
 
         // CARA TERBAIK: Cache data dalam bentuk Array (->toArray()), BUKAN objek Eloquent
         $design = Cache::remember('all_design_array', 3600, function () {
             // Kita gunakan toArray() agar yang disimpan di cache benar-benar murni data
-            return GrapichDesign::all()->toArray();
+            return GrapichDesign::all()
+                ->groupBy('category')
+                ->flatMap(function ($group) {
+                    return $group->shuffle()->take(15);
+                })
+                ->values()
+                ->toArray();
         });
 
         $photovideo = Cache::remember('all_photovideo_array', 3600, function () {
-            return PhotoVideo::all()->toArray();
+            return PhotoVideo::all()
+                ->groupBy('category')
+                ->flatMap(function ($group) {
+                    return $group->shuffle()->take(15);
+                })
+                ->values()
+                ->toArray();
         });
 
         $website = Cache::remember('all_website_array', 3600, function () {
-            return Website::all()->map(function ($web) {
-                // Menggabungkan semua kolom url ke dalam satu array
-                $rawImages = [
-                    $web->url_1,
-                    $web->url_2,
-                    $web->url_3,
-                    $web->url_4,
-                    $web->url_5,
-                    $web->url_6,
-                    $web->url_7,
-                    $web->url_8
-                ];
-                return [
-                    'id' => $web->id,
-                    'category' => $web->category,
-                    'title' => $web->title,
-                    'origin' => $web->origin,
-                    'link' => $web->link,
-                    'description' => $web->description,
-                    'tech' => $web->tech,
-                    'images' => array_values(array_filter($rawImages)),
-                ];
-            })->toArray();
+            return Website::all()
+                ->groupBy('category')
+                ->flatMap(function ($group) {
+                    return $group->shuffle()->take(15);
+                })
+                ->map(function ($web) {
+                    // Menggabungkan semua kolom url ke dalam satu array
+                    $rawImages = [
+                        $web->url_1,
+                        $web->url_2,
+                        $web->url_3,
+                        $web->url_4,
+                        $web->url_5,
+                        $web->url_6,
+                        $web->url_7,
+                        $web->url_8
+                    ];
+                    return [
+                        'id' => $web->id,
+                        'category' => $web->category,
+                        'title' => $web->title,
+                        'origin' => $web->origin,
+                        'link' => $web->link,
+                        'description' => $web->description,
+                        'tech' => $web->tech,
+                        'images' => array_values(array_filter($rawImages)),
+                    ];
+                })
+                ->values()
+                ->toArray();
         });
 
         $others = Cache::remember('all_others_array', 3600, function () {
-            return Other::all()->toArray();
+            return Other::all()
+                ->groupBy('category')
+                ->flatMap(function ($group) {
+                    return $group->shuffle()->take(15);
+                })
+                ->values()
+                ->toArray();
         });
 
         return Inertia::render('Home/index', [

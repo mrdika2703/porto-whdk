@@ -37,6 +37,33 @@ const getMonthYear = (dateString: string | null) => {
     return date.toLocaleString('id-ID', { month: 'short', year: 'numeric' });
 };
 
+const renderDescription = (text: string | null) => {
+    if (!text) return null;
+
+    const lines = text.split('\n');
+    const hasList = lines.some(l => l.trim().startsWith('-') || l.trim().startsWith('*'));
+
+    if (!hasList) {
+        return <span className="whitespace-pre-line">{text}</span>;
+    }
+
+    return (
+        <ul className="list-disc list-inside space-y-1">
+            {lines.map((line, idx) => {
+                const trimmed = line.trim();
+                if (trimmed.startsWith('-') || trimmed.startsWith('*')) {
+                    return (
+                        <li key={idx} className="ml-2">
+                            {trimmed.substring(1).trim()}
+                        </li>
+                    );
+                }
+                return <p key={idx} className="mt-1">{line}</p>;
+            })}
+        </ul>
+    );
+};
+
 export default function ExperienceEducationSection({
     experiences,
     educations,
@@ -174,9 +201,9 @@ export default function ExperienceEducationSection({
                                                     }}
                                                     className="overflow-hidden"
                                                 >
-                                                    <p className="mt-2 text-sm leading-relaxed text-gray-300">
-                                                        {item.description}
-                                                    </p>
+                                                    <div className="mt-2 text-sm leading-relaxed text-gray-300">
+                                                        {renderDescription(item.description)}
+                                                    </div>
                                                 </motion.div>
                                             )}
                                         </AnimatePresence>
@@ -279,9 +306,9 @@ export default function ExperienceEducationSection({
                                                     }}
                                                     className="overflow-hidden"
                                                 >
-                                                    <p className="mt-2 text-sm leading-relaxed text-gray-300">
-                                                        {item.description}
-                                                    </p>
+                                                    <div className="mt-2 text-sm leading-relaxed text-gray-300">
+                                                        {renderDescription(item.description)}
+                                                    </div>
                                                 </motion.div>
                                             )}
                                         </AnimatePresence>

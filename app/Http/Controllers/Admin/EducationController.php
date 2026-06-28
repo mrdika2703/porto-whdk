@@ -48,7 +48,7 @@ class EducationController extends Controller
         $validated = $request->validate([
             'title' => 'required|string|max:255',
             'origin' => 'required|string|max:255',
-            'description' => 'nullable|string|max:255',
+            'description' => 'nullable|string|max:5000',
             'status' => 'required|string|max:255',
             'start_date' => 'required|date',
             'end_date' => 'nullable|date',
@@ -76,7 +76,7 @@ class EducationController extends Controller
         $validated = $request->validate([
             'title' => 'required|string|max:255',
             'origin' => 'required|string|max:255',
-            'description' => 'nullable|string|max:255',
+            'description' => 'nullable|string|max:5000',
             'status' => 'required|string|max:255',
             'start_date' => 'required|date',
             'end_date' => 'nullable|date',
