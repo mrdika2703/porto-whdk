@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\Experience;
 use App\Models\Profile;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 use Inertia\Inertia;
 
 class ExperienceController extends Controller
@@ -56,6 +57,7 @@ class ExperienceController extends Controller
 
         $validated['profile_id'] = $profile->id;
         Experience::create($validated);
+        Cache::forget('all_experience_array');
 
         return redirect()->route('admin.experience.index')->with('success', 'Pengalaman berhasil ditambahkan!');
     }
@@ -83,6 +85,7 @@ class ExperienceController extends Controller
         ]);
 
         $experience->update($validated);
+        Cache::forget('all_experience_array');
 
         return redirect()->route('admin.experience.index')->with('success', 'Pengalaman berhasil diperbarui!');
     }
@@ -91,6 +94,7 @@ class ExperienceController extends Controller
     {
         $experience = Experience::findOrFail($id);
         $experience->delete();
+        Cache::forget('all_experience_array');
 
         return redirect()->route('admin.experience.index')->with('success', 'Pengalaman berhasil dihapus!');
     }

@@ -7,6 +7,7 @@ use App\Models\Skill; // Pastikan Model Skill sudah ada
 use App\Models\Profile;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 use Inertia\Inertia;
 
 class SkillController extends Controller
@@ -54,6 +55,7 @@ class SkillController extends Controller
 
         $validated['profile_id'] = $profile->id;
         Skill::create($validated);
+        Cache::forget('all_skill_array');
 
         return redirect()->route('admin.skills.index')->with('success', 'Keahlian berhasil ditambahkan!');
     }
@@ -78,6 +80,7 @@ class SkillController extends Controller
         ]);
 
         $skill->update($validated);
+        Cache::forget('all_skill_array');
 
         return redirect()->route('admin.skills.index')->with('success', 'Keahlian berhasil diperbarui!');
     }
@@ -86,6 +89,7 @@ class SkillController extends Controller
     {
         $skill = Skill::findOrFail($id);
         $skill->delete();
+        Cache::forget('all_skill_array');
 
         return redirect()->route('admin.skills.index')->with('success', 'Keahlian berhasil dihapus!');
     }

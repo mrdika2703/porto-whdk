@@ -7,6 +7,7 @@ use App\Models\Certificate;
 use App\Models\Profile;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 
@@ -78,6 +79,7 @@ class CertificateController extends Controller
             }
 
             Certificate::create($validated);
+            Cache::forget('all_certificate_array');
 
             return redirect()->route('admin.certificate.index')->with('success', 'Data sertifikat berhasil ditambahkan!');
         } catch (\Exception $e) {
@@ -132,6 +134,7 @@ class CertificateController extends Controller
             }
 
             $certificates->update($validated);
+            Cache::forget('all_certificate_array');
 
             return redirect()->route('admin.certificate.index')->with('success', 'Data sertifikat berhasil diperbarui!');
         } catch (\Exception $e) {
@@ -150,6 +153,7 @@ class CertificateController extends Controller
         }
 
         $certificates->delete();
+        Cache::forget('all_certificate_array');
 
         return redirect()->route('admin.certificate.index')->with('success', 'Data sertifikat berhasil dihapus!');
     }

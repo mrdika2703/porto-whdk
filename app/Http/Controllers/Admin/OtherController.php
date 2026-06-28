@@ -7,6 +7,7 @@ use App\Models\Other; // Pastikan Model sudah dibuat
 use App\Models\Profile;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 
@@ -79,6 +80,7 @@ class OtherController extends Controller
             }
 
             Other::create($validated);
+            Cache::forget('all_others_array');
 
             return redirect()->route('admin.others.index')->with('success', 'Data Lainnya berhasil ditambahkan!');
         } catch (\Exception $e) {
@@ -134,6 +136,7 @@ class OtherController extends Controller
             }
 
             $others->update($validated);
+            Cache::forget('all_others_array');
 
             return redirect()->route('admin.others.index')->with('success', 'Data Lainnya berhasil diperbarui!');
         } catch (\Exception $e) {
@@ -152,6 +155,7 @@ class OtherController extends Controller
         }
 
         $others->delete();
+        Cache::forget('all_others_array');
 
         return redirect()->route('admin.others.index')->with('success', 'Data lainnya berhasil dihapus!');
     }

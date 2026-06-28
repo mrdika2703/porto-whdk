@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\Profile;
 use App\Models\Website;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 
@@ -85,6 +86,7 @@ class WebsiteController extends Controller
             }
 
             Website::create($validated);
+            Cache::forget('all_website_array');
 
             return redirect()->route('admin.website.index')->with('success', 'Data projek berhasil ditambahkan!');
         } catch (\Exception $e) {
@@ -145,6 +147,7 @@ class WebsiteController extends Controller
             }
 
             $websites->update($validated);
+            Cache::forget('all_website_array');
 
             return redirect()->route('admin.website.index')->with('success', 'Data projek berhasil diperbarui!');
         } catch (\Exception $e) {
@@ -163,6 +166,7 @@ class WebsiteController extends Controller
         }
 
         $websites->delete();
+        Cache::forget('all_website_array');
 
         return redirect()->route('admin.website.index')->with('success', 'Data projek berhasil dihapus!');
     }

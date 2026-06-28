@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\Profile;
 use App\Models\PhotoVideo;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 
@@ -81,6 +82,7 @@ class PhotoVideoController extends Controller
             }
 
             PhotoVideo::create($validated);
+            Cache::forget('all_photovideo_array');
 
             return redirect()->route('admin.photo-video.index')->with('success', 'Data projek berhasil ditambahkan!');
         } catch (\Exception $e) {
@@ -138,6 +140,7 @@ class PhotoVideoController extends Controller
             }
 
             $photovideos->update($validated);
+            Cache::forget('all_photovideo_array');
 
             return redirect()->route('admin.photo-video.index')->with('success', 'Data projek berhasil diperbarui!');
         } catch (\Exception $e) {
@@ -156,6 +159,7 @@ class PhotoVideoController extends Controller
         }
 
         $photovideos->delete();
+        Cache::forget('all_photovideo_array');
 
         return redirect()->route('admin.photo-video.index')->with('success', 'Data projek berhasil dihapus!');
     }

@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\Education;
 use App\Models\Profile;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 use Inertia\Inertia;
 
 class EducationController extends Controller
@@ -55,6 +56,7 @@ class EducationController extends Controller
 
         $validated['profile_id'] = $profile->id;
         Education::create($validated);
+        Cache::forget('all_education_array');
 
         return redirect()->route('admin.education.index')->with('success', 'Pendidikan berhasil ditambahkan!');
     }
@@ -81,6 +83,7 @@ class EducationController extends Controller
         ]);
 
         $education->update($validated);
+        Cache::forget('all_education_array');
 
         return redirect()->route('admin.education.index')->with('success', 'Pendidikan berhasil diperbarui!');
     }
@@ -89,6 +92,7 @@ class EducationController extends Controller
     {
         $education = Education::findOrFail($id);
         $education->delete();
+        Cache::forget('all_education_array');
 
         return redirect()->route('admin.education.index')->with('success', 'Pendidikan berhasil dihapus!');
     }

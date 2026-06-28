@@ -7,6 +7,7 @@ use App\Models\GrapichDesign; // Pastikan Model sudah dibuat
 use App\Models\Profile;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 
@@ -79,6 +80,7 @@ class GrapichDesignController extends Controller
             }
 
             GrapichDesign::create($validated);
+            Cache::forget('all_design_array');
 
             return redirect()->route('admin.grapich-design.index')->with('success', 'Data desain berhasil ditambahkan!');
         } catch (\Exception $e) {
@@ -134,6 +136,7 @@ class GrapichDesignController extends Controller
             }
 
             $design->update($validated);
+            Cache::forget('all_design_array');
 
             return redirect()->route('admin.grapich-design.index')->with('success', 'Data desain berhasil diperbarui!');
         } catch (\Exception $e) {
@@ -152,6 +155,7 @@ class GrapichDesignController extends Controller
         }
 
         $design->delete();
+        Cache::forget('all_design_array');
 
         return redirect()->route('admin.grapich-design.index')->with('success', 'Data desain berhasil dihapus!');
     }

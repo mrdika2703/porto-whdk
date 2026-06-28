@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Profile;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 
@@ -60,6 +61,7 @@ class ProfileController extends Controller
             $validated['user_id'] = $userId;
 
             Profile::create($validated);
+            Cache::forget('all_profile_array');
 
             return redirect()->route('admin.profiles.index')->with('success', 'Profil berhasil dibuat!');
         } catch (\Exception $e) {
@@ -101,6 +103,7 @@ class ProfileController extends Controller
             }
 
             $profile->update($validated);
+            Cache::forget('all_profile_array');
 
             if (isset($oldPhoto) && $oldPhoto) {
                 Storage::disk('public')->delete($oldPhoto);
