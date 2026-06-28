@@ -7,8 +7,9 @@ interface PhotoVideoData {
     id?: number;
     category: string;
     title: string;
-    description: string;
+    description: string | null;
     type: 'photo' | 'video';
+    link: string | null;
     url_1: string | File | null;
     url_2: string | File | null;
     url_3: string | File | null;
@@ -33,6 +34,7 @@ export default function Form({
             title: photovideos?.title ?? '',
             description: photovideos?.description ?? '',
             type: photovideos?.type ?? 'photo',
+            link: photovideos?.link ?? '',
             url_1: null,
             url_2: null,
             url_3: null,
@@ -274,7 +276,7 @@ export default function Form({
                             </label>
                             <textarea
                                 rows={4}
-                                value={data.description}
+                                value={data.description || ''}
                                 onChange={(e) =>
                                     setData('description', e.target.value)
                                 }
@@ -284,6 +286,26 @@ export default function Form({
                             {errors.description && (
                                 <p className="mt-1 text-xs text-red-500">
                                     {errors.description}
+                                </p>
+                            )}
+                        </div>
+
+                        <div>
+                            <label className="mb-2 block text-xs font-semibold tracking-wider text-tmuted uppercase">
+                                link (Optional)
+                            </label>
+                            <input
+                                type="text"
+                                value={data.link || ''}
+                                onChange={(e) =>
+                                    setData('link', e.target.value)
+                                }
+                                className="w-full rounded-xl border border-bmain/30 bg-main/40 px-4 py-3 text-sm text-htext transition-colors focus:border-accent focus:outline-none dark:text-tmain"
+                                placeholder="www.google.com"
+                            />
+                            {errors.link && (
+                                <p className="mt-1 text-xs text-red-500">
+                                    {errors.link}
                                 </p>
                             )}
                         </div>
@@ -408,20 +430,11 @@ export default function Form({
                         </button>
 
                         <div className="flex justify-center overflow-hidden rounded-2xl bg-black shadow-2xl">
-                            {data.type === 'video' ? (
-                                <video
-                                    src={modalMedia}
-                                    controls
-                                    autoPlay
-                                    className="max-h-[85vh] w-auto object-contain"
-                                />
-                            ) : (
-                                <img
-                                    src={modalMedia}
-                                    alt="Zoom Preview"
-                                    className="max-h-[85vh] w-auto object-contain"
-                                />
-                            )}
+                            <img
+                                src={modalMedia}
+                                alt="Zoom Preview"
+                                className="max-h-[85vh] w-auto object-contain"
+                            />
                         </div>
                     </div>
                 </div>

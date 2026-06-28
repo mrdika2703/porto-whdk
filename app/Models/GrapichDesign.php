@@ -19,6 +19,7 @@ class GrapichDesign extends Model
         'title',
         'description',
         'type',
+        'link',
         'url_1',
         'url_2',
         'url_3',

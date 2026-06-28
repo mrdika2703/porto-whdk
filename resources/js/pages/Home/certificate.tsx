@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import type { Certificate } from './index';
 import { Underline } from '@/components/underline';
@@ -17,11 +17,13 @@ export default function CertificateSection({
     const [selectedCert, setSelectedCert] = useState<Certificate | null>(null);
     const [activeImg, setActiveImg] = useState<string | null>(null);
 
-    const softSkills = certificates.filter((cert) =>
-        cert.category.includes('Soft Skill'),
+    const softSkills = useMemo(
+        () => certificates.filter((cert) => cert.category.includes('Soft Skill')),
+        [certificates],
     );
-    const hardSkills = certificates.filter((cert) =>
-        cert.category.includes('Hard Skill'),
+    const hardSkills = useMemo(
+        () => certificates.filter((cert) => cert.category.includes('Hard Skill')),
+        [certificates],
     );
 
     const openModal = (cert: Certificate) => {

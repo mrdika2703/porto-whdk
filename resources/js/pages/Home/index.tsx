@@ -66,7 +66,11 @@ export interface Design {
     id: number;
     category: string;
     title: string;
+    type: string;
+    link: string | null;
     url_1: string;
+    url_2: string | null;
+    url_3: string | null;
 }
 
 export interface PhotoVideo {
@@ -75,6 +79,7 @@ export interface PhotoVideo {
     category: string;
     description: string;
     type: string;
+    link: string | null;
     url_1: string;
     url_2: string | null;
     url_3: string | null;

@@ -7,7 +7,7 @@ interface CertificateData {
     id?: number;
     category: string;
     title: string;
-    description: string;
+    description: string | null;
     start_date: string;
     end_date: string | null;
     url_1: string | File | null;
@@ -16,12 +16,10 @@ interface CertificateData {
 
 interface FormProps {
     certificates?: CertificateData;
-    existingCategories?: string[];
 }
 
 export default function Form({
     certificates,
-    existingCategories = [],
 }: FormProps) {
     const isEdit = !!certificates;
 
@@ -42,7 +40,7 @@ export default function Form({
     });
 
     const [modalMedia, setModalMedia] = useState<string | null>(null);
-    const [showSuggestions, setShowSuggestions] = useState(false); // State untuk Dropdown Kategori
+
 
     useEffect(() => {
         return () => {
@@ -114,12 +112,6 @@ export default function Form({
         }
     };
 
-    // Logika Filter Kategori
-    const filteredCategories = existingCategories.filter(
-        (c) =>
-            c.toLowerCase().includes(data.category.toLowerCase()) &&
-            c.toLowerCase() !== data.category.toLowerCase(),
-    );
 
     return (
         <LayoutAdmin>
@@ -177,58 +169,31 @@ export default function Form({
                         </div>
 
                         <div>
-                            {/* BAGIAN AUTOCOMPLETE KATEGORI */}
-                            <div className="relative">
-                                <label className="mb-2 block text-xs font-semibold tracking-wider text-tmuted uppercase">
-                                    Kategori
-                                </label>
-                                <input
-                                    type="text"
-                                    value={data.category}
-                                    onFocus={() => setShowSuggestions(true)}
-                                    onBlur={() => setShowSuggestions(false)}
-                                    onChange={(e) =>
-                                        setData('category', e.target.value)
-                                    }
-                                    className="w-full rounded-xl border border-bmain/30 bg-main/40 px-4 py-3 text-sm text-htext transition-colors focus:border-accent focus:outline-none dark:text-tmain"
-                                    placeholder="Contoh: Branding"
-                                    autoComplete="off"
-                                />
-
-                                {/* DROPDOWN KATEGORI MELAYANG */}
-                                {showSuggestions &&
-                                    filteredCategories.length > 0 && (
-                                        <div className="absolute top-full left-0 z-20 mt-2 max-h-40 w-full overflow-y-auto rounded-xl border border-bmain/20 bg-bcard py-1 shadow-lg backdrop-blur-md">
-                                            {filteredCategories.map(
-                                                (cat, index) => (
-                                                    <div
-                                                        key={index}
-                                                        // onMouseDown bekerja lebih cepat dibanding onBlur milik input, sehingga klik terbaca
-                                                        onMouseDown={(e) => {
-                                                            e.preventDefault();
-                                                            setData(
-                                                                'category',
-                                                                cat,
-                                                            );
-                                                            setShowSuggestions(
-                                                                false,
-                                                            );
-                                                        }}
-                                                        className="cursor-pointer px-4 py-2 text-sm text-htext transition-colors hover:bg-accent/20 dark:text-tmain"
-                                                    >
-                                                        <i className="fa-solid fa-tag mr-2 text-xs text-tmuted"></i>{' '}
-                                                        {cat}
-                                                    </div>
-                                                ),
-                                            )}
-                                        </div>
-                                    )}
-                                {errors.category && (
-                                    <p className="mt-1 text-xs text-red-500">
-                                        {errors.category}
-                                    </p>
-                                )}
-                            </div>
+                            <label className="mb-2 block text-xs font-semibold tracking-wider text-tmuted uppercase">
+                                Kategori
+                            </label>
+                            <select
+                                value={data.category}
+                                onChange={(e) =>
+                                    setData('category', e.target.value)
+                                }
+                                className="w-full rounded-xl border border-bmain/30 bg-main/40 px-4 py-3 text-sm text-htext transition-colors focus:border-accent focus:outline-none dark:text-tmain"
+                            >
+                                <option value="" disabled>
+                                    Pilih Kategori...
+                                </option>
+                                <option value="Hard Skill">
+                                    Hard Skill
+                                </option>
+                                <option value="Soft Skill">
+                                    Soft Skill
+                                </option>
+                            </select>
+                            {errors.category && (
+                                <p className="mt-1 text-xs text-red-500">
+                                    {errors.category}
+                                </p>
+                            )}
                         </div>
 
                         <div>
@@ -237,7 +202,7 @@ export default function Form({
                             </label>
                             <textarea
                                 rows={4}
-                                value={data.description}
+                                value={data.description || ''}
                                 onChange={(e) =>
                                     setData('description', e.target.value)
                                 }
@@ -384,7 +349,7 @@ export default function Form({
                 </div>
             </form>
 
-            {/* MODAL ZOOM GAMBAR / VIDEO */}
+            {/* MODAL ZOOM GAMBAR */}
             {modalMedia && (
                 <div
                     className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4 backdrop-blur-sm transition-opacity"

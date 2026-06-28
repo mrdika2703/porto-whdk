@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useMemo, useCallback } from 'react';
 import { Link } from '@inertiajs/react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { BgPhotograph } from '@/components/bg-photograph';
@@ -32,22 +32,22 @@ export default function PhotoVideoSection({
     const activeImages = getImages(selectedPhotoVideo);
     const activeIndex = activeImg ? activeImages.indexOf(activeImg) : 0;
 
-    const handlePrev = () => {
+    const handlePrev = useCallback(() => {
         if (activeImages.length <= 1) return;
         const newIndex =
             (activeIndex - 1 + activeImages.length) % activeImages.length;
         setActiveImg(activeImages[newIndex]);
-    };
+    }, [activeImages, activeIndex]);
 
-    const handleNext = () => {
+    const handleNext = useCallback(() => {
         if (activeImages.length <= 1) return;
         const newIndex = (activeIndex + 1) % activeImages.length;
         setActiveImg(activeImages[newIndex]);
-    };
+    }, [activeImages, activeIndex]);
 
-    // 1. Filter data berdasarkan tab yang aktif
-    const filteredProjects = photovideos.filter(
-        (item) => item.type === activeTab,
+    const filteredProjects = useMemo(
+        () => photovideos.filter((item) => item.type === activeTab),
+        [photovideos, activeTab],
     );
 
     // 2. Fungsi memecah data menjadi kolom-kolom (Maks 2-3 item per kolom ala Pinterest)
@@ -62,10 +62,12 @@ export default function PhotoVideoSection({
         return columns;
     };
 
-    const projectColumns = getColumns(filteredProjects);
+    const projectColumns = useMemo(
+        () => getColumns(filteredProjects),
+        [filteredProjects],
+    );
 
-    // 3. Fungsi untuk Slider (Kiri/Kanan) dengan sistem Loop
-    const scroll = (direction: 'left' | 'right') => {
+    const scroll = useCallback((direction: 'left' | 'right') => {
         if (scrollRef.current) {
             const { scrollLeft, clientWidth, scrollWidth } = scrollRef.current;
             const scrollAmount = clientWidth * 0.75;
@@ -93,7 +95,7 @@ export default function PhotoVideoSection({
                 }
             }
         }
-    };
+    }, []);
 
     return (
         <section className="relative flex min-h-[500px] w-full flex-col items-center overflow-hidden py-16 pb-14 md:py-24 md:pb-32">
@@ -386,6 +388,24 @@ export default function PhotoVideoSection({
                                         {selectedPhotoVideo.description ||
                                             'Tidak ada deskripsi.'}
                                     </div>
+
+                                    {selectedPhotoVideo.link && (
+                                        <a
+                                            href={
+                                                selectedPhotoVideo.link.match(
+                                                    /^https?:\/\//,
+                                                )
+                                                    ? selectedPhotoVideo.link
+                                                    : `https://${selectedPhotoVideo.link}`
+                                            }
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="mt-6 flex w-full items-center justify-center gap-2 rounded-full border border-bshine/50 bg-bshine/10 px-6 py-2 text-sm font-semibold text-bshine backdrop-blur-sm transition-all duration-300 hover:border-bshine hover:bg-bshine/20 hover:shadow-[0_0_20px_rgba(192,104,0,0.2)]"
+                                        >
+                                            <i className="fa-solid fa-arrow-up-right-from-square" />
+                                            See Video
+                                        </a>
+                                    )}
                                 </div>
                             </div>
                         </motion.div>

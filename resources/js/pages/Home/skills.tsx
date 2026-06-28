@@ -149,36 +149,37 @@ function MarqueeRow({
     );
 }
 
-export default function Skills({ skills = [] }: { skills: Skill[] }) {
-    const MultiIcons = [
-        PhotoshopIcon,
-        LightroomIcon,
-        AfterEffctIcon,
-        IllustratorIcon,
-        CanvaIcon,
-        CorellIcon,
-        PremiereIcon,
-        OfficeIcon,
-        ExcelIcon,
-        PowerpointIcon,
-    ];
+const MultiIcons = [
+    PhotoshopIcon,
+    LightroomIcon,
+    AfterEffctIcon,
+    IllustratorIcon,
+    CanvaIcon,
+    CorellIcon,
+    PremiereIcon,
+    OfficeIcon,
+    ExcelIcon,
+    PowerpointIcon,
+];
 
-    const CodeIcons = [
-        FigmaIcon,
-        TailwindIcon,
-        GitIcon,
-        GithubIcon,
-        ReactIcon,
-        PhpIcon,
-        JsIcon,
-        LaravelIcon,
-        HtmlIcon,
-        CssIcon,
-        MysqlIcon,
-        PgsqlIcon,
-        PythonIcon,
-        NodeJsIcon,
-    ];
+const CodeIcons = [
+    FigmaIcon,
+    TailwindIcon,
+    GitIcon,
+    GithubIcon,
+    ReactIcon,
+    PhpIcon,
+    JsIcon,
+    LaravelIcon,
+    HtmlIcon,
+    CssIcon,
+    MysqlIcon,
+    PgsqlIcon,
+    PythonIcon,
+    NodeJsIcon,
+];
+
+export default function Skills({ skills = [] }: { skills: Skill[] }) {
 
     const appRef = useRef(null);
     const isAppInView = useInView(appRef, { margin: '0px 0px -50px 0px' });

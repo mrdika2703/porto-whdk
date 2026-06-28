@@ -5,8 +5,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <link rel="icon" href="/favicon.ico" sizes="any">
-    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+    <link rel="icon" href="/favicon.ico?v=2" sizes="any">
     <link rel="apple-touch-icon" href="/apple-touch-icon.png">
     <script src="https://kit.fontawesome.com/746700f1ee.js" crossorigin="anonymous"></script>
 

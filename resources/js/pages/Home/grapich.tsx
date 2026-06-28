@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useMemo, useCallback } from 'react';
 import { Link } from '@inertiajs/react';
 import { motion, AnimatePresence } from 'framer-motion'; // Tambahkan import framer-motion
 import { Design } from './index';
@@ -17,10 +17,12 @@ export default function DesignGraphicSection({ designs = [] }: GrapichProps) {
 
     // console.log('Isi data designs:', designs);
 
-    // Gunakan pengamanan Array.isArray
-    const filteredDesigns = Array.isArray(designs)
-        ? designs.filter((item) => item.category === activeCategory)
-        : [];
+    const filteredDesigns = useMemo(
+        () => Array.isArray(designs)
+            ? designs.filter((item) => item.category === activeCategory)
+            : [],
+        [designs, activeCategory],
+    );
 
     const getColumns = (items: typeof designs) => {
         const columns: (typeof items)[] = [];
@@ -33,9 +35,12 @@ export default function DesignGraphicSection({ designs = [] }: GrapichProps) {
         return columns;
     };
 
-    const designsColumns = getColumns(filteredDesigns);
+    const designsColumns = useMemo(
+        () => getColumns(filteredDesigns),
+        [filteredDesigns],
+    );
 
-    const scroll = (direction: 'left' | 'right') => {
+    const scroll = useCallback((direction: 'left' | 'right') => {
         if (scrollRef.current) {
             const { scrollLeft, clientWidth, scrollWidth } = scrollRef.current;
             const scrollAmount = clientWidth * 0.8;
@@ -63,7 +68,7 @@ export default function DesignGraphicSection({ designs = [] }: GrapichProps) {
                 }
             }
         }
-    };
+    }, []);
 
     return (
         <section className="relative min-h-[500px] w-full overflow-hidden py-16 md:py-24">
@@ -287,6 +292,18 @@ export default function DesignGraphicSection({ designs = [] }: GrapichProps) {
                                         Desain grafis untuk kategori{' '}
                                         {selectedDesign.category}.
                                     </div>
+
+                                    {selectedDesign.link && (
+                                        <a
+                                            href={selectedDesign.link.match(/^https?:\/\//) ? selectedDesign.link : `https://${selectedDesign.link}`}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="mt-6 flex w-full items-center justify-center gap-2 rounded-full border border-bshine/50 bg-bshine/10 px-6 py-2 text-sm font-semibold text-bshine backdrop-blur-sm transition-all duration-300 hover:border-bshine hover:bg-bshine/20 hover:shadow-[0_0_20px_rgba(192,104,0,0.2)]"
+                                        >
+                                            <i className="fa-solid fa-arrow-up-right-from-square" />
+                                            See Video
+                                        </a>
+                                    )}
                                 </div>
                             </div>
                         </motion.div>

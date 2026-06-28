@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import { Link } from '@inertiajs/react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Website } from './index';
@@ -48,26 +48,27 @@ export default function WebsiteSection({
     const activeImages = getImages(selectedWebsite);
     const activeIndex = activeImg ? activeImages.indexOf(activeImg) : 0;
 
-    const handlePrevImg = () => {
+    const handlePrevImg = useCallback(() => {
         if (activeImages.length <= 1) return;
         const newIndex =
             (activeIndex - 1 + activeImages.length) % activeImages.length;
         setActiveImg(activeImages[newIndex]);
-    };
+    }, [activeImages, activeIndex]);
 
-    const handleNextImg = () => {
+    const handleNextImg = useCallback(() => {
         if (activeImages.length <= 1) return;
         const newIndex = (activeIndex + 1) % activeImages.length;
         setActiveImg(activeImages[newIndex]);
-    };
+    }, [activeImages, activeIndex]);
 
     const openModal = (project: Website) => {
         setSelectedWebsite(project);
         setActiveImg(project.images[0] || null);
     };
 
-    const filteredProjects = websites.filter(
-        (item) => item.category === activeTab,
+    const filteredProjects = useMemo(
+        () => websites.filter((item) => item.category === activeTab),
+        [websites, activeTab],
     );
 
     useEffect(() => {
@@ -75,18 +76,18 @@ export default function WebsiteSection({
         setDirection('next');
     }, [activeTab]);
 
-    const handleNextProject = () => {
+    const handleNextProject = useCallback(() => {
         setDirection('next');
         setProjectIndex((prev) => (prev + 1) % filteredProjects.length);
-    };
+    }, [filteredProjects.length]);
 
-    const handlePrevProject = () => {
+    const handlePrevProject = useCallback(() => {
         setDirection('prev');
         setProjectIndex(
             (prev) =>
                 (prev - 1 + filteredProjects.length) % filteredProjects.length,
         );
-    };
+    }, [filteredProjects.length]);
 
     const project = filteredProjects[projectIndex];
 
@@ -167,6 +168,7 @@ export default function WebsiteSection({
                                                         src={`/storage/${project.images[1]}`}
                                                         alt="Screenshot 2"
                                                         className="h-full w-full object-cover"
+                                                        loading="lazy"
                                                         draggable={false}
                                                     />
                                                 </div>
@@ -182,6 +184,7 @@ export default function WebsiteSection({
                                                             src={`/storage/${project.images[0]}`}
                                                             alt="Screenshot 1"
                                                             className="h-full w-full object-cover"
+                                                            loading="lazy"
                                                             draggable={false}
                                                         />
                                                     </div>
@@ -231,7 +234,7 @@ export default function WebsiteSection({
                                             {filteredProjects.length > 1 && (
                                                 <button
                                                     onClick={handleNextProject}
-                                                    className="flex items-center justify-center gap-2 rounded-full border border-white/10 bg-white/5 px-6 py-2.5 text-sm font-semibold text-white transition-all duration-300 hover:border-white/20 hover:bg-white/10"
+                                                    className="flex items-center justify-center gap-2 rounded-full border border-tmain/10 bg-tmain/5 px-6 py-2.5 text-sm font-semibold text-tmain transition-all duration-300 hover:border-tmain/20 hover:bg-tmain/10"
                                                 >
                                                     Next Project
                                                     <i className="fa-solid fa-arrow-right-long" />
@@ -446,7 +449,13 @@ export default function WebsiteSection({
 
                                     {selectedWebsite.link && (
                                         <a
-                                            href={selectedWebsite.link}
+                                            href={
+                                                selectedWebsite.link.match(
+                                                    /^https?:\/\//,
+                                                )
+                                                    ? selectedWebsite.link
+                                                    : `https://${selectedWebsite.link}`
+                                            }
                                             target="_blank"
                                             rel="noopener noreferrer"
                                             className="mt-6 flex w-full items-center justify-center gap-2 rounded-full border border-bshine/50 bg-bshine/10 px-6 py-2 text-sm font-semibold text-bshine backdrop-blur-sm transition-all duration-300 hover:border-bshine hover:bg-bshine/20 hover:shadow-[0_0_20px_rgba(192,104,0,0.2)]"

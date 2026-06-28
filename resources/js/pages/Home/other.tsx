@@ -182,6 +182,7 @@ export default function OtherSection({ others }: { others: Other[] }) {
                                             src={`/storage/${item.url_1}`}
                                             alt={item.title}
                                             className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                                            loading="lazy"
                                             draggable={false}
                                         />
 

@@ -16,7 +16,7 @@ class CertificateSeeder extends Seeder
         Certificate::insert([
             [
                 'profile_id' => 1,
-                'category' => 'UI/UX Design',
+                'category' => 'Hard Skill',
                 'title' => 'UI/UX Design',
                 'description' => 'UI/UX Design',
                 'start_date' => '2022-01-01',
@@ -27,7 +27,7 @@ class CertificateSeeder extends Seeder
             ],
             [
                 'profile_id' => 1,
-                'category' => 'Web Development',
+                'category' => 'Soft Skill',
                 'title' => 'Web Development',
                 'description' => 'Web Development',
                 'start_date' => '2022-01-01',

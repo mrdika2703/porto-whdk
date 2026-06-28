@@ -63,6 +63,7 @@ class PhotoVideoController extends Controller
             'title'       => 'required|string|max:255',
             'description' => 'nullable|string',
             'type'        => 'required|in:photo,video',
+            'link'        => 'nullable|string',
             'url_1'       => 'required|file|mimes:jpeg,png,jpg,webp,mp4,mov,avi|max:10240', // 10MB max
             'url_2'       => 'nullable|file|mimes:jpeg,png,jpg,webp,mp4,mov,avi|max:10240',
             'url_3'       => 'nullable|file|mimes:jpeg,png,jpg,webp,mp4,mov,avi|max:10240',
@@ -114,6 +115,7 @@ class PhotoVideoController extends Controller
             'title'       => 'required|string|max:255',
             'description' => 'nullable|string',
             'type'        => 'required|in:photo,video',
+            'link'        => 'nullable|string',
             'url_1'       => 'nullable|file|mimes:jpeg,png,jpg,webp,mp4,mov,avi|max:10240', // 10MB max
             'url_2'       => 'nullable|file|mimes:jpeg,png,jpg,webp,mp4,mov,avi|max:10240',
             'url_3'       => 'nullable|file|mimes:jpeg,png,jpg,webp,mp4,mov,avi|max:10240',

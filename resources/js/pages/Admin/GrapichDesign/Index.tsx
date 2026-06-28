@@ -32,6 +32,14 @@ export default function Index({ designs, hasProfile, flash }: IndexProps) {
                 timer: 3000,
                 timerProgressBar: true,
             });
+            if (flash.error) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Terjadi Kesalahan Sistem',
+                    text: flash.error,
+                    confirmButtonColor: '#ef4444',
+                });
+            }
         }
         if (flash.error) {
             Swal.fire({

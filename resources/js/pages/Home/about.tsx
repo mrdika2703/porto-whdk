@@ -92,11 +92,13 @@ export default function About({ profiles = [] }: { profiles: Profile[] }) {
                         <img
                             src="/assets/background/beach.webp"
                             alt="Beach Background"
+                            loading="lazy"
                             className="h-full w-full object-cover dark:hidden"
                         />
                         <img
                             src="/assets/background/mountain.webp"
                             alt="Mountain Background"
+                            loading="lazy"
                             className="hidden h-full w-full object-cover dark:block"
                         />
                         <div className="absolute top-0 left-0 h-40 w-full bg-gradient-to-b from-main to-transparent"></div>
