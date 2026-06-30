@@ -26,6 +26,7 @@ class Website extends Model
         'url_6',
         'url_7',
         'url_8',
+        'visible',
     ];
 
     public function profile(): BelongsTo

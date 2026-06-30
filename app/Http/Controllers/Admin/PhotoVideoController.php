@@ -21,7 +21,7 @@ class PhotoVideoController extends Controller
     public function index()
     {
         $profile = $this->getProfile();
-        $photovideos = $profile ? PhotoVideo::where('profile_id', $profile->id)->latest()->get() : [];
+        $photovideos = $profile ? PhotoVideo::where('profile_id', $profile->id)->latest()->paginate(15) : [];
 
         return Inertia::render('Admin/PhotoVideo/Index', [
             'photovideos' => $photovideos,
@@ -70,6 +70,7 @@ class PhotoVideoController extends Controller
             'url_3'       => 'nullable|file|mimes:jpeg,png,jpg,webp,mp4,mov,avi|max:10240',
             'url_4'       => 'nullable|file|mimes:jpeg,png,jpg,webp,mp4,mov,avi|max:10240',
             'url_5'       => 'nullable|file|mimes:jpeg,png,jpg,webp,mp4,mov,avi|max:10240',
+            'visible'     => 'required|in:yes,no',
         ]);
 
         try {
@@ -123,6 +124,7 @@ class PhotoVideoController extends Controller
             'url_3'       => 'nullable|file|mimes:jpeg,png,jpg,webp,mp4,mov,avi|max:10240',
             'url_4'       => 'nullable|file|mimes:jpeg,png,jpg,webp,mp4,mov,avi|max:10240',
             'url_5'       => 'nullable|file|mimes:jpeg,png,jpg,webp,mp4,mov,avi|max:10240',
+            'visible'     => 'required|in:yes,no',
         ]);
 
         try {
@@ -132,7 +134,12 @@ class PhotoVideoController extends Controller
                     if ($photovideos->$url) {
                         Storage::disk('public')->delete($photovideos->$url);
                     }
-                    $validated[$url] = $request->file($url)->store('photo-video', 'public');
+                    $validated[$url] = $request->file($url)->store('PhotoVideo', 'public');
+                } elseif ($request->input("clear_$url") === true || $request->input("clear_$url") === 'true' || $request->input("clear_$url") === 1 || $request->input("clear_$url") === '1') {
+                    if ($photovideos->$url) {
+                        Storage::disk('public')->delete($photovideos->$url);
+                    }
+                    $validated[$url] = null;
                 } else {
                     // Mencegah nilai tertimpa null jika file tidak diunggah ulang
                     unset($validated[$url]);

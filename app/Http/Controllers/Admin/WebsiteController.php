@@ -21,7 +21,7 @@ class WebsiteController extends Controller
     public function index()
     {
         $profile = $this->getProfile();
-        $websites = $profile ? Website::where('profile_id', $profile->id)->latest()->get() : [];
+        $websites = $profile ? Website::where('profile_id', $profile->id)->latest()->paginate(15) : [];
 
         return Inertia::render('Admin/Website/Index', [
             'websites' => $websites,
@@ -74,6 +74,7 @@ class WebsiteController extends Controller
             'url_6'       => 'nullable|file|mimes:jpeg,png,jpg,webp,mp4,mov,avi|max:3072',
             'url_7'       => 'nullable|file|mimes:jpeg,png,jpg,webp,mp4,mov,avi|max:3072',
             'url_8'       => 'nullable|file|mimes:jpeg,png,jpg,webp,mp4,mov,avi|max:3072',
+            'visible'     => 'required|in:yes,no',
         ]);
 
         try {
@@ -120,6 +121,7 @@ class WebsiteController extends Controller
             'category'    => 'required|string|max:255',
             'title'       => 'required|string|max:255',
             'description' => 'nullable|string',
+            'tech'        => 'nullable|string',
             'link'        => 'nullable|string',
             'origin'      => 'nullable|string',
             'url_1'       => 'nullable|file|mimes:jpeg,png,jpg,webp,mp4,mov,avi|max:10240', // 10MB max
@@ -130,6 +132,7 @@ class WebsiteController extends Controller
             'url_6'       => 'nullable|file|mimes:jpeg,png,jpg,webp,mp4,mov,avi|max:3072',
             'url_7'       => 'nullable|file|mimes:jpeg,png,jpg,webp,mp4,mov,avi|max:3072',
             'url_8'       => 'nullable|file|mimes:jpeg,png,jpg,webp,mp4,mov,avi|max:3072',
+            'visible'     => 'required|in:yes,no',
         ]);
 
         try {
@@ -139,7 +142,12 @@ class WebsiteController extends Controller
                     if ($websites->$url) {
                         Storage::disk('public')->delete($websites->$url);
                     }
-                    $validated[$url] = $request->file($url)->store('websites', 'public');
+                    $validated[$url] = $request->file($url)->store('Website', 'public');
+                } elseif ($request->input("clear_$url") === true || $request->input("clear_$url") === 'true' || $request->input("clear_$url") === 1 || $request->input("clear_$url") === '1') {
+                    if ($websites->$url) {
+                        Storage::disk('public')->delete($websites->$url);
+                    }
+                    $validated[$url] = null;
                 } else {
                     // Mencegah nilai tertimpa null jika file tidak diunggah ulang
                     unset($validated[$url]);

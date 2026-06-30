@@ -68,6 +68,7 @@ class OtherController extends Controller
             'url_3'       => 'nullable|file|mimes:jpeg,png,jpg,webp,mp4,mov,avi|max:3076',
             'url_4'       => 'nullable|file|mimes:jpeg,png,jpg,webp,mp4,mov,avi|max:3076',
             'url_5'       => 'nullable|file|mimes:jpeg,png,jpg,webp,mp4,mov,avi|max:3076',
+            'visible'     => 'required|in:yes,no',
         ]);
 
         try {
@@ -119,6 +120,7 @@ class OtherController extends Controller
             'url_3'       => 'nullable|file|mimes:jpeg,png,jpg,webp,mp4,mov,avi|max:3076',
             'url_4'       => 'nullable|file|mimes:jpeg,png,jpg,webp,mp4,mov,avi|max:3076',
             'url_5'       => 'nullable|file|mimes:jpeg,png,jpg,webp,mp4,mov,avi|max:3076',
+            'visible'     => 'required|in:yes,no',
         ]);
 
         try {
@@ -129,6 +131,11 @@ class OtherController extends Controller
                         Storage::disk('public')->delete($others->$url);
                     }
                     $validated[$url] = $request->file($url)->store('others', 'public');
+                } elseif ($request->input("clear_$url") === true || $request->input("clear_$url") === 'true' || $request->input("clear_$url") === 1 || $request->input("clear_$url") === '1') {
+                    if ($others->$url) {
+                        Storage::disk('public')->delete($others->$url);
+                    }
+                    $validated[$url] = null;
                 } else {
                     // Mencegah nilai tertimpa null jika file tidak diunggah ulang
                     unset($validated[$url]);

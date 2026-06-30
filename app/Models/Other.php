@@ -16,6 +16,7 @@ class Other extends Model
         'url_3',
         'url_4',
         'url_5',
+        'visible',
     ];
     public function profile()
     {

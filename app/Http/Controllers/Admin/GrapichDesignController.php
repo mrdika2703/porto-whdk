@@ -21,7 +21,7 @@ class GrapichDesignController extends Controller
     public function index()
     {
         $profile = $this->getProfile();
-        $designs = $profile ? GrapichDesign::where('profile_id', $profile->id)->latest()->get() : [];
+        $designs = $profile ? GrapichDesign::where('profile_id', $profile->id)->latest()->paginate(15) : [];
 
         return Inertia::render('Admin/GrapichDesign/Index', [
             'designs' => $designs,
@@ -68,6 +68,7 @@ class GrapichDesignController extends Controller
             'url_1'       => 'required|file|mimes:jpeg,png,jpg,webp,mp4,mov,avi|max:10240', // 10MB max
             'url_2'       => 'nullable|file|mimes:jpeg,png,jpg,webp,mp4,mov,avi|max:10240',
             'url_3'       => 'nullable|file|mimes:jpeg,png,jpg,webp,mp4,mov,avi|max:10240',
+            'visible'     => 'required|in:yes,no',
         ]);
 
         try {
@@ -119,6 +120,7 @@ class GrapichDesignController extends Controller
             'url_1'       => 'nullable|file|mimes:jpeg,png,jpg,webp,mp4,mov,avi|max:10240',
             'url_2'       => 'nullable|file|mimes:jpeg,png,jpg,webp,mp4,mov,avi|max:10240',
             'url_3'       => 'nullable|file|mimes:jpeg,png,jpg,webp,mp4,mov,avi|max:10240',
+            'visible'     => 'required|in:yes,no',
         ]);
 
         try {
@@ -129,6 +131,11 @@ class GrapichDesignController extends Controller
                         Storage::disk('public')->delete($design->$url);
                     }
                     $validated[$url] = $request->file($url)->store('graphic-designs', 'public');
+                } elseif ($request->input("clear_$url") === true || $request->input("clear_$url") === 'true' || $request->input("clear_$url") === 1 || $request->input("clear_$url") === '1') {
+                    if ($design->$url) {
+                        Storage::disk('public')->delete($design->$url);
+                    }
+                    $validated[$url] = null;
                 } else {
                     // Mencegah nilai tertimpa null jika file tidak diunggah ulang
                     unset($validated[$url]);

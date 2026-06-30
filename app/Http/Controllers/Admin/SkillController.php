@@ -21,7 +21,7 @@ class SkillController extends Controller
     {
         $profile = $this->getProfile();
         // Mengambil data skill terbaru berdasarkan profil
-        $skills = $profile ? Skill::where('profile_id', $profile->id)->latest()->get() : [];
+        $skills = $profile ? Skill::where('profile_id', $profile->id)->latest()->paginate(15) : [];
 
         return Inertia::render('Admin/Skills/Index', [
             'skills' => $skills,
@@ -52,6 +52,7 @@ class SkillController extends Controller
             'level'       => 'nullable|in:Beginner,Intermediate,Expert',
             'icon'        => 'nullable|string|max:255',
             'viewmode'    => 'nullable|in:All,Programming,Multimedia',
+            'visible'     => 'required|in:yes,no',
         ]);
 
         $validated['profile_id'] = $profile->id;
@@ -79,6 +80,7 @@ class SkillController extends Controller
             'level'       => 'nullable|in:Beginner,Intermediate,Expert',
             'icon'        => 'nullable|string|max:255',
             'viewmode'    => 'nullable|in:All,Programming,Multimedia',
+            'visible'     => 'required|in:yes,no',
         ]);
 
         $skill->update($validated);

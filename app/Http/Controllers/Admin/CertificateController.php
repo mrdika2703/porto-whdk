@@ -68,6 +68,7 @@ class CertificateController extends Controller
             'url_1'       => 'required|file|mimes:jpeg,png,jpg,webp,mp4,mov,avi|max:10240', // 10MB max
             'url_2'       => 'nullable|file|mimes:jpeg,png,jpg,webp,mp4,mov,avi|max:10240',
             'viewmode'    => 'nullable|in:All,Programming,Multimedia',
+            'visible'     => 'required|in:yes,no',
         ]);
 
         try {
@@ -119,6 +120,7 @@ class CertificateController extends Controller
             'url_1'       => 'nullable|file|mimes:jpeg,png,jpg,webp,mp4,mov,avi|max:10240', // 10MB max
             'url_2'       => 'nullable|file|mimes:jpeg,png,jpg,webp,mp4,mov,avi|max:10240',
             'viewmode'    => 'nullable|in:All,Programming,Multimedia',
+            'visible'     => 'required|in:yes,no',
         ]);
 
         try {
@@ -128,7 +130,12 @@ class CertificateController extends Controller
                     if ($certificates->$url) {
                         Storage::disk('public')->delete($certificates->$url);
                     }
-                    $validated[$url] = $request->file($url)->store('certificate', 'public');
+                    $validated[$url] = $request->file($url)->store('certificates', 'public');
+                } elseif ($request->input("clear_$url") === true || $request->input("clear_$url") === 'true' || $request->input("clear_$url") === 1 || $request->input("clear_$url") === '1') {
+                    if ($certificates->$url) {
+                        Storage::disk('public')->delete($certificates->$url);
+                    }
+                    $validated[$url] = null;
                 } else {
                     // Mencegah nilai tertimpa null jika file tidak diunggah ulang
                     unset($validated[$url]);

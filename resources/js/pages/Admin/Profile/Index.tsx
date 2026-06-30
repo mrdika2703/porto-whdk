@@ -88,8 +88,51 @@ export default function Index({ profile, flash }: IndexProps) {
     const handleSubmit = (e: FormEvent) => {
         e.preventDefault();
 
+        let progressInterval: any = null;
+        let currentProgress = 0;
+        const hasFiles = data.photo instanceof File;
+
         const options = {
+            onStart: () => {
+                currentProgress = 0;
+                Swal.fire({
+                    title: 'Mengirim Data...',
+                    html: 'Progress: <b>0%</b>',
+                    allowOutsideClick: false,
+                    showConfirmButton: false,
+                    backdrop: 'rgba(0, 0, 0, 0.5)',
+                    showClass: { popup: '', backdrop: '' },
+                    hideClass: { popup: '', backdrop: '' },
+                    didOpen: () => {
+                        Swal.showLoading();
+                        if (!hasFiles) {
+                            progressInterval = setInterval(() => {
+                                if (currentProgress < 95) {
+                                    currentProgress += Math.floor(Math.random() * 10) + 5;
+                                    if (currentProgress > 95) currentProgress = 95;
+                                    const b = Swal.getHtmlContainer()?.querySelector('b');
+                                    if (b) b.textContent = `${currentProgress}%`;
+                                }
+                            }, 100);
+                        }
+                    },
+                });
+            },
+            onProgress: (event: any) => {
+                if (event?.percentage) {
+                    currentProgress = event.percentage;
+                    const b = Swal.getHtmlContainer()?.querySelector('b');
+                    if (b) b.textContent = `${currentProgress}%`;
+                }
+            },
             onSuccess: (page: any) => {
+                if (progressInterval) {
+                    clearInterval(progressInterval);
+                }
+                const b = Swal.getHtmlContainer()?.querySelector('b');
+                if (b) b.textContent = '100%';
+                Swal.close();
+
                 if (page.props.flash?.success) {
                     Swal.fire({
                         icon: 'success',
@@ -114,12 +157,21 @@ export default function Index({ profile, flash }: IndexProps) {
                 }
             },
             onError: () => {
+                if (progressInterval) {
+                    clearInterval(progressInterval);
+                }
+                Swal.close();
                 Swal.fire({
                     icon: 'error',
                     title: 'Gagal Menyimpan',
                     text: 'Harap periksa kembali input form Anda.',
                     confirmButtonColor: '#ef4444',
                 });
+            },
+            onFinish: () => {
+                if (progressInterval) {
+                    clearInterval(progressInterval);
+                }
             },
         };
 

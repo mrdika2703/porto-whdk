@@ -11,8 +11,24 @@ interface DesignData {
     url_1: string;
 }
 
+interface PaginationLink {
+    url: string | null;
+    label: string;
+    active: boolean;
+}
+
+interface PaginatedDesigns {
+    data: DesignData[];
+    links: PaginationLink[];
+    current_page: number;
+    last_page: number;
+    from: number | null;
+    to: number | null;
+    total: number;
+}
+
 interface IndexProps {
-    designs: DesignData[];
+    designs: PaginatedDesigns;
     hasProfile: boolean;
     flash: {
         success: string | null;
@@ -114,8 +130,8 @@ export default function Index({ designs, hasProfile, flash }: IndexProps) {
                         </tr>
                     </thead>
                     <tbody>
-                        {designs.length > 0 ? (
-                            designs.map((item) => (
+                        {designs.data && designs.data.length > 0 ? (
+                            designs.data.map((item) => (
                                 <tr
                                     key={item.id}
                                     className="border-b border-bmain/10 transition-colors hover:bg-main/20"
@@ -184,6 +200,32 @@ export default function Index({ designs, hasProfile, flash }: IndexProps) {
                         )}
                     </tbody>
                 </table>
+
+                {/* PAGINATION */}
+                {designs.last_page > 1 && (
+                    <div className="mt-6 flex flex-col items-center justify-between gap-4 border-t border-bmain/20 pt-4 sm:flex-row">
+                        <p className="text-xs text-tmuted">
+                            Menampilkan {designs.from}–{designs.to} dari {designs.total} data
+                        </p>
+                        <div className="flex flex-wrap items-center gap-1">
+                            {designs.links.map((link, i) => (
+                                <button
+                                    key={i}
+                                    disabled={!link.url}
+                                    onClick={() => link.url && router.get(link.url, {}, { preserveState: true, preserveScroll: true })}
+                                    className={`min-w-[36px] rounded-lg px-3 py-2 text-xs font-semibold transition-colors ${
+                                        link.active
+                                            ? 'bg-bshine text-white shadow-md'
+                                            : link.url
+                                              ? 'bg-main/40 text-tmuted hover:bg-accent/20 hover:text-accent'
+                                              : 'cursor-not-allowed text-tmuted/40'
+                                    }`}
+                                    dangerouslySetInnerHTML={{ __html: link.label }}
+                                />
+                            ))}
+                        </div>
+                    </div>
+                )}
             </div>
         </LayoutAdmin>
     );

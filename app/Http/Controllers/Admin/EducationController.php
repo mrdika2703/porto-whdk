@@ -52,6 +52,7 @@ class EducationController extends Controller
             'status' => 'required|string|max:255',
             'start_date' => 'required|date',
             'end_date' => 'nullable|date',
+            'visible' => 'required|in:yes,no',
         ]);
 
         $validated['profile_id'] = $profile->id;
@@ -80,6 +81,7 @@ class EducationController extends Controller
             'status' => 'required|string|max:255',
             'start_date' => 'required|date',
             'end_date' => 'nullable|date',
+            'visible' => 'required|in:yes,no',
         ]);
 
         $education->update($validated);

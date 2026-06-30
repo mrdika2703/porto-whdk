@@ -13,6 +13,7 @@ interface ExperienceData {
     end_date: string | null;
     duration: string | null;
     viewmode: 'All' | 'Programming' | 'Multimedia';
+    visible: 'yes' | 'no';
 }
 
 interface FormProps {
@@ -52,6 +53,7 @@ export default function Form({ experience }: FormProps) {
             end_date: experience?.end_date ?? null,
             duration: experience?.duration ?? null,
             viewmode: experience?.viewmode ?? 'All',
+            visible: experience?.visible ?? 'yes',
         });
 
     const handleStatusChange = (statusVal: 'Selesai' | 'Sekarang') => {
@@ -109,8 +111,48 @@ export default function Form({ experience }: FormProps) {
     const handleSubmit = (e: FormEvent) => {
         e.preventDefault();
 
+        let progressInterval: any = null;
+        let currentProgress = 0;
+
         const options = {
+            onStart: () => {
+                currentProgress = 0;
+                Swal.fire({
+                    title: 'Mengirim Data...',
+                    html: 'Progress: <b>0%</b>',
+                    allowOutsideClick: false,
+                    showConfirmButton: false,
+                    backdrop: 'rgba(0, 0, 0, 0.5)',
+                    showClass: { popup: '', backdrop: '' },
+                    hideClass: { popup: '', backdrop: '' },
+                    didOpen: () => {
+                        Swal.showLoading();
+                        progressInterval = setInterval(() => {
+                            if (currentProgress < 95) {
+                                currentProgress += Math.floor(Math.random() * 10) + 5;
+                                if (currentProgress > 95) currentProgress = 95;
+                                const b = Swal.getHtmlContainer()?.querySelector('b');
+                                if (b) b.textContent = `${currentProgress}%`;
+                            }
+                        }, 100);
+                    },
+                });
+            },
+            onProgress: (event: any) => {
+                if (event?.percentage) {
+                    currentProgress = event.percentage;
+                    const b = Swal.getHtmlContainer()?.querySelector('b');
+                    if (b) b.textContent = `${currentProgress}%`;
+                }
+            },
             onSuccess: (page: any) => {
+                if (progressInterval) {
+                    clearInterval(progressInterval);
+                }
+                const b = Swal.getHtmlContainer()?.querySelector('b');
+                if (b) b.textContent = '100%';
+                Swal.close();
+
                 if (page.props.flash?.success) {
                     Swal.fire({
                         icon: 'success',
@@ -124,12 +166,21 @@ export default function Form({ experience }: FormProps) {
                 }
             },
             onError: () => {
+                if (progressInterval) {
+                    clearInterval(progressInterval);
+                }
+                Swal.close();
                 Swal.fire({
                     icon: 'error',
                     title: 'Gagal Menyimpan',
                     text: 'Harap periksa kembali input form Anda.',
                     confirmButtonColor: '#ef4444',
                 });
+            },
+            onFinish: () => {
+                if (progressInterval) {
+                    clearInterval(progressInterval);
+                }
             },
         };
 
@@ -282,6 +333,30 @@ export default function Form({ experience }: FormProps) {
                             {errors.viewmode && (
                                 <p className="mt-1 text-xs text-red-500">
                                     {errors.viewmode}
+                                </p>
+                            )}
+                        </div>
+
+                        <div>
+                            <label className="mb-2 block text-xs font-semibold tracking-wider text-tmuted uppercase">
+                                Visible (Tampilkan di Portfolio)
+                            </label>
+                            <select
+                                value={data.visible}
+                                onChange={(e) =>
+                                    setData(
+                                        'visible',
+                                        e.target.value as 'yes' | 'no',
+                                    )
+                                }
+                                className="w-full rounded-xl border border-bmain/30 bg-main/40 px-4 py-3 text-sm text-htext transition-colors focus:border-accent focus:outline-none dark:text-tmain"
+                            >
+                                <option value="yes">Yes (Tampilkan)</option>
+                                <option value="no">No (Sembunyikan)</option>
+                            </select>
+                            {errors.visible && (
+                                <p className="mt-1 text-xs text-red-500">
+                                    {errors.visible}
                                 </p>
                             )}
                         </div>

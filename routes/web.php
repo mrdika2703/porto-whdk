@@ -15,6 +15,7 @@ use App\Http\Controllers\Admin\PhotoVideoController;
 use App\Http\Controllers\Admin\WebsiteController;
 use App\Http\Controllers\Admin\CertificateController;
 use App\Http\Controllers\Admin\OtherController;
+use App\Http\Controllers\Admin\DescriptionSectionController;
 
 Route::name('guest')->group(function () {
     Route::get('/', [HomeController::class, 'index'])->name('home');
@@ -97,6 +98,10 @@ Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
     Route::get('/others/{id}/edit', [OtherController::class, 'edit'])->name('others.edit');
     Route::post('/others/{id}', [OtherController::class, 'update'])->name('others.update');
     Route::delete('/others/{id}', [OtherController::class, 'destroy'])->name('others.destroy');
+
+    Route::get('/description-sections', [DescriptionSectionController::class, 'index'])->name('description-sections.index');
+    Route::post('/description-sections', [DescriptionSectionController::class, 'store'])->name('description-sections.store');
+    Route::post('/description-sections/{id}', [DescriptionSectionController::class, 'update'])->name('description-sections.update');
 });
 
 Route::fallback(function () {

@@ -17,6 +17,7 @@ class Skill extends Model
         'level',
         'icon',
         'viewmode',
+        'visible',
     ];
 
     public function profile(): BelongsTo

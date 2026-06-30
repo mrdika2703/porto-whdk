@@ -11,8 +11,24 @@ interface PhotoVideoData {
     url_1: string;
 }
 
+interface PaginationLink {
+    url: string | null;
+    label: string;
+    active: boolean;
+}
+
+interface PaginatedPhotoVideos {
+    data: PhotoVideoData[];
+    links: PaginationLink[];
+    current_page: number;
+    last_page: number;
+    from: number | null;
+    to: number | null;
+    total: number;
+}
+
 interface IndexProps {
-    photovideos: PhotoVideoData[];
+    photovideos: PaginatedPhotoVideos;
     hasProfile: boolean;
     flash: {
         success: string | null;
@@ -106,8 +122,8 @@ export default function Index({ photovideos, hasProfile, flash }: IndexProps) {
                         </tr>
                     </thead>
                     <tbody>
-                        {photovideos.length > 0 ? (
-                            photovideos.map((item) => (
+                        {photovideos.data && photovideos.data.length > 0 ? (
+                            photovideos.data.map((item) => (
                                 <tr
                                     key={item.id}
                                     className="border-b border-bmain/10 transition-colors hover:bg-main/20"
@@ -176,6 +192,32 @@ export default function Index({ photovideos, hasProfile, flash }: IndexProps) {
                         )}
                     </tbody>
                 </table>
+
+                {/* PAGINATION */}
+                {photovideos.last_page > 1 && (
+                    <div className="mt-6 flex flex-col items-center justify-between gap-4 border-t border-bmain/20 pt-4 sm:flex-row">
+                        <p className="text-xs text-tmuted">
+                            Menampilkan {photovideos.from}–{photovideos.to} dari {photovideos.total} data
+                        </p>
+                        <div className="flex flex-wrap items-center gap-1">
+                            {photovideos.links.map((link, i) => (
+                                <button
+                                    key={i}
+                                    disabled={!link.url}
+                                    onClick={() => link.url && router.get(link.url, {}, { preserveState: true, preserveScroll: true })}
+                                    className={`min-w-[36px] rounded-lg px-3 py-2 text-xs font-semibold transition-colors ${
+                                        link.active
+                                            ? 'bg-bshine text-white shadow-md'
+                                            : link.url
+                                              ? 'bg-main/40 text-tmuted hover:bg-accent/20 hover:text-accent'
+                                              : 'cursor-not-allowed text-tmuted/40'
+                                    }`}
+                                    dangerouslySetInnerHTML={{ __html: link.label }}
+                                />
+                            ))}
+                        </div>
+                    </div>
+                )}
             </div>
         </LayoutAdmin>
     );

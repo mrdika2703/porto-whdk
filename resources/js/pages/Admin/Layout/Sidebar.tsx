@@ -19,6 +19,11 @@ export default function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
         },
         { name: 'Profile', icon: 'fa-solid fa-user', route: '/admin/profiles' },
         {
+            name: 'Description Section',
+            icon: 'fa-solid fa-feather',
+            route: '/admin/description-sections',
+        },
+        {
             name: 'Graphic Design',
             icon: 'fa-solid fa-palette',
             route: '/admin/grapich-design',

@@ -19,6 +19,15 @@ interface WebsiteData {
     url_6: string | File | null;
     url_7: string | File | null;
     url_8: string | File | null;
+    visible: 'yes' | 'no';
+    clear_url_1?: boolean;
+    clear_url_2?: boolean;
+    clear_url_3?: boolean;
+    clear_url_4?: boolean;
+    clear_url_5?: boolean;
+    clear_url_6?: boolean;
+    clear_url_7?: boolean;
+    clear_url_8?: boolean;
 }
 
 interface FormProps {
@@ -44,6 +53,15 @@ export default function Form({ websites, existingCategories = [] }: FormProps) {
         url_6: null,
         url_7: null,
         url_8: null,
+        visible: websites?.visible ?? 'yes',
+        clear_url_1: false,
+        clear_url_2: false,
+        clear_url_3: false,
+        clear_url_4: false,
+        clear_url_5: false,
+        clear_url_6: false,
+        clear_url_7: false,
+        clear_url_8: false,
     });
 
     const [previews, setPreviews] = useState<{ [key: string]: string | null }>({
@@ -72,7 +90,13 @@ export default function Form({ websites, existingCategories = [] }: FormProps) {
 
     const handleFileChange = (num: number, file: File | null) => {
         const urlKey = `url_${num}` as keyof WebsiteData;
-        setData(urlKey, file);
+        const clearKey = `clear_url_${num}` as keyof WebsiteData;
+
+        setData((prev) => ({
+            ...prev,
+            [urlKey]: file,
+            [clearKey]: false,
+        }));
 
         if (file) {
             const objectUrl = URL.createObjectURL(file);
@@ -86,11 +110,77 @@ export default function Form({ websites, existingCategories = [] }: FormProps) {
         }
     };
 
+    const handleClearFile = (num: number) => {
+        const urlKey = `url_${num}` as keyof WebsiteData;
+        const clearKey = `clear_url_${num}` as keyof WebsiteData;
+
+        setData((prev) => ({
+            ...prev,
+            [urlKey]: null,
+            [clearKey]: true,
+        }));
+        setPreviews((prev) => ({
+            ...prev,
+            [urlKey]: null,
+        }));
+    };
+
     const handleSubmit = (e: FormEvent) => {
         e.preventDefault();
 
+        let progressInterval: any = null;
+        let currentProgress = 0;
+        const hasFiles =
+            data.url_1 instanceof File ||
+            data.url_2 instanceof File ||
+            data.url_3 instanceof File ||
+            data.url_4 instanceof File ||
+            data.url_5 instanceof File ||
+            data.url_6 instanceof File ||
+            data.url_7 instanceof File ||
+            data.url_8 instanceof File;
+
         const options = {
+            onStart: () => {
+                currentProgress = 0;
+                Swal.fire({
+                    title: 'Mengirim Data...',
+                    html: 'Progress: <b>0%</b>',
+                    allowOutsideClick: false,
+                    showConfirmButton: false,
+                    backdrop: 'rgba(0, 0, 0, 0.5)',
+                    showClass: { popup: '', backdrop: '' },
+                    hideClass: { popup: '', backdrop: '' },
+                    didOpen: () => {
+                        Swal.showLoading();
+                        if (!hasFiles) {
+                            progressInterval = setInterval(() => {
+                                if (currentProgress < 95) {
+                                    currentProgress += Math.floor(Math.random() * 10) + 5;
+                                    if (currentProgress > 95) currentProgress = 95;
+                                    const b = Swal.getHtmlContainer()?.querySelector('b');
+                                    if (b) b.textContent = `${currentProgress}%`;
+                                }
+                            }, 100);
+                        }
+                    },
+                });
+            },
+            onProgress: (event: any) => {
+                if (event?.percentage) {
+                    currentProgress = event.percentage;
+                    const b = Swal.getHtmlContainer()?.querySelector('b');
+                    if (b) b.textContent = `${currentProgress}%`;
+                }
+            },
             onSuccess: (page: any) => {
+                if (progressInterval) {
+                    clearInterval(progressInterval);
+                }
+                const b = Swal.getHtmlContainer()?.querySelector('b');
+                if (b) b.textContent = '100%';
+                Swal.close();
+
                 if (page.props.flash?.success) {
                     Swal.fire({
                         icon: 'success',
@@ -111,14 +201,22 @@ export default function Form({ websites, existingCategories = [] }: FormProps) {
                     });
                 }
             },
-
             onError: () => {
+                if (progressInterval) {
+                    clearInterval(progressInterval);
+                }
+                Swal.close();
                 Swal.fire({
                     icon: 'error',
                     title: 'Gagal Menyimpan',
                     text: 'Harap periksa kembali input form Anda.',
                     confirmButtonColor: '#ef4444',
                 });
+            },
+            onFinish: () => {
+                if (progressInterval) {
+                    clearInterval(progressInterval);
+                }
             },
         };
 
@@ -325,6 +423,30 @@ export default function Form({ websites, existingCategories = [] }: FormProps) {
                                 </p>
                             )}
                         </div>
+
+                        <div>
+                            <label className="mb-2 block text-xs font-semibold tracking-wider text-tmuted uppercase">
+                                Visible (Tampilkan di Portfolio)
+                            </label>
+                            <select
+                                value={data.visible}
+                                onChange={(e) =>
+                                    setData(
+                                        'visible',
+                                        e.target.value as 'yes' | 'no',
+                                    )
+                                }
+                                className="w-full rounded-xl border border-bmain/30 bg-main/40 px-4 py-3 text-sm text-htext transition-colors focus:border-accent focus:outline-none dark:text-tmain"
+                            >
+                                <option value="yes">Yes (Tampilkan)</option>
+                                <option value="no">No (Sembunyikan)</option>
+                            </select>
+                            {errors.visible && (
+                                <p className="mt-1 text-xs text-red-500">
+                                    {errors.visible}
+                                </p>
+                            )}
+                        </div>
                     </div>
 
                     <div className="space-y-4 rounded-2xl border border-bmain/20 bg-bcard p-6 shadow-sm">
@@ -352,26 +474,37 @@ export default function Form({ websites, existingCategories = [] }: FormProps) {
                                     </label>
 
                                     {previewUrl && (
-                                        <div
-                                            className="group relative mb-4 h-48 w-full cursor-pointer overflow-hidden rounded-xl border border-bmain/40 bg-black/5"
-                                            onClick={() =>
-                                                setModalMedia(previewUrl)
-                                            }
-                                        >
-                                            <img
-                                                src={previewUrl}
-                                                alt={`Preview ${num}`}
-                                                className="h-full w-full object-cover"
-                                            />
+                                        <div className="relative mb-4">
+                                            <div
+                                                className="group relative h-48 w-full cursor-pointer overflow-hidden rounded-xl border border-bmain/40 bg-black/5"
+                                                onClick={() =>
+                                                    setModalMedia(previewUrl)
+                                                }
+                                            >
+                                                <img
+                                                    src={previewUrl}
+                                                    alt={`Preview ${num}`}
+                                                    className="h-full w-full object-cover"
+                                                />
 
-                                            <div className="absolute inset-0 flex items-center justify-center bg-black/50 opacity-0 transition-opacity group-hover:opacity-100">
-                                                <i className="fa-solid fa-magnifying-glass-plus text-3xl text-white"></i>
+                                                <div className="absolute inset-0 flex items-center justify-center bg-black/50 opacity-0 transition-opacity group-hover:opacity-100">
+                                                    <i className="fa-solid fa-magnifying-glass-plus text-3xl text-white"></i>
+                                                </div>
                                             </div>
+                                            <button
+                                                type="button"
+                                                onClick={() => handleClearFile(num)}
+                                                className="absolute top-2 right-2 flex h-8 w-8 items-center justify-center rounded-lg bg-red-500 text-white shadow-md hover:bg-red-600 transition-colors"
+                                                title="Hapus File"
+                                            >
+                                                <i className="fa-solid fa-trash-can text-sm"></i>
+                                            </button>
                                         </div>
                                     )}
 
                                     <input
                                         type="file"
+                                        key={data[urlKey as keyof WebsiteData] ? (data[urlKey as keyof WebsiteData] as File).name : 'empty'}
                                         onChange={(e) =>
                                             handleFileChange(
                                                 num,

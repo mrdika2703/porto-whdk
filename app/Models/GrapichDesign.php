@@ -23,6 +23,7 @@ class GrapichDesign extends Model
         'url_1',
         'url_2',
         'url_3',
+        'visible',
     ];
 
     public function profile(): BelongsTo

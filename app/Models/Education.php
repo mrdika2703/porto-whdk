@@ -21,6 +21,7 @@ class Education extends Model
         'status',
         'start_date',
         'end_date',
+        'visible',
     ];
 
     public function profile(): BelongsTo

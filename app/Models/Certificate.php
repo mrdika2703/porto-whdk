@@ -16,6 +16,7 @@ class Certificate extends Model
         'url_1',
         'url_2',
         'viewmode',
+        'visible',
     ];
     public function profile()
     {
