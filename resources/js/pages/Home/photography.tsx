@@ -2,14 +2,16 @@ import { useState, useRef, useMemo, useCallback } from 'react';
 import { Link } from '@inertiajs/react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { BgPhotograph } from '@/components/bg-photograph';
-import { PhotoVideo } from './index';
+import { PhotoVideo, DescriptionSection } from './index';
 import { useIsMobile } from '@/hooks/useIsMobile';
 import { Underline } from '@/components/underline';
 
 export default function PhotoVideoSection({
     photovideos = [],
+    description_sections,
 }: {
     photovideos: PhotoVideo[];
+    description_sections?: DescriptionSection | null;
 }) {
     const [activeTab, setActiveTab] = useState('photo');
     const [selectedPhotoVideo, setSelectedPhotoVideo] =
@@ -55,7 +57,7 @@ export default function PhotoVideoSection({
         const columns: (typeof items)[] = [];
         let i = 0;
         while (i < items.length) {
-            const chunkSize = columns.length % 2 === 0 ? 2 : 3;
+            const chunkSize = columns.length % 2 === 0 ? 4 : 4;
             columns.push(items.slice(i, i + chunkSize));
             i += chunkSize;
         }
@@ -109,7 +111,7 @@ export default function PhotoVideoSection({
             {/* TOP FADE GRADIENT */}
             <div className="pointer-events-none absolute top-0 left-0 z-10 h-[15%] w-full bg-gradient-to-b from-main to-transparent"></div>
 
-            <div className="mx-auto flex w-full max-w-7xl flex-col items-center gap-10 px-4 sm:px-8 md:gap-12 md:px-12">
+            <div className="mx-auto flex w-full max-w-7xl flex-col items-center gap-2 px-4 sm:px-8 md:gap-3 md:px-12">
                 {/* --- HEADER DENGAN ANIMASI --- */}
                 <motion.div
                     initial={{ opacity: 0, y: -20 }}
@@ -135,12 +137,13 @@ export default function PhotoVideoSection({
                     </div>
                     {/* Teks preview disembunyikan di layar HP paling kecil agar bersih */}
                     <p className="hidden text-sm font-light text-tmain sm:block md:text-base">
-                        Preview Project
+                        {description_sections?.photovideo_section ||
+                            'Preview Project'}
                     </p>
                 </motion.div>
 
                 {/* --- TABS (Filter & See More) --- */}
-                <div className="relative z-20 flex w-full flex-col items-center justify-center gap-3 md:gap-6">
+                <div className="relative z-20 mt-10 flex w-full flex-col items-center justify-center gap-3 md:mt-12 md:gap-6">
                     <div className="flex w-full flex-wrap items-center justify-center gap-3 md:gap-6">
                         <button
                             onClick={() => setActiveTab('photo')}
@@ -214,7 +217,7 @@ export default function PhotoVideoSection({
                                     <div
                                         key={colIndex}
                                         // Lebar kolom responsif (220px di HP, membesar di tablet/desktop)
-                                        className="flex w-[180px] shrink-0 snap-start flex-col gap-4 md:w-[320px] md:gap-6"
+                                        className="flex w-[110px] shrink-0 snap-start flex-col gap-4 md:w-[150px] md:gap-6 lg:w-[275px]"
                                     >
                                         {column.map((project) => (
                                             <div

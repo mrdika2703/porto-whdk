@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import { Link } from '@inertiajs/react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Website } from './index';
+import { Website, DescriptionSection } from './index';
 import { Underline } from '@/components/underline';
 
 const transitionVariants = {
@@ -29,8 +29,10 @@ const transitionVariants = {
 
 export default function WebsiteSection({
     websites = [],
+    description_sections,
 }: {
     websites: Website[];
+    description_sections?: DescriptionSection | null;
 }) {
     const [activeTab, setActiveTab] = useState('project');
     const [projectIndex, setProjectIndex] = useState(0);
@@ -99,7 +101,7 @@ export default function WebsiteSection({
             {/* Ambient Glow */}
             <div className="pointer-events-none absolute top-1/2 left-1/2 hidden h-[500px] w-[500px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-bshine/5 blur-[120px] md:block"></div>
 
-            <div className="mx-auto flex w-full max-w-[1440px] flex-col gap-10 px-6 md:px-12">
+            <div className="mx-auto flex w-full max-w-[1440px] flex-col gap-2 px-6 md:px-12">
                 {/* Header */}
                 <motion.div
                     initial={{ opacity: 0, y: -30 }}
@@ -119,8 +121,16 @@ export default function WebsiteSection({
                     </p>
                 </motion.div>
 
+                {description_sections?.design_section && (
+                    <div className="flex w-full flex-col items-start">
+                        <p className="text-xs font-light text-tmain/70 md:text-sm">
+                            {description_sections.design_section}
+                        </p>
+                    </div>
+                )}
+
                 {/* Tabs & Content Container */}
-                <div className="flex flex-col items-center gap-8">
+                <div className="mt-10 flex flex-col items-center gap-8">
                     <div className="flex w-full flex-wrap items-center justify-center gap-4">
                         {['project', 'develop'].map((tab) => (
                             <button

@@ -1,26 +1,52 @@
 import { useState, useRef, useMemo, useCallback } from 'react';
 import { Link } from '@inertiajs/react';
 import { motion, AnimatePresence } from 'framer-motion'; // Tambahkan import framer-motion
-import { Design } from './index';
+import { Design, DescriptionSection } from './index';
 import { Underline } from '@/components/underline';
 
-const categories = ['Sosmed', 'Poster', 'Banner'];
+const categories = ['Poster', 'Logo', 'Print', 'Motion', 'Others'];
 
-interface GrapichProps {
+export default function DesignGraphicSection({
+    designs = [],
+    description_sections = null,
+}: {
     designs: Design[];
-}
-
-export default function DesignGraphicSection({ designs = [] }: GrapichProps) {
-    const [activeCategory, setActiveCategory] = useState('Sosmed');
+    description_sections: DescriptionSection | null;
+}) {
+    const [activeCategory, setActiveCategory] = useState('Poster');
     const [selectedDesign, setSelectedDesign] = useState<Design | null>(null);
+    const [activeImg, setActiveImg] = useState<string | null>(null);
     const scrollRef = useRef<HTMLDivElement>(null);
 
     // console.log('Isi data designs:', designs);
 
+    const getImages = (item: Design | null) => {
+        if (!item) return [];
+        return [item.url_1, item.url_2, item.url_3].filter(Boolean) as string[];
+    };
+
+    const activeImages = getImages(selectedDesign);
+    const currentImg = activeImg || selectedDesign?.url_1 || null;
+    const activeIndex = currentImg ? activeImages.indexOf(currentImg) : 0;
+
+    const handlePrev = useCallback(() => {
+        if (activeImages.length <= 1) return;
+        const newIndex =
+            (activeIndex - 1 + activeImages.length) % activeImages.length;
+        setActiveImg(activeImages[newIndex]);
+    }, [activeImages, activeIndex]);
+
+    const handleNext = useCallback(() => {
+        if (activeImages.length <= 1) return;
+        const newIndex = (activeIndex + 1) % activeImages.length;
+        setActiveImg(activeImages[newIndex]);
+    }, [activeImages, activeIndex]);
+
     const filteredDesigns = useMemo(
-        () => Array.isArray(designs)
-            ? designs.filter((item) => item.category === activeCategory)
-            : [],
+        () =>
+            Array.isArray(designs)
+                ? designs.filter((item) => item.category === activeCategory)
+                : [],
         [designs, activeCategory],
     );
 
@@ -28,7 +54,7 @@ export default function DesignGraphicSection({ designs = [] }: GrapichProps) {
         const columns: (typeof items)[] = [];
         let i = 0;
         while (i < items.length) {
-            const chunkSize = columns.length % 2 === 0 ? 2 : 3;
+            const chunkSize = columns.length % 2 === 0 ? 4 : 4;
             columns.push(items.slice(i, i + chunkSize));
             i += chunkSize;
         }
@@ -72,7 +98,7 @@ export default function DesignGraphicSection({ designs = [] }: GrapichProps) {
 
     return (
         <section className="relative min-h-[500px] w-full overflow-hidden py-16 md:py-24">
-            <div className="mx-auto flex w-full max-w-7xl flex-col gap-10 px-4 sm:px-8 md:gap-12 md:px-12">
+            <div className="mx-auto flex w-full max-w-7xl flex-col gap-2 px-4 sm:px-8 md:gap-3 md:px-12">
                 {/* --- HEADER DENGAN ANIMASI --- */}
                 <motion.div
                     initial={{ opacity: 0, y: -20 }}
@@ -97,16 +123,24 @@ export default function DesignGraphicSection({ designs = [] }: GrapichProps) {
                     </div>
                 </motion.div>
 
+                {description_sections?.design_section && (
+                    <div className="flex w-full flex-col items-center md:items-start">
+                        <p className="text-xs font-light text-tmain/70 md:text-sm">
+                            {description_sections.design_section}
+                        </p>
+                    </div>
+                )}
+
                 {/* --- MAIN CONTENT (Tabs & Slider) --- */}
-                <div className="relative z-20 flex w-full flex-col items-center gap-3 md:gap-6">
+                <div className="relative z-20 mt-10 flex w-full flex-col items-center gap-3 md:mt-12 md:gap-6">
                     {/* TABS */}
-                    <div className="flex w-full flex-wrap items-center justify-center gap-3 md:gap-6">
+                    <div className="flex w-full flex-wrap items-center justify-center gap-2 md:gap-6">
                         {categories.map((cat) => (
                             <button
                                 key={cat}
                                 onClick={() => setActiveCategory(cat)}
                                 // Padding dan teks diperkecil di HP
-                                className={`flex items-center justify-center rounded-3xl px-4 py-1.5 text-xs transition-all duration-300 sm:text-sm md:px-6 md:py-2 md:text-base ${
+                                className={`flex items-center justify-center rounded-3xl px-3 py-1 text-xs transition-all duration-300 sm:text-sm md:px-6 md:py-2 md:text-base ${
                                     activeCategory === cat
                                         ? 'border bg-gradient-to-r from-bsecond to-stone-500 font-medium text-white dark:border-white dark:bg-white/10 dark:bg-none dark:shadow-[0_0_30px_rgba(255,255,255,0.3)]'
                                         : 'border border-bsecond font-normal text-tmain hover:bg-bsecond/5 dark:hover:bg-white/10'
@@ -163,8 +197,7 @@ export default function DesignGraphicSection({ designs = [] }: GrapichProps) {
                                 {designsColumns.map((column, colIndex) => (
                                     <div
                                         key={colIndex}
-                                        // Lebar kolom di HP diperkecil menjadi 220px agar nyaman dilihat
-                                        className="flex w-[180px] shrink-0 snap-start flex-col gap-4 sm:w-[180px] md:w-[320px] md:gap-6"
+                                        className="flex w-[110px] shrink-0 snap-start flex-col gap-4 md:w-[150px] md:gap-6 lg:w-[275px]"
                                     >
                                         {column.map((designs) => (
                                             <div
@@ -263,12 +296,56 @@ export default function DesignGraphicSection({ designs = [] }: GrapichProps) {
 
                             {/* Image side (more space) */}
                             <div className="relative flex min-h-[280px] w-full items-center justify-center p-3 md:min-h-[480px] md:w-3/5 lg:w-2/3">
-                                <img
-                                    src={`/storage/${selectedDesign.url_1}`}
-                                    alt={selectedDesign.title}
-                                    className="max-h-[50vh] max-w-full rounded-lg object-contain shadow-lg md:max-h-[85vh]"
-                                    draggable={false}
-                                />
+                                {currentImg && (
+                                    <img
+                                        src={`/storage/${currentImg}`}
+                                        alt={selectedDesign.title}
+                                        className="max-h-[50vh] max-w-full rounded-lg object-contain shadow-lg md:max-h-[85vh]"
+                                        draggable={false}
+                                    />
+                                )}
+
+                                {/* Arrow Navigation if multiple images exist */}
+                                {activeImages.length > 1 && (
+                                    <>
+                                        <button
+                                            onClick={handlePrev}
+                                            className="absolute top-1/2 left-6 z-10 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-white/10 bg-black/60 text-white backdrop-blur-sm transition-all hover:scale-105 hover:border-bshine hover:bg-hbshine/50"
+                                        >
+                                            <i className="fa-solid fa-chevron-left text-sm" />
+                                        </button>
+                                        <button
+                                            onClick={handleNext}
+                                            className="absolute top-1/2 right-6 z-10 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-white/10 bg-black/60 text-white backdrop-blur-sm transition-all hover:scale-105 hover:border-bshine hover:bg-hbshine/50"
+                                        >
+                                            <i className="fa-solid fa-chevron-right text-sm" />
+                                        </button>
+                                    </>
+                                )}
+
+                                {/* Thumbnail Switcher if multiple images exist */}
+                                {activeImages.length > 1 && (
+                                    <div className="absolute bottom-4 left-1/2 flex -translate-x-1/2 gap-3 rounded-lg border border-white/5 bg-black/60 p-2 backdrop-blur-md">
+                                        {activeImages.map((img, idx) => (
+                                            <button
+                                                key={idx}
+                                                onClick={() =>
+                                                    setActiveImg(img)
+                                                }
+                                                className={`h-10 w-14 overflow-hidden rounded border transition-all ${
+                                                    currentImg === img
+                                                        ? 'scale-105 border-bshine'
+                                                        : 'border-white/20 opacity-60 hover:opacity-100'
+                                                }`}
+                                            >
+                                                <img
+                                                    src={`/storage/${img}`}
+                                                    className="h-full w-full object-cover"
+                                                />
+                                            </button>
+                                        ))}
+                                    </div>
+                                )}
                             </div>
 
                             {/* Info side (less space) */}
@@ -295,7 +372,13 @@ export default function DesignGraphicSection({ designs = [] }: GrapichProps) {
 
                                     {selectedDesign.link && (
                                         <a
-                                            href={selectedDesign.link.match(/^https?:\/\//) ? selectedDesign.link : `https://${selectedDesign.link}`}
+                                            href={
+                                                selectedDesign.link.match(
+                                                    /^https?:\/\//,
+                                                )
+                                                    ? selectedDesign.link
+                                                    : `https://${selectedDesign.link}`
+                                            }
                                             target="_blank"
                                             rel="noopener noreferrer"
                                             className="mt-6 flex w-full items-center justify-center gap-2 rounded-full border border-bshine/50 bg-bshine/10 px-6 py-2 text-sm font-semibold text-bshine backdrop-blur-sm transition-all duration-300 hover:border-bshine hover:bg-bshine/20 hover:shadow-[0_0_20px_rgba(192,104,0,0.2)]"

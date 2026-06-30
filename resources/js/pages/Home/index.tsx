@@ -29,6 +29,14 @@ export interface Profile {
     passion_multimedia?: string | null;
 }
 
+export interface DescriptionSection {
+    id: number;
+    design_section: string | null;
+    photovideo_section: string | null;
+    website_section: string | null;
+    other_section: string | null;
+}
+
 export interface Skill {
     id: number;
     name_skills: string;
@@ -134,6 +142,7 @@ export interface Footers {
 interface HomeProps {
     profiles: Profile[];
     skills: Skill[];
+    description_sections: DescriptionSection | null;
     certificates: Certificate[];
     experiences: Experience[];
     educations: Education[];
@@ -147,6 +156,7 @@ interface HomeProps {
 export default function Home({
     profiles = [],
     skills = [],
+    description_sections = null,
     certificates = [],
     experiences = [],
     educations = [],
@@ -247,6 +257,9 @@ export default function Home({
                                     {designSection.shouldRender ? (
                                         <DesignGraphicSection
                                             designs={designs}
+                                            description_sections={
+                                                description_sections
+                                            }
                                         />
                                     ) : (
                                         <div className="min-h-[500px]" />
@@ -271,6 +284,9 @@ export default function Home({
                                     {photoSection.shouldRender ? (
                                         <PhotoVideoSection
                                             photovideos={photovideos}
+                                            description_sections={
+                                                description_sections
+                                            }
                                         />
                                     ) : (
                                         <div className="min-h-[500px]" />
@@ -292,7 +308,12 @@ export default function Home({
                                     ref={websiteSection.ref}
                                 >
                                     {websiteSection.shouldRender ? (
-                                        <WebsiteSection websites={websites} />
+                                        <WebsiteSection
+                                            websites={websites}
+                                            description_sections={
+                                                description_sections
+                                            }
+                                        />
                                     ) : (
                                         <div className="min-h-[650px]" />
                                     )}
@@ -302,7 +323,10 @@ export default function Home({
 
                         <div id="other" ref={otherSection.ref}>
                             {otherSection.shouldRender ? (
-                                <OtherSection others={others} />
+                                <OtherSection
+                                    others={others}
+                                    description_sections={description_sections}
+                                />
                             ) : (
                                 <div className="min-h-[200px]" />
                             )}

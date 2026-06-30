@@ -1,9 +1,15 @@
 import { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import type { Other } from './index';
+import type { Other, DescriptionSection } from './index';
 import { Underline } from '@/components/underline';
 
-export default function OtherSection({ others }: { others: Other[] }) {
+export default function OtherSection({
+    others,
+    description_sections,
+}: {
+    others: Other[];
+    description_sections?: DescriptionSection | null;
+}) {
     const [isOpen, setIsOpen] = useState(false);
     const [selectedOther, setSelectedOther] = useState<Other | null>(null);
     const [activeImg, setActiveImg] = useState<string | null>(null);
@@ -92,7 +98,7 @@ export default function OtherSection({ others }: { others: Other[] }) {
                         <p
                             className={`font-regular text-center text-xs text-gray-500 transition-opacity duration-100 md:text-left md:text-sm ${isOpen ? 'absolute opacity-0' : 'opacity-100'}`}
                         >
-                            {others.map((item) => item.category).join(', ')}
+                            {description_sections?.other_section || others.map((item) => item.category).join(', ')}
                         </p>
                     </div>
 

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Certificate;
+use App\Models\DescriptionSection;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Carbon\Carbon;
@@ -44,29 +45,39 @@ class HomeController extends Controller
         });
 
         $skill = Cache::remember('all_skill_array', 3600, function () {
-            return Skill::orderByRaw("CASE WHEN category = 'Soft Skill' THEN 1 ELSE 2 END ASC")
+            return Skill::where('visible', 'yes')
+                ->orderByRaw("CASE WHEN category = 'Soft Skill' THEN 1 ELSE 2 END ASC")
                 ->orderByRaw("CASE WHEN level = 'Expert' THEN 1 WHEN level = 'Intermediate' THEN 2 WHEN level = 'Beginner' THEN 3 ELSE 4 END ASC")
                 ->orderBy('name_skills', 'asc')
                 ->get()
                 ->toArray();
         });
 
+        $descriptionSections = Cache::remember(
+            'all_description_sections_array',
+            3600,
+            function () {
+                return DescriptionSection::first();
+            }
+        );
+
         $certificate = Cache::remember('all_certificate_array', 3600, function () {
-            return Certificate::orderBy('start_date', 'desc')->get()->toArray();
+            return Certificate::where('visible', 'yes')->orderBy('start_date', 'desc')->get()->toArray();
         });
 
         $experience = Cache::remember('all_experience_array', 3600, function () {
-            return Experience::orderBy('start_date', 'desc')->get()->toArray();
+            return Experience::where('visible', 'yes')->orderBy('start_date', 'desc')->get()->toArray();
         });
 
         $education = Cache::remember('all_education_array', 3600, function () {
-            return Education::orderBy('start_date', 'desc')->get()->toArray();
+            return Education::where('visible', 'yes')->orderBy('start_date', 'desc')->get()->toArray();
         });
 
         // CARA TERBAIK: Cache data dalam bentuk Array (->toArray()), BUKAN objek Eloquent
         $design = Cache::remember('all_design_array', 3600, function () {
             // Kita gunakan toArray() agar yang disimpan di cache benar-benar murni data
-            return GrapichDesign::all()
+            return GrapichDesign::where('visible', 'yes')
+                ->get()
                 ->groupBy('category')
                 ->flatMap(function ($group) {
                     return $group->shuffle()->take(15);
@@ -76,7 +87,8 @@ class HomeController extends Controller
         });
 
         $photovideo = Cache::remember('all_photovideo_array', 3600, function () {
-            return PhotoVideo::all()
+            return PhotoVideo::where('visible', 'yes')
+                ->get()
                 ->groupBy('category')
                 ->flatMap(function ($group) {
                     return $group->shuffle()->take(15);
@@ -86,7 +98,8 @@ class HomeController extends Controller
         });
 
         $website = Cache::remember('all_website_array', 3600, function () {
-            return Website::all()
+            return Website::where('visible', 'yes')
+                ->get()
                 ->groupBy('category')
                 ->flatMap(function ($group) {
                     return $group->shuffle()->take(15);
@@ -119,7 +132,8 @@ class HomeController extends Controller
         });
 
         $others = Cache::remember('all_others_array', 3600, function () {
-            return Other::all()
+            return Other::where('visible', 'yes')
+                ->get()
                 ->groupBy('category')
                 ->flatMap(function ($group) {
                     return $group->shuffle()->take(15);
@@ -131,6 +145,7 @@ class HomeController extends Controller
         return Inertia::render('Home/index', [
             'profiles' => $profile,
             'skills' => $skill,
+            'description_sections' => $descriptionSections,
             'certificates' => $certificate,
             'experiences' => $experience,
             'educations' => $education,
