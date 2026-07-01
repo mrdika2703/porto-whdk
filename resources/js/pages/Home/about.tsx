@@ -15,17 +15,19 @@ export default function About({
     const profile = profiles[0];
     const isMobile = useIsMobile();
 
-    const currentPassion = viewMode === 'Multimedia'
-        ? (profile?.passion_multimedia || profile?.passion)
-        : viewMode === 'Programming'
-        ? (profile?.passion_coding || profile?.passion)
-        : profile?.passion;
+    const currentPassion =
+        viewMode === 'Multimedia'
+            ? profile?.passion_multimedia || profile?.passion
+            : viewMode === 'Programming'
+              ? profile?.passion_coding || profile?.passion
+              : profile?.passion;
 
-    const currentAbout = viewMode === 'Multimedia'
-        ? (profile?.description_multimedia || profile?.about)
-        : viewMode === 'Programming'
-        ? (profile?.description_coding || profile?.about)
-        : profile?.about;
+    const currentAbout =
+        viewMode === 'Multimedia'
+            ? profile?.description_multimedia || profile?.about
+            : viewMode === 'Programming'
+              ? profile?.description_coding || profile?.about
+              : profile?.about;
 
     const words = [
         `I'm ${profile?.nickname || 'Nickname'}`,
@@ -60,7 +62,7 @@ export default function About({
                 // Selesai mengetik, tunggu 5 detik
                 timer = setTimeout(() => {
                     setIsDeleting(true);
-                }, 5000);
+                }, 2000);
             }
         } else {
             if (displayedText.length > 0) {

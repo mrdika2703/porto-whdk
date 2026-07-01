@@ -23,9 +23,20 @@ class OtherController extends Controller
         $profile = $this->getProfile();
         $others = $profile ? Other::where('profile_id', $profile->id)->latest()->get() : [];
 
+        $categoryCounts = [];
+        if ($profile) {
+            $categoryCounts = Other::where('profile_id', $profile->id)
+                ->selectRaw('category, count(*) as total')
+                ->groupBy('category')
+                ->get()
+                ->pluck('total', 'category')
+                ->toArray();
+        }
+
         return Inertia::render('Admin/Others/Index', [
             'others' => $others,
             'hasProfile' => (bool) $profile,
+            'categoryCounts' => (object) $categoryCounts,
             'flash' => [
                 'success' => session('success'),
                 'error'   => session('error'),

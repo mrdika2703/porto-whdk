@@ -127,6 +127,7 @@ export default function ExperienceEducationSection({
                 <div className="grid grid-cols-1 gap-16 lg:grid-cols-2 lg:gap-24">
                     {/* KOLOM PENGALAMAN */}
                     <motion.div
+                        key={viewMode}
                         variants={containerVariants}
                         initial="hidden"
                         whileInView="visible"

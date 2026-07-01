@@ -30,13 +30,19 @@ interface PaginatedDesigns {
 interface IndexProps {
     designs: PaginatedDesigns;
     hasProfile: boolean;
+    categoryCounts: Record<string, number>;
     flash: {
         success: string | null;
         error: string | null;
     };
 }
 
-export default function Index({ designs, hasProfile, flash }: IndexProps) {
+export default function Index({
+    designs,
+    hasProfile,
+    categoryCounts,
+    flash,
+}: IndexProps) {
     useEffect(() => {
         if (flash.success) {
             Swal.fire({
@@ -118,6 +124,24 @@ export default function Index({ designs, hasProfile, flash }: IndexProps) {
                 )}
             </div>
 
+            {Object.keys(categoryCounts || {}).length > 0 && (
+                <div className="mb-8 flex w-full flex-row flex-wrap gap-3">
+                    {Object.entries(categoryCounts).map(([category, count]) => (
+                        <div
+                            key={category}
+                            className="flex flex-col items-center gap-1 rounded-2xl border border-tmuted/10 bg-bcard p-4 text-center shadow-sm md:p-6"
+                        >
+                            <h3 className="text-2xl font-bold text-htext md:text-3xl dark:text-tmain">
+                                {count}
+                            </h3>
+                            <p className="text-xs font-medium text-tmuted md:text-sm">
+                                {category}
+                            </p>
+                        </div>
+                    ))}
+                </div>
+            )}
+
             <div className="overflow-x-auto rounded-2xl border border-bmain/20 bg-bcard p-6 shadow-sm">
                 <table className="w-full text-left text-sm text-htext dark:text-tmain">
                     <thead className="border-b border-bmain/20 text-xs text-tmuted uppercase">
@@ -139,13 +163,9 @@ export default function Index({ designs, hasProfile, flash }: IndexProps) {
                                     <td className="px-4 py-3">
                                         <div className="flex h-12 w-12 items-center justify-center overflow-hidden rounded-lg border border-bmain/30 bg-main">
                                             {item.type === 'video' ? (
-                                                <i className="fa-solid fa-play text-xl text-accent"></i>
+                                                <i className="fa-solid fa-circle-play text-xl text-accent"></i>
                                             ) : (
-                                                <img
-                                                    src={`/storage/${item.url_1}`}
-                                                    alt={item.title}
-                                                    className="h-full w-full object-cover"
-                                                />
+                                                <i className="fa-solid fa-image text-xl text-accent"></i>
                                             )}
                                         </div>
                                     </td>
@@ -205,14 +225,25 @@ export default function Index({ designs, hasProfile, flash }: IndexProps) {
                 {designs.last_page > 1 && (
                     <div className="mt-6 flex flex-col items-center justify-between gap-4 border-t border-bmain/20 pt-4 sm:flex-row">
                         <p className="text-xs text-tmuted">
-                            Menampilkan {designs.from}–{designs.to} dari {designs.total} data
+                            Menampilkan {designs.from}–{designs.to} dari{' '}
+                            {designs.total} data
                         </p>
                         <div className="flex flex-wrap items-center gap-1">
                             {designs.links.map((link, i) => (
                                 <button
                                     key={i}
                                     disabled={!link.url}
-                                    onClick={() => link.url && router.get(link.url, {}, { preserveState: true, preserveScroll: true })}
+                                    onClick={() =>
+                                        link.url &&
+                                        router.get(
+                                            link.url,
+                                            {},
+                                            {
+                                                preserveState: true,
+                                                preserveScroll: true,
+                                            },
+                                        )
+                                    }
                                     className={`min-w-[36px] rounded-lg px-3 py-2 text-xs font-semibold transition-colors ${
                                         link.active
                                             ? 'bg-bshine text-white shadow-md'
@@ -220,7 +251,9 @@ export default function Index({ designs, hasProfile, flash }: IndexProps) {
                                               ? 'bg-main/40 text-tmuted hover:bg-accent/20 hover:text-accent'
                                               : 'cursor-not-allowed text-tmuted/40'
                                     }`}
-                                    dangerouslySetInnerHTML={{ __html: link.label }}
+                                    dangerouslySetInnerHTML={{
+                                        __html: link.label,
+                                    }}
                                 />
                             ))}
                         </div>

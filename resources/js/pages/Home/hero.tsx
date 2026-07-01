@@ -30,7 +30,7 @@ export default function PortfolioHero({ viewMode, setViewMode }: HeroProps) {
     useEffect(() => {
         const introTimer = setTimeout(() => {
             setShowIntro(false);
-        }, 3000);
+        }, 2500);
 
         return () => clearTimeout(introTimer);
     }, []);
@@ -99,18 +99,18 @@ export default function PortfolioHero({ viewMode, setViewMode }: HeroProps) {
 
     const textShadowTransition = isMobile
         ? {
-              opacity: { duration: 0.8, delay: 0.4 },
+              opacity: { duration: 0.65, delay: 0.4 },
               y: {
-                  duration: 0.8,
+                  duration: 0.65,
                   delay: 0.4,
                   type: 'spring' as const,
                   stiffness: 80,
               },
           }
         : {
-              opacity: { duration: 0.8, delay: 0.4 },
+              opacity: { duration: 0.65, delay: 0.4 },
               y: {
-                  duration: 0.8,
+                  duration: 0.65,
                   delay: 0.4,
                   type: 'spring' as const,
                   stiffness: 80,
@@ -199,7 +199,7 @@ export default function PortfolioHero({ viewMode, setViewMode }: HeroProps) {
                                         y: -15,
                                     }}
                                     transition={{
-                                        duration: 0.8,
+                                        duration: 0.65,
                                         ease: 'easeInOut',
                                     }}
                                     className="flex flex-col items-center gap-2 md:gap-3"
@@ -207,7 +207,7 @@ export default function PortfolioHero({ viewMode, setViewMode }: HeroProps) {
                                     <span className="text-xs font-light tracking-[0.2em] text-tmain/70 uppercase md:text-sm">
                                         Build With
                                     </span>
-                                    <h1 className="hidden font-montserrat-alt text-3xl font-semibold text-tmain md:block md:text-5xl">
+                                    <h1 className="hidden font-montserrat-alt text-2xl font-semibold text-tmain md:block md:text-4xl">
                                         Laravel 13{' '}
                                         <span className="mx-1 text-bshine md:mx-2">
                                             |
@@ -218,7 +218,7 @@ export default function PortfolioHero({ viewMode, setViewMode }: HeroProps) {
                                         </span>{' '}
                                         Full Tailwind
                                     </h1>
-                                    <h1 className="flex flex-col gap-5 text-center font-montserrat-alt text-3xl font-semibold text-tmain md:hidden">
+                                    <h1 className="flex flex-col gap-3 text-center font-montserrat-alt text-2xl font-semibold text-tmain md:hidden">
                                         <p className="mx-auto">Laravel 13</p>
                                         <p className="mx-auto">React</p>
                                         <p className="mx-auto">Full Tailwind</p>
@@ -237,7 +237,7 @@ export default function PortfolioHero({ viewMode, setViewMode }: HeroProps) {
                                         initial={{ opacity: 0, y: -20 }}
                                         animate={{ opacity: 1, y: 0 }}
                                         transition={{
-                                            duration: 0.8,
+                                            duration: 0.65,
                                             delay: 0.2,
                                         }}
                                         className="mb-4 flex items-center gap-4 md:mb-6"
@@ -246,7 +246,7 @@ export default function PortfolioHero({ viewMode, setViewMode }: HeroProps) {
                                             initial={{ scaleX: 0 }}
                                             animate={{ scaleX: 1 }}
                                             transition={{
-                                                duration: 0.8,
+                                                duration: 0.65,
                                                 delay: 0.5,
                                             }}
                                             className="h-[1px] w-8 origin-left bg-tmain md:w-20"
@@ -258,7 +258,7 @@ export default function PortfolioHero({ viewMode, setViewMode }: HeroProps) {
                                             initial={{ scaleX: 0 }}
                                             animate={{ scaleX: 1 }}
                                             transition={{
-                                                duration: 0.8,
+                                                duration: 0.65,
                                                 delay: 0.5,
                                             }}
                                             className="h-[1px] w-8 origin-right bg-tmain md:w-20"
@@ -293,7 +293,7 @@ export default function PortfolioHero({ viewMode, setViewMode }: HeroProps) {
                                         initial={{ opacity: 0, y: 20 }}
                                         animate={{ opacity: 1, y: 0 }}
                                         transition={{
-                                            duration: 0.8,
+                                            duration: 0.65,
                                             delay: 0.6,
                                         }}
                                         className="text-xs font-light tracking-widest text-tmain md:text-sm"
@@ -310,7 +310,7 @@ export default function PortfolioHero({ viewMode, setViewMode }: HeroProps) {
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{
-                            duration: 0.8,
+                            duration: 0.65,
                             delay: 0.7,
                         }}
                         className="mt-25 flex flex-col justify-center gap-3"

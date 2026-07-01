@@ -14,13 +14,19 @@ interface CertificateData {
 interface IndexProps {
     certificates: CertificateData[];
     hasProfile: boolean;
+    categoryCounts: Record<string, number>;
     flash: {
         success: string | null;
         error: string | null;
     };
 }
 
-export default function Index({ certificates, hasProfile, flash }: IndexProps) {
+export default function Index({
+    certificates,
+    hasProfile,
+    categoryCounts,
+    flash,
+}: IndexProps) {
     useEffect(() => {
         if (flash.success) {
             Swal.fire({
@@ -93,6 +99,24 @@ export default function Index({ certificates, hasProfile, flash }: IndexProps) {
                 )}
             </div>
 
+            {Object.keys(categoryCounts || {}).length > 0 && (
+                <div className="mb-8 flex w-full flex-row flex-wrap gap-3">
+                    {Object.entries(categoryCounts).map(([category, count]) => (
+                        <div
+                            key={category}
+                            className="flex flex-col items-center gap-1 rounded-2xl border border-tmuted/10 bg-bcard p-4 text-center shadow-sm md:p-6"
+                        >
+                            <h3 className="text-2xl font-bold text-htext md:text-3xl dark:text-tmain">
+                                {count}
+                            </h3>
+                            <p className="text-xs font-medium text-tmuted md:text-sm">
+                                {category}
+                            </p>
+                        </div>
+                    ))}
+                </div>
+            )}
+
             <div className="overflow-x-auto rounded-2xl border border-bmain/20 bg-bcard p-6 shadow-sm">
                 <table className="w-full text-left text-sm text-htext dark:text-tmain">
                     <thead className="border-b border-bmain/20 text-xs text-tmuted uppercase">
@@ -113,11 +137,14 @@ export default function Index({ certificates, hasProfile, flash }: IndexProps) {
                                 >
                                     <td className="px-4 py-3">
                                         <div className="flex h-12 w-12 items-center justify-center overflow-hidden rounded-lg border border-bmain/30 bg-main">
-                                            <img
-                                                src={`/storage/${item.url_1}`}
-                                                alt={item.title}
-                                                className="h-full w-full object-cover"
-                                            />
+                                            {item.category == 'Soft Skill' ? (
+                                                <i className="fa-solid fa-brain"></i>
+                                            ) : item.category ==
+                                              'Hard Skill' ? (
+                                                <i className="fa-solid fa-code"></i>
+                                            ) : (
+                                                <i className="fa-solid fa-question"></i>
+                                            )}
                                         </div>
                                     </td>
                                     <td className="px-4 py-3 font-semibold">

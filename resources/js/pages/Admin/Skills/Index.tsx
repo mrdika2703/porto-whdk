@@ -31,13 +31,19 @@ interface PaginatedSkills {
 interface IndexProps {
     skills: PaginatedSkills;
     hasProfile: boolean;
+    categoryCounts: Record<string, number>;
     flash: {
         success: string | null;
         error: string | null;
     };
 }
 
-export default function Index({ skills, hasProfile, flash }: IndexProps) {
+export default function Index({
+    skills,
+    hasProfile,
+    categoryCounts,
+    flash,
+}: IndexProps) {
     useEffect(() => {
         if (flash.success) {
             Swal.fire({
@@ -124,6 +130,24 @@ export default function Index({ skills, hasProfile, flash }: IndexProps) {
                 )}
             </div>
 
+            {Object.keys(categoryCounts || {}).length > 0 && (
+                <div className="mb-8 flex w-full flex-row flex-wrap gap-3">
+                    {Object.entries(categoryCounts).map(([category, count]) => (
+                        <div
+                            key={category}
+                            className="flex flex-col items-center gap-1 rounded-2xl border border-tmuted/10 bg-bcard p-4 text-center shadow-sm md:p-6"
+                        >
+                            <h3 className="text-2xl font-bold text-htext md:text-3xl dark:text-tmain">
+                                {count}
+                            </h3>
+                            <p className="text-xs font-medium text-tmuted md:text-sm">
+                                {category}
+                            </p>
+                        </div>
+                    ))}
+                </div>
+            )}
+
             <div className="overflow-x-auto rounded-2xl border border-bmain/20 bg-bcard p-6 shadow-sm">
                 <table className="w-full text-left text-sm text-htext dark:text-tmain">
                     <thead className="border-b border-bmain/20 text-xs text-tmuted uppercase">
@@ -147,9 +171,7 @@ export default function Index({ skills, hasProfile, flash }: IndexProps) {
                                         {item.icon ? (
                                             <i className={item.icon}></i>
                                         ) : (
-                                            <span className="text-xs text-tmuted/50">
-                                                -
-                                            </span>
+                                            <i className="fa-solid fa-question"></i>
                                         )}
                                     </td>
                                     <td className="px-4 py-3 font-semibold">
@@ -222,14 +244,25 @@ export default function Index({ skills, hasProfile, flash }: IndexProps) {
                 {skills.last_page > 1 && (
                     <div className="mt-6 flex flex-col items-center justify-between gap-4 border-t border-bmain/20 pt-4 sm:flex-row">
                         <p className="text-xs text-tmuted">
-                            Menampilkan {skills.from}–{skills.to} dari {skills.total} data
+                            Menampilkan {skills.from}–{skills.to} dari{' '}
+                            {skills.total} data
                         </p>
                         <div className="flex flex-wrap items-center gap-1">
                             {skills.links.map((link, i) => (
                                 <button
                                     key={i}
                                     disabled={!link.url}
-                                    onClick={() => link.url && router.get(link.url, {}, { preserveState: true, preserveScroll: true })}
+                                    onClick={() =>
+                                        link.url &&
+                                        router.get(
+                                            link.url,
+                                            {},
+                                            {
+                                                preserveState: true,
+                                                preserveScroll: true,
+                                            },
+                                        )
+                                    }
                                     className={`min-w-[36px] rounded-lg px-3 py-2 text-xs font-semibold transition-colors ${
                                         link.active
                                             ? 'bg-bshine text-white shadow-md'
@@ -237,7 +270,9 @@ export default function Index({ skills, hasProfile, flash }: IndexProps) {
                                               ? 'bg-main/40 text-tmuted hover:bg-accent/20 hover:text-accent'
                                               : 'cursor-not-allowed text-tmuted/40'
                                     }`}
-                                    dangerouslySetInnerHTML={{ __html: link.label }}
+                                    dangerouslySetInnerHTML={{
+                                        __html: link.label,
+                                    }}
                                 />
                             ))}
                         </div>

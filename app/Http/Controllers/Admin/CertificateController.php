@@ -23,9 +23,20 @@ class CertificateController extends Controller
         $profile = $this->getProfile();
         $certificates = $profile ? Certificate::where('profile_id', $profile->id)->latest()->get() : [];
 
+        $categoryCounts = [];
+        if ($profile) {
+            $categoryCounts = Certificate::where('profile_id', $profile->id)
+                ->selectRaw('category, count(*) as total')
+                ->groupBy('category')
+                ->get()
+                ->pluck('total', 'category')
+                ->toArray();
+        }
+
         return Inertia::render('Admin/Certificate/Index', [
             'certificates' => $certificates,
             'hasProfile' => (bool) $profile,
+            'categoryCounts' => (object) $categoryCounts,
             'flash' => [
                 'success' => session('success'),
                 'error'   => session('error'),

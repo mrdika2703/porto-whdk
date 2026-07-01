@@ -23,9 +23,20 @@ class PhotoVideoController extends Controller
         $profile = $this->getProfile();
         $photovideos = $profile ? PhotoVideo::where('profile_id', $profile->id)->latest()->paginate(15) : [];
 
+        $categoryCounts = [];
+        if ($profile) {
+            $categoryCounts = PhotoVideo::where('profile_id', $profile->id)
+                ->selectRaw('category, count(*) as total')
+                ->groupBy('category')
+                ->get()
+                ->pluck('total', 'category')
+                ->toArray();
+        }
+
         return Inertia::render('Admin/PhotoVideo/Index', [
             'photovideos' => $photovideos,
             'hasProfile' => (bool) $profile,
+            'categoryCounts' => (object) $categoryCounts,
             'flash' => [
                 'success' => session('success'),
                 'error'   => session('error'),

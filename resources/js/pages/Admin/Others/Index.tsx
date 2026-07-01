@@ -111,11 +111,7 @@ export default function Index({ others, hasProfile, flash }: IndexProps) {
                                 >
                                     <td className="px-4 py-3">
                                         <div className="flex h-12 w-12 items-center justify-center overflow-hidden rounded-lg border border-bmain/30 bg-main">
-                                            <img
-                                                src={`/storage/${item.url_1}`}
-                                                alt={item.title}
-                                                className="h-full w-full object-cover"
-                                            />
+                                            <i className="fa-solid fa-file-image"></i>
                                         </div>
                                     </td>
                                     <td className="px-4 py-3 font-semibold">

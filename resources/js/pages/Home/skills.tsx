@@ -253,6 +253,7 @@ export default function Skills({
 
                 <section>
                     <motion.div
+                        key={viewMode}
                         variants={containerVariants}
                         initial="hidden"
                         whileInView="visible"
@@ -262,36 +263,36 @@ export default function Skills({
                         }}
                         className="mt-4 grid grid-cols-2 gap-3 md:flex md:flex-wrap md:items-center md:justify-between md:gap-x-2 md:gap-y-7 md:after:w-[20%] md:after:flex-auto md:after:content-['']"
                     >
-                        {filteredSkills.map((skills, index) => (
+                        {filteredSkills.map((skill) => (
                             <motion.div
                                 variants={itemVariants}
-                                key={index}
+                                key={skill.id}
                                 // w-full di HP agar mengisi kolom grid, w-auto di Desktop agar memadat
                                 className="relative flex h-[30px] w-full items-center gap-0 md:h-8 md:w-auto"
                             >
                                 {/* Nama Skill */}
                                 <span
                                     className={`flex h-full min-w-0 flex-1 items-center ${
-                                        skills.level
+                                        skill.level
                                             ? 'justify-start rounded-l-full border-y border-l'
                                             : 'justify-center rounded-full border'
                                     } border-white/50 bg-white/10 px-2 text-white md:px-3.5 md:backdrop-blur-sm`}
                                 >
-                                    {skills.icon && (
+                                    {skill.icon && (
                                         <span className="mr-1.5 hidden shrink-0 md:mr-2 md:block">
-                                            <i className={skills.icon}></i>
+                                            <i className={skill.icon}></i>
                                         </span>
                                     )}
                                     <span className="min-w-0 truncate text-[9px] font-normal md:text-xs">
-                                        {skills.name_skills}
+                                        {skill.name_skills}
                                     </span>
                                 </span>
 
                                 {/* Level Skill */}
-                                {skills.level && (
+                                {skill.level && (
                                     <span className="flex h-full shrink-0 items-center rounded-r-full border-y border-r border-white/50 bg-white/20 px-2 md:px-3.5 md:backdrop-blur-sm">
                                         <span className="font-regular truncate text-[9px] text-white md:text-xs md:font-medium">
-                                            {skills.level}
+                                            {skill.level}
                                         </span>
                                     </span>
                                 )}

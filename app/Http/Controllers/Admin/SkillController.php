@@ -23,9 +23,20 @@ class SkillController extends Controller
         // Mengambil data skill terbaru berdasarkan profil
         $skills = $profile ? Skill::where('profile_id', $profile->id)->latest()->paginate(15) : [];
 
+        $categoryCounts = [];
+        if ($profile) {
+            $categoryCounts = Skill::where('profile_id', $profile->id)
+                ->selectRaw('category, count(*) as total')
+                ->groupBy('category')
+                ->get()
+                ->pluck('total', 'category')
+                ->toArray();
+        }
+
         return Inertia::render('Admin/Skills/Index', [
             'skills' => $skills,
             'hasProfile' => (bool) $profile,
+            'categoryCounts' => (object) $categoryCounts,
             'flash' => [
                 'success' => session('success'),
                 'error'   => session('error'),

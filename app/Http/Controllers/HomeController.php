@@ -80,7 +80,7 @@ class HomeController extends Controller
                 ->get()
                 ->groupBy('category')
                 ->flatMap(function ($group) {
-                    return $group->shuffle()->take(15);
+                    return $group->shuffle()->take(16);
                 })
                 ->values()
                 ->toArray();
@@ -91,7 +91,7 @@ class HomeController extends Controller
                 ->get()
                 ->groupBy('category')
                 ->flatMap(function ($group) {
-                    return $group->shuffle()->take(15);
+                    return $group->shuffle()->take(16);
                 })
                 ->values()
                 ->toArray();
@@ -102,7 +102,7 @@ class HomeController extends Controller
                 ->get()
                 ->groupBy('category')
                 ->flatMap(function ($group) {
-                    return $group->shuffle()->take(15);
+                    return $group->shuffle()->take(16);
                 })
                 ->map(function ($web) {
                     // Menggabungkan semua kolom url ke dalam satu array
@@ -136,7 +136,7 @@ class HomeController extends Controller
                 ->get()
                 ->groupBy('category')
                 ->flatMap(function ($group) {
-                    return $group->shuffle()->take(15);
+                    return $group->shuffle()->take(16);
                 })
                 ->values()
                 ->toArray();
