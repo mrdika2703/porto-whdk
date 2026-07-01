@@ -57,7 +57,7 @@ export default function PhotoVideoSection({
         const columns: (typeof items)[] = [];
         let i = 0;
         const total = items.length;
-        const chunkSize = total < 5 ? 2 : total < 10 ? 3 : 4;
+        const chunkSize = total < 7 ? 2 : total < 14 ? 3 : 4;
         while (i < items.length) {
             columns.push(items.slice(i, i + chunkSize));
             i += chunkSize;
