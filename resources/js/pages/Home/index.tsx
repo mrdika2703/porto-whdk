@@ -1,6 +1,6 @@
 import { Head } from '@inertiajs/react';
 import { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence } from 'motion/react';
 import Layout from '@/layouts/layout';
 import Hero from './hero';
 import About from './about';

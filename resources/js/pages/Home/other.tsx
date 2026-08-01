@@ -1,7 +1,66 @@
-import { useState, useRef } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { useState, useRef, useEffect } from 'react';
+import { motion, AnimatePresence } from 'motion/react';
 import type { Other, DescriptionSection } from './index';
 import { Underline } from '@/components/underline';
+import { useIsMobile } from '@/hooks/useIsMobile';
+
+function OtherCardImage({ src, alt }: { src: string; alt: string }) {
+    const [isLoaded, setIsLoaded] = useState(false);
+
+    useEffect(() => {
+        setIsLoaded(false);
+    }, [src]);
+
+    return (
+        <div className="relative h-full w-full">
+            {!isLoaded && (
+                <div className="absolute inset-0 z-10 flex animate-pulse items-center justify-center bg-white/10">
+                    <div className="h-6 w-6 animate-spin rounded-full border-2 border-bshine/30 border-t-bshine" />
+                </div>
+            )}
+            <img
+                src={src}
+                alt={alt}
+                loading="lazy"
+                draggable={false}
+                onLoad={() => setIsLoaded(true)}
+                onError={() => setIsLoaded(true)}
+                className={`h-full w-full object-cover transition-all duration-500 group-hover:scale-105 ${
+                    isLoaded ? 'opacity-100' : 'opacity-0'
+                }`}
+            />
+        </div>
+    );
+}
+
+function ModalImage({ src, alt }: { src: string; alt: string }) {
+    const [isLoaded, setIsLoaded] = useState(false);
+
+    useEffect(() => {
+        setIsLoaded(false);
+    }, [src]);
+
+    return (
+        <div className="relative flex w-full items-center justify-center">
+            {!isLoaded && (
+                <div className="flex h-48 w-48 animate-pulse items-center justify-center rounded-lg bg-white/5">
+                    <div className="h-8 w-8 animate-spin rounded-full border-3 border-bshine/30 border-t-bshine" />
+                </div>
+            )}
+            <img
+                src={src}
+                alt={alt}
+                loading="lazy"
+                draggable={false}
+                onLoad={() => setIsLoaded(true)}
+                onError={() => setIsLoaded(true)}
+                className={`max-h-[50vh] max-w-full rounded-lg object-contain shadow-lg transition-opacity duration-300 md:max-h-[85vh] ${
+                    isLoaded ? 'opacity-100' : 'hidden'
+                }`}
+            />
+        </div>
+    );
+}
 
 export default function OtherSection({
     others,
@@ -13,6 +72,7 @@ export default function OtherSection({
     const [isOpen, setIsOpen] = useState(false);
     const [selectedOther, setSelectedOther] = useState<Other | null>(null);
     const [activeImg, setActiveImg] = useState<string | null>(null);
+    const isMobile = useIsMobile();
 
     const scrollRef = useRef<HTMLDivElement>(null);
     const [isDragging, setIsDragging] = useState(false);
@@ -98,7 +158,8 @@ export default function OtherSection({
                         <p
                             className={`font-regular text-center text-xs text-gray-500 transition-opacity duration-100 md:text-left md:text-sm ${isOpen ? 'absolute opacity-0' : 'opacity-100'}`}
                         >
-                            {description_sections?.other_section || others.map((item) => item.category).join(', ')}
+                            {description_sections?.other_section ||
+                                others.map((item) => item.category).join(', ')}
                         </p>
                     </div>
 
@@ -184,12 +245,9 @@ export default function OtherSection({
                                         </div>
 
                                         {/* Image */}
-                                        <img
+                                        <OtherCardImage
                                             src={`/storage/${item.url_1}`}
                                             alt={item.title}
-                                            className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-                                            loading="lazy"
-                                            draggable={false}
                                         />
 
                                         {/* Hover Overlay with Gradient info */}
@@ -211,18 +269,32 @@ export default function OtherSection({
             <AnimatePresence>
                 {selectedOther && (
                     <motion.div
-                        initial={{ opacity: 0 }}
+                        initial={isMobile ? false : { opacity: 0 }}
                         animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                        transition={{ duration: 0.1 }}
+                        exit={isMobile ? undefined : { opacity: 0 }}
+                        transition={
+                            isMobile ? { duration: 0 } : { duration: 0.1 }
+                        }
                         className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
                         onClick={() => setSelectedOther(null)}
                     >
                         <motion.div
-                            initial={{ scale: 0.95, opacity: 0, y: 10 }}
+                            initial={
+                                isMobile
+                                    ? false
+                                    : { scale: 0.95, opacity: 0, y: 10 }
+                            }
                             animate={{ scale: 1, opacity: 1, y: 0 }}
-                            exit={{ scale: 0.95, opacity: 0, y: 10 }}
-                            transition={{ ease: 'easeOut', duration: 0.1 }}
+                            exit={
+                                isMobile
+                                    ? undefined
+                                    : { scale: 0.95, opacity: 0, y: 10 }
+                            }
+                            transition={
+                                isMobile
+                                    ? { duration: 0 }
+                                    : { ease: 'easeOut', duration: 0.1 }
+                            }
                             className="relative flex w-full max-w-5xl flex-col overflow-hidden rounded-2xl border border-white/10 bg-main shadow-2xl backdrop-blur-md md:flex-row"
                             onClick={(e) => e.stopPropagation()}
                         >
@@ -237,11 +309,9 @@ export default function OtherSection({
                             {/* Image side (more space) */}
                             <div className="relative flex min-h-[280px] w-full items-center justify-center p-3 md:min-h-[480px] md:w-3/5 lg:w-2/3">
                                 {activeImg && (
-                                    <img
+                                    <ModalImage
                                         src={`/storage/${activeImg}`}
                                         alt={selectedOther.title}
-                                        className="max-h-[50vh] max-w-full rounded-lg object-contain shadow-lg md:max-h-[85vh]"
-                                        draggable={false}
                                     />
                                 )}
 
@@ -280,6 +350,7 @@ export default function OtherSection({
                                             >
                                                 <img
                                                     src={`/storage/${img}`}
+                                                    loading="lazy"
                                                     className="h-full w-full object-cover"
                                                 />
                                             </button>

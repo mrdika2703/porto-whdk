@@ -1,4 +1,3 @@
-import { Head } from '@inertiajs/react';
 import { useState, useRef, useEffect } from 'react';
 import {
     motion,
@@ -6,7 +5,7 @@ import {
     Variants,
     useMotionValue,
     animate,
-} from 'framer-motion';
+} from 'motion/react';
 import {
     PhotoshopIcon,
     LightroomIcon,
@@ -252,20 +251,12 @@ export default function Skills({
                 </div>
 
                 <section>
-                    <motion.div
+                    <div
                         key={viewMode}
-                        variants={containerVariants}
-                        initial="hidden"
-                        whileInView="visible"
-                        viewport={{
-                            once: true,
-                            amount: 0.2,
-                        }}
                         className="mt-4 grid grid-cols-2 gap-3 md:flex md:flex-wrap md:items-center md:justify-between md:gap-x-2 md:gap-y-7 md:after:w-[20%] md:after:flex-auto md:after:content-['']"
                     >
                         {filteredSkills.map((skill) => (
-                            <motion.div
-                                variants={itemVariants}
+                            <div
                                 key={skill.id}
                                 // w-full di HP agar mengisi kolom grid, w-auto di Desktop agar memadat
                                 className="relative flex h-[30px] w-full items-center gap-0 md:h-8 md:w-auto"
@@ -296,9 +287,9 @@ export default function Skills({
                                         </span>
                                     </span>
                                 )}
-                            </motion.div>
+                            </div>
                         ))}
-                    </motion.div>
+                    </div>
                 </section>
             </div>
 

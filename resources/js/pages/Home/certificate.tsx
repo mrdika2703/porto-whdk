@@ -1,7 +1,37 @@
-import { useState, useMemo } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { useState, useMemo, useEffect } from 'react';
+import { motion, AnimatePresence } from 'motion/react';
 import type { Certificate } from './index';
 import { Underline } from '@/components/underline';
+import { useIsMobile } from '@/hooks/useIsMobile';
+
+function ModalImage({ src, alt }: { src: string; alt: string }) {
+    const [isLoaded, setIsLoaded] = useState(false);
+
+    useEffect(() => {
+        setIsLoaded(false);
+    }, [src]);
+
+    return (
+        <div className="relative flex w-full items-center justify-center">
+            {!isLoaded && (
+                <div className="flex h-48 w-48 animate-pulse items-center justify-center rounded-lg bg-white/5">
+                    <div className="h-8 w-8 animate-spin rounded-full border-3 border-bshine/30 border-t-bshine" />
+                </div>
+            )}
+            <img
+                src={src}
+                alt={alt}
+                loading="lazy"
+                draggable={false}
+                onLoad={() => setIsLoaded(true)}
+                onError={() => setIsLoaded(true)}
+                className={`max-h-[50vh] max-w-full rounded-lg object-contain shadow-lg transition-opacity duration-300 md:max-h-[85vh] ${
+                    isLoaded ? 'opacity-100' : 'hidden'
+                }`}
+            />
+        </div>
+    );
+}
 
 const getMonthYear = (dateString: string | null) => {
     if (!dateString) return '';
@@ -18,6 +48,7 @@ export default function CertificateSection({
 }) {
     const [selectedCert, setSelectedCert] = useState<Certificate | null>(null);
     const [activeImg, setActiveImg] = useState<string | null>(null);
+    const isMobile = useIsMobile();
 
     const filteredCertificates = useMemo(
         () =>
@@ -167,18 +198,32 @@ export default function CertificateSection({
             <AnimatePresence>
                 {selectedCert && (
                     <motion.div
-                        initial={{ opacity: 0 }}
+                        initial={isMobile ? false : { opacity: 0 }}
                         animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                        transition={{ duration: 0.1 }}
+                        exit={isMobile ? undefined : { opacity: 0 }}
+                        transition={
+                            isMobile ? { duration: 0 } : { duration: 0.1 }
+                        }
                         className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
                         onClick={() => setSelectedCert(null)}
                     >
                         <motion.div
-                            initial={{ scale: 0.95, opacity: 0, y: 10 }}
+                            initial={
+                                isMobile
+                                    ? false
+                                    : { scale: 0.95, opacity: 0, y: 10 }
+                            }
                             animate={{ scale: 1, opacity: 1, y: 0 }}
-                            exit={{ scale: 0.95, opacity: 0, y: 10 }}
-                            transition={{ ease: 'easeOut', duration: 0.1 }}
+                            exit={
+                                isMobile
+                                    ? undefined
+                                    : { scale: 0.95, opacity: 0, y: 10 }
+                            }
+                            transition={
+                                isMobile
+                                    ? { duration: 0 }
+                                    : { ease: 'easeOut', duration: 0.1 }
+                            }
                             className="relative flex w-full max-w-5xl flex-col overflow-hidden rounded-2xl border border-white/10 bg-main shadow-2xl backdrop-blur-md md:flex-row"
                             onClick={(e) => e.stopPropagation()}
                         >
@@ -193,11 +238,9 @@ export default function CertificateSection({
                             {/* Image side (more space) */}
                             <div className="relative flex min-h-[280px] w-full items-center justify-center p-3 md:min-h-[480px] md:w-3/5 lg:w-2/3">
                                 {activeImg && (
-                                    <img
+                                    <ModalImage
                                         src={`/storage/${activeImg}`}
                                         alt={selectedCert.title}
-                                        className="max-h-[50vh] max-w-full rounded-lg object-contain shadow-lg md:max-h-[85vh]"
-                                        draggable={false}
                                     />
                                 )}
 
@@ -248,6 +291,7 @@ export default function CertificateSection({
                                         >
                                             <img
                                                 src={`/storage/${selectedCert.url_1}`}
+                                                loading="lazy"
                                                 className="h-full w-full object-cover"
                                             />
                                         </button>
@@ -263,6 +307,7 @@ export default function CertificateSection({
                                         >
                                             <img
                                                 src={`/storage/${selectedCert.url_2}`}
+                                                loading="lazy"
                                                 className="h-full w-full object-cover"
                                             />
                                         </button>

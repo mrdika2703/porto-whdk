@@ -1,9 +1,38 @@
 import { Head } from '@inertiajs/react';
 import { useState, useEffect, useRef } from 'react';
-import { motion, useInView } from 'framer-motion';
+import { motion, useInView } from 'motion/react';
 import { Profile } from './index';
 import { useIsMobile } from '@/hooks/useIsMobile';
 import { Underline } from '@/components/underline';
+
+function ProfilePhoto({ src }: { src: string }) {
+    const [isLoaded, setIsLoaded] = useState(false);
+
+    useEffect(() => {
+        setIsLoaded(false);
+    }, [src]);
+
+    return (
+        <>
+            {!isLoaded && (
+                <div className="absolute bottom-0 left-1/2 z-10 flex h-auto w-[220px] -translate-x-1/2 items-center justify-center sm:w-[280px] md:w-[387px]">
+                    <div className="flex h-40 w-full animate-pulse items-center justify-center rounded-2xl bg-white/5">
+                        <div className="h-8 w-8 animate-spin rounded-full border-3 border-bshine/30 border-t-bshine" />
+                    </div>
+                </div>
+            )}
+            <img
+                src={src}
+                alt="Wahyu Adam Anandika"
+                onLoad={() => setIsLoaded(true)}
+                onError={() => setIsLoaded(true)}
+                className={`absolute bottom-0 left-1/2 z-10 h-auto w-[220px] -translate-x-1/2 object-contain drop-shadow-2xl transition-opacity duration-500 sm:w-[280px] md:w-[387px] ${
+                    isLoaded ? 'opacity-100' : 'opacity-0'
+                }`}
+            />
+        </>
+    );
+}
 
 export default function About({
     profiles = [],
@@ -211,14 +240,8 @@ export default function About({
                                 transition={{ duration: 0.8, delay: 0.2 }}
                                 className="relative mt-8 flex w-full justify-center lg:mt-0 lg:w-[40%]"
                             >
-                                {/* Max-width mencegah elemen tumpah di layar HP yang sempit */}
                                 <div className="relative h-[320px] w-full max-w-[350px] sm:h-[420px]">
-                                    {/* Foto Dika menabrak batas shape */}
-                                    <img
-                                        src={`/storage/${profile?.photo}`}
-                                        alt="Wahyu Adam Anandika"
-                                        className="absolute bottom-0 left-1/2 z-10 h-auto w-[220px] -translate-x-1/2 object-contain drop-shadow-2xl sm:w-[280px] md:w-[387px]"
-                                    />
+                                    <ProfilePhoto src={`/storage/${profile?.photo}`} />
 
                                     {/* Kutipan Animasi Melayang (Floating Badge) — CSS animation untuk performa */}
                                     <div className="absolute -bottom-4 left-1/2 z-20 w-[90%] -translate-x-1/2 sm:bottom-12 sm:left-4 sm:w-auto sm:translate-x-0 lg:-left-20">

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Other; // Pastikan Model sudah dibuat
 use App\Models\Profile;
+use App\Services\ImageService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
@@ -74,11 +75,11 @@ class OtherController extends Controller
             'category'    => 'required|string|max:255',
             'title'       => 'required|string|max:255',
             'description' => 'nullable|string',
-            'url_1'       => 'required|file|mimes:jpeg,png,jpg,webp,mp4,mov,avi|max:10240', // 10MB max
-            'url_2'       => 'nullable|file|mimes:jpeg,png,jpg,webp,mp4,mov,avi|max:3076',
-            'url_3'       => 'nullable|file|mimes:jpeg,png,jpg,webp,mp4,mov,avi|max:3076',
-            'url_4'       => 'nullable|file|mimes:jpeg,png,jpg,webp,mp4,mov,avi|max:3076',
-            'url_5'       => 'nullable|file|mimes:jpeg,png,jpg,webp,mp4,mov,avi|max:3076',
+            'url_1'       => 'required|file|mimes:jpeg,png,jpg,webp,mp4,mov,avi|max:1024', // 10MB max
+            'url_2'       => 'nullable|file|mimes:jpeg,png,jpg,webp,mp4,mov,avi|max:1024',
+            'url_3'       => 'nullable|file|mimes:jpeg,png,jpg,webp,mp4,mov,avi|max:1024',
+            'url_4'       => 'nullable|file|mimes:jpeg,png,jpg,webp,mp4,mov,avi|max:1024',
+            'url_5'       => 'nullable|file|mimes:jpeg,png,jpg,webp,mp4,mov,avi|max:1024',
             'visible'     => 'required|in:yes,no',
         ]);
 
@@ -87,7 +88,7 @@ class OtherController extends Controller
 
             foreach (['url_1', 'url_2', 'url_3', 'url_4', 'url_5'] as $url) {
                 if ($request->hasFile($url)) {
-                    $validated[$url] = $request->file($url)->store('others', 'public');
+                    $validated[$url] = ImageService::compressAndStore($request->file($url), 'others');
                 }
             }
 
@@ -126,11 +127,11 @@ class OtherController extends Controller
             'category'    => 'required|string|max:255',
             'title'       => 'required|string|max:255',
             'description' => 'nullable|string',
-            'url_1'       => 'nullable|file|mimes:jpeg,png,jpg,webp,mp4,mov,avi|max:10240', // 10MB max
-            'url_2'       => 'nullable|file|mimes:jpeg,png,jpg,webp,mp4,mov,avi|max:3076',
-            'url_3'       => 'nullable|file|mimes:jpeg,png,jpg,webp,mp4,mov,avi|max:3076',
-            'url_4'       => 'nullable|file|mimes:jpeg,png,jpg,webp,mp4,mov,avi|max:3076',
-            'url_5'       => 'nullable|file|mimes:jpeg,png,jpg,webp,mp4,mov,avi|max:3076',
+            'url_1'       => 'nullable|file|mimes:jpeg,png,jpg,webp,mp4,mov,avi|max:1024', // 10MB max
+            'url_2'       => 'nullable|file|mimes:jpeg,png,jpg,webp,mp4,mov,avi|max:1024',
+            'url_3'       => 'nullable|file|mimes:jpeg,png,jpg,webp,mp4,mov,avi|max:1024',
+            'url_4'       => 'nullable|file|mimes:jpeg,png,jpg,webp,mp4,mov,avi|max:1024',
+            'url_5'       => 'nullable|file|mimes:jpeg,png,jpg,webp,mp4,mov,avi|max:1024',
             'visible'     => 'required|in:yes,no',
         ]);
 
@@ -141,7 +142,7 @@ class OtherController extends Controller
                     if ($others->$url) {
                         Storage::disk('public')->delete($others->$url);
                     }
-                    $validated[$url] = $request->file($url)->store('others', 'public');
+                    $validated[$url] = ImageService::compressAndStore($request->file($url), 'others');
                 } elseif ($request->input("clear_$url") === true || $request->input("clear_$url") === 'true' || $request->input("clear_$url") === 1 || $request->input("clear_$url") === '1') {
                     if ($others->$url) {
                         Storage::disk('public')->delete($others->$url);

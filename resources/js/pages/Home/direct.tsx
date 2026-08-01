@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from 'react';
-import { motion } from 'framer-motion';
+import { motion } from 'motion/react';
 
 const direct = [
     {
@@ -83,7 +83,7 @@ export default function DirectSection({
                                     duration: 0.5,
                                     delay: index * 0.1,
                                 }}
-                                className={`${item.bg} w-[calc(50%-10px)] md:w-[calc(25%-15px)] flex justify-center cursor-pointer rounded-xl border-2 px-4 py-3 shadow-[2px_5px_0px_rgba(0,0,0,1)] transition-all hover:scale-102`}
+                                className={`${item.bg} flex w-[calc(50%-10px)] cursor-pointer justify-center rounded-xl border-2 px-4 py-3 shadow-[2px_5px_0px_rgba(0,0,0,1)] transition-all hover:scale-102 md:w-[calc(25%-15px)]`}
                             >
                                 <a
                                     href={item.href}

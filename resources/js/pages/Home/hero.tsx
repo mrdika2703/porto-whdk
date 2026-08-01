@@ -5,7 +5,7 @@ import {
     useTransform,
     AnimatePresence,
     delay,
-} from 'framer-motion';
+} from 'motion/react';
 import { useState, useEffect } from 'react';
 import { useIsMobile } from '@/hooks/useIsMobile';
 
@@ -154,6 +154,7 @@ export default function PortfolioHero({ viewMode, setViewMode }: HeroProps) {
                             animate={shapeAnimation}
                             transition={shapeTransition1}
                             src="/assets/shapes/brown_shape_1.webp"
+                            loading="lazy"
                             alt="Brown Shape Top Right"
                             className="h-full w-full dark:hidden"
                         />
@@ -161,6 +162,7 @@ export default function PortfolioHero({ viewMode, setViewMode }: HeroProps) {
                             animate={shapeAnimation}
                             transition={shapeTransition1}
                             src="/assets/shapes/blue_shape_1.webp"
+                            loading="lazy"
                             alt="Blue Shape Top Right"
                             className="hidden h-full w-full dark:block"
                         />
@@ -172,6 +174,7 @@ export default function PortfolioHero({ viewMode, setViewMode }: HeroProps) {
                             animate={shapeAnimation}
                             transition={shapeTransition2}
                             src="/assets/shapes/brown_shape_2.webp"
+                            loading="lazy"
                             alt="Brown Shape Bottom Left"
                             className="h-full w-full dark:hidden"
                         />
@@ -179,6 +182,7 @@ export default function PortfolioHero({ viewMode, setViewMode }: HeroProps) {
                             animate={shapeAnimation}
                             transition={shapeTransition2}
                             src="/assets/shapes/blue_shape_2.webp"
+                            loading="lazy"
                             alt="Blue Shape Bottom Left"
                             className="hidden h-full w-full dark:block"
                         />

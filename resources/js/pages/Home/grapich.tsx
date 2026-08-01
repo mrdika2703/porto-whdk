@@ -1,10 +1,84 @@
-import { useState, useRef, useMemo, useCallback } from 'react';
-import { Link } from '@inertiajs/react';
-import { motion, AnimatePresence } from 'framer-motion'; // Tambahkan import framer-motion
+import { useState, useEffect, useRef, useMemo, useCallback } from 'react';
+// import { Link } from '@inertiajs/react';
+import { motion, AnimatePresence } from 'motion/react';
 import { Design, DescriptionSection } from './index';
 import { Underline } from '@/components/underline';
+import { useIsMobile } from '@/hooks/useIsMobile';
 
 const categories = ['Poster', 'Logo', 'Print', 'Motion', 'Others'];
+
+function DesignImageCard({
+    design,
+    onClick,
+}: {
+    design: Design;
+    onClick: () => void;
+}) {
+    const [isLoaded, setIsLoaded] = useState(false);
+
+    return (
+        <div
+            className="group/card relative w-full cursor-pointer overflow-hidden rounded-lg bg-white/5 md:rounded-2xl"
+            onClick={onClick}
+        >
+            {/* Loading Skeleton */}
+            {!isLoaded && (
+                <div className="absolute inset-0 z-0 flex min-h-[120px] w-full animate-pulse items-center justify-center bg-white/10 md:min-h-[160px]">
+                    <div className="h-5 w-5 animate-spin rounded-full border-2 border-bshine/30 border-t-bshine" />
+                </div>
+            )}
+
+            {/* Badge Hover */}
+            <div className="absolute top-1.5 right-1.5 z-10 rounded-full bg-bshine/90 px-2 py-0.5 opacity-0 transition-opacity duration-300 group-hover/card:opacity-100 md:top-3 md:right-3 md:px-4 md:py-1.5 md:backdrop-blur-md dark:bg-cyan-500/90">
+                <span className="text-[9px] font-semibold tracking-wide text-white md:text-xs">
+                    {design.title}
+                </span>
+            </div>
+
+            {/* Gambar */}
+            <img
+                src={`/storage/${design.url_1}`}
+                alt={design.title}
+                className={`h-auto w-full object-cover transition-all duration-500 group-hover/card:scale-105 ${
+                    isLoaded ? 'opacity-100' : 'opacity-0'
+                }`}
+                loading="lazy"
+                onLoad={() => setIsLoaded(true)}
+                onError={() => setIsLoaded(true)}
+            />
+        </div>
+    );
+}
+
+function ModalImage({ src, alt }: { src: string; alt: string }) {
+    const [isLoaded, setIsLoaded] = useState(false);
+
+    // Reset loading state saat src gambar berubah
+    useEffect(() => {
+        setIsLoaded(false);
+    }, [src]);
+
+    return (
+        <div className="relative flex w-full items-center justify-center">
+            {!isLoaded && (
+                <div className="flex h-48 w-48 animate-pulse items-center justify-center rounded-lg bg-white/5">
+                    <div className="h-8 w-8 animate-spin rounded-full border-3 border-bshine/30 border-t-bshine" />
+                </div>
+            )}
+            <img
+                src={src}
+                alt={alt}
+                loading="lazy"
+                draggable={false}
+                onLoad={() => setIsLoaded(true)}
+                onError={() => setIsLoaded(true)}
+                className={`max-h-[50vh] max-w-full rounded-lg object-contain shadow-lg transition-opacity duration-300 md:max-h-[85vh] ${
+                    isLoaded ? 'opacity-100' : 'hidden'
+                }`}
+            />
+        </div>
+    );
+}
 
 export default function DesignGraphicSection({
     designs = [],
@@ -17,6 +91,7 @@ export default function DesignGraphicSection({
     const [selectedDesign, setSelectedDesign] = useState<Design | null>(null);
     const [activeImg, setActiveImg] = useState<string | null>(null);
     const scrollRef = useRef<HTMLDivElement>(null);
+    const isMobile = useIsMobile();
 
     // console.log('Isi data designs:', designs);
 
@@ -66,6 +141,14 @@ export default function DesignGraphicSection({
         () => getColumns(filteredDesigns),
         [filteredDesigns],
     );
+
+    const mobileColumns = useMemo(() => {
+        const cols: (typeof filteredDesigns)[] = [[], [], []];
+        filteredDesigns.forEach((item, index) => {
+            cols[index % 3].push(item);
+        });
+        return cols;
+    }, [filteredDesigns]);
 
     const scroll = useCallback((direction: 'left' | 'right') => {
         if (scrollRef.current) {
@@ -150,19 +233,37 @@ export default function DesignGraphicSection({
                                 {cat}
                             </button>
                         ))}
-                        <Link
-                            href="/portfolio/design"
-                            className="flex hidden items-center justify-center rounded-3xl bg-bshine px-4 py-1.5 text-xs font-medium text-white transition-colors hover:brightness-110 sm:text-sm md:block md:px-6 md:py-2 md:text-base dark:bg-white dark:text-secondary dark:hover:bg-gray-200"
+                        <button
+                            disabled
+                            className="hidden items-center justify-center rounded-3xl bg-bshine px-4 py-1.5 text-xs font-medium text-white transition-colors hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-50 sm:text-sm md:flex md:px-6 md:py-2 md:text-base dark:bg-white dark:text-secondary dark:hover:bg-gray-200"
                         >
-                            See More
+                            See More{' '}
                             <i className="fa-solid fa-chevron-right ml-1"></i>
-                        </Link>
+                        </button>
                     </div>
 
-                    {/* SLIDER CONTAINER */}
-                    <div className="group/nav relative w-full">
+                    {/* KONTEN GAMBAR */}
+                    {/* Mode Mobile: Masonry 3 Kolom Flex (tanpa scroll horizontal & tanpa gap Y berlebih) */}
+                    <div className="flex w-full gap-2 pt-2 md:hidden">
+                        {mobileColumns.map((col, colIdx) => (
+                            <div
+                                key={colIdx}
+                                className="flex flex-1 flex-col gap-2"
+                            >
+                                {col.map((item) => (
+                                    <DesignImageCard
+                                        key={item.id}
+                                        design={item}
+                                        onClick={() => setSelectedDesign(item)}
+                                    />
+                                ))}
+                            </div>
+                        ))}
+                    </div>
+
+                    {/* Mode Desktop: SLIDER CONTAINER */}
+                    <div className="group/nav relative hidden w-full md:block">
                         {/* Tombol Kiri */}
-                        {/* Posisi digeser ke dalam di HP (left-1) agar tidak terpotong, dan ukurannya diperkecil */}
                         <button
                             onClick={() => scroll('left')}
                             className="absolute top-1/2 left-1 z-30 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full bg-gray-400/60 text-white opacity-0 shadow-lg transition-opacity group-hover/nav:opacity-100 md:-left-4 md:h-12 md:w-12 md:-translate-x-1/2 md:backdrop-blur-sm dark:bg-black/60"
@@ -201,28 +302,13 @@ export default function DesignGraphicSection({
                                         className="flex w-[110px] shrink-0 snap-start flex-col gap-4 md:w-[150px] md:gap-6 lg:w-[275px]"
                                     >
                                         {column.map((designs) => (
-                                            <div
+                                            <DesignImageCard
                                                 key={designs.id}
-                                                className="group/card relative w-full cursor-pointer overflow-hidden rounded-xl bg-white/5 md:rounded-2xl"
+                                                design={designs}
                                                 onClick={() =>
                                                     setSelectedDesign(designs)
                                                 }
-                                            >
-                                                {/* Badge Hover */}
-                                                <div className="absolute top-2 right-2 z-10 rounded-full bg-bshine/90 px-3 py-1 opacity-0 transition-opacity duration-300 group-hover/card:opacity-100 md:top-3 md:right-3 md:px-4 md:py-1.5 md:backdrop-blur-md dark:bg-cyan-500/90">
-                                                    <span className="text-[10px] font-semibold tracking-wide text-white md:text-xs">
-                                                        {designs.title}
-                                                    </span>
-                                                </div>
-
-                                                {/* Gambar */}
-                                                <img
-                                                    src={`/storage/${designs.url_1}`}
-                                                    alt={designs.title}
-                                                    className="h-auto w-full object-cover transition-transform duration-700 group-hover/card:scale-105"
-                                                    loading="lazy"
-                                                />
-                                            </div>
+                                            />
                                         ))}
                                     </div>
                                 ))}
@@ -257,13 +343,13 @@ export default function DesignGraphicSection({
 
                     {/* Tombol see more berpindah saat mode hp */}
                     <div className="relative z-20 flex w-full flex-wrap items-center justify-center">
-                        <Link
-                            href="/portfolio/media"
-                            className="flex w-full items-center justify-center rounded-lg bg-bshine py-1.5 text-xs font-medium text-white transition-colors hover:brightness-110 sm:text-sm md:hidden md:px-6 md:py-2 md:text-base dark:bg-white dark:text-secondary dark:hover:bg-gray-200"
+                        <button
+                            disabled
+                            className="flex w-full items-center justify-center rounded-lg bg-bshine py-1.5 text-xs font-medium text-white transition-colors hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-50 sm:text-sm md:hidden md:px-6 md:py-2 md:text-base dark:bg-white dark:text-secondary dark:hover:bg-gray-200"
                         >
                             See More
                             <i className="fa-solid fa-chevron-right ml-1"></i>
-                        </Link>
+                        </button>
                     </div>
                 </div>
             </div>
@@ -272,18 +358,32 @@ export default function DesignGraphicSection({
             <AnimatePresence>
                 {selectedDesign && (
                     <motion.div
-                        initial={{ opacity: 0 }}
+                        initial={isMobile ? false : { opacity: 0 }}
                         animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                        transition={{ duration: 0.1 }}
+                        exit={isMobile ? undefined : { opacity: 0 }}
+                        transition={
+                            isMobile ? { duration: 0 } : { duration: 0.1 }
+                        }
                         className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
                         onClick={() => setSelectedDesign(null)}
                     >
                         <motion.div
-                            initial={{ scale: 0.95, opacity: 0, y: 10 }}
+                            initial={
+                                isMobile
+                                    ? false
+                                    : { scale: 0.95, opacity: 0, y: 10 }
+                            }
                             animate={{ scale: 1, opacity: 1, y: 0 }}
-                            exit={{ scale: 0.95, opacity: 0, y: 10 }}
-                            transition={{ ease: 'easeOut', duration: 0.1 }}
+                            exit={
+                                isMobile
+                                    ? undefined
+                                    : { scale: 0.95, opacity: 0, y: 10 }
+                            }
+                            transition={
+                                isMobile
+                                    ? { duration: 0 }
+                                    : { ease: 'easeOut', duration: 0.1 }
+                            }
                             className="relative flex w-full max-w-5xl flex-col overflow-hidden rounded-2xl border border-white/10 bg-main shadow-2xl backdrop-blur-md md:flex-row"
                             onClick={(e) => e.stopPropagation()}
                         >
@@ -298,11 +398,9 @@ export default function DesignGraphicSection({
                             {/* Image side (more space) */}
                             <div className="relative flex min-h-[280px] w-full items-center justify-center p-3 md:min-h-[480px] md:w-3/5 lg:w-2/3">
                                 {currentImg && (
-                                    <img
+                                    <ModalImage
                                         src={`/storage/${currentImg}`}
                                         alt={selectedDesign.title}
-                                        className="max-h-[50vh] max-w-full rounded-lg object-contain shadow-lg md:max-h-[85vh]"
-                                        draggable={false}
                                     />
                                 )}
 
@@ -341,6 +439,7 @@ export default function DesignGraphicSection({
                                             >
                                                 <img
                                                     src={`/storage/${img}`}
+                                                    loading="lazy"
                                                     className="h-full w-full object-cover"
                                                 />
                                             </button>

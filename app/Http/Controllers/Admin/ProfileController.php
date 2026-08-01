@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Profile;
+use App\Services\ImageService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
@@ -48,7 +49,7 @@ class ProfileController extends Controller
             'passion_coding'   => 'nullable|string|max:255',
             'passion_multimedia'   => 'nullable|string|max:255',
             'ttl'           => 'required|date',
-            'photo'         => 'required|image|mimes:jpeg,png,jpg,webp|max:2048',
+            'photo'         => 'required|image|mimes:jpeg,png,jpg,webp|max:1024',
             'whatsapp'      => 'required|string|max:255',
             'email'         => 'required|email|max:255',
             'linkedin'      => 'required|string|max:255',
@@ -59,7 +60,7 @@ class ProfileController extends Controller
 
         try {
             if ($request->hasFile('photo')) {
-                $validated['photo'] = $request->file('photo')->store('profiles', 'public');
+                $validated['photo'] = ImageService::compressAndStore($request->file('photo'), 'profiles');
             }
 
             $validated['user_id'] = $userId;
@@ -93,7 +94,7 @@ class ProfileController extends Controller
             'passion_coding'   => 'nullable|string|max:255',
             'passion_multimedia'   => 'nullable|string|max:255',
             'ttl'           => 'required|date',
-            'photo'         => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
+            'photo'         => 'nullable|image|mimes:jpeg,png,jpg,webp|max:1024',
             'whatsapp'      => 'required|string|max:255',
             'email'         => 'required|email|max:255',
             'linkedin'      => 'required|string|max:255',
@@ -105,7 +106,7 @@ class ProfileController extends Controller
         try {
             if ($request->hasFile('photo')) {
                 $oldPhoto = $profile->photo;
-                $validated['photo'] = $request->file('photo')->store('profiles', 'public');
+                $validated['photo'] = ImageService::compressAndStore($request->file('photo'), 'profiles');
             } else {
                 unset($validated['photo']);
             }

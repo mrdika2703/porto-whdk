@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
+use App\Services\ImageService;
 use Inertia\Inertia;
 
 class GrapichDesignController extends Controller
@@ -22,7 +23,7 @@ class GrapichDesignController extends Controller
     {
         $profile = $this->getProfile();
         $designs = $profile ? GrapichDesign::where('profile_id', $profile->id)->latest()->paginate(15) : [];
-        
+
         $categoryCounts = [];
         if ($profile) {
             $categoryCounts = GrapichDesign::where('profile_id', $profile->id)
@@ -76,9 +77,9 @@ class GrapichDesignController extends Controller
             'description' => 'nullable|string',
             'type'        => 'required|in:image,video',
             'link'        => 'nullable|string',
-            'url_1'       => 'required|file|mimes:jpeg,png,jpg,webp,mp4,mov,avi|max:10240', // 10MB max
-            'url_2'       => 'nullable|file|mimes:jpeg,png,jpg,webp,mp4,mov,avi|max:10240',
-            'url_3'       => 'nullable|file|mimes:jpeg,png,jpg,webp,mp4,mov,avi|max:10240',
+            'url_1'       => 'required|file|mimes:jpeg,png,jpg,webp,mp4,mov,avi|max:1024', // 10MB max
+            'url_2'       => 'nullable|file|mimes:jpeg,png,jpg,webp,mp4,mov,avi|max:1024',
+            'url_3'       => 'nullable|file|mimes:jpeg,png,jpg,webp,mp4,mov,avi|max:1024',
             'visible'     => 'required|in:yes,no',
         ]);
 
@@ -87,7 +88,7 @@ class GrapichDesignController extends Controller
 
             foreach (['url_1', 'url_2', 'url_3'] as $url) {
                 if ($request->hasFile($url)) {
-                    $validated[$url] = $request->file($url)->store('graphic-designs', 'public');
+                    $validated[$url] = ImageService::compressAndStore($request->file($url), 'graphic-designs');
                 }
             }
 
@@ -128,9 +129,9 @@ class GrapichDesignController extends Controller
             'description' => 'nullable|string',
             'type'        => 'required|in:image,video',
             'link'        => 'nullable|string',
-            'url_1'       => 'nullable|file|mimes:jpeg,png,jpg,webp,mp4,mov,avi|max:10240',
-            'url_2'       => 'nullable|file|mimes:jpeg,png,jpg,webp,mp4,mov,avi|max:10240',
-            'url_3'       => 'nullable|file|mimes:jpeg,png,jpg,webp,mp4,mov,avi|max:10240',
+            'url_1'       => 'nullable|file|mimes:jpeg,png,jpg,webp,mp4,mov,avi|max:1024',
+            'url_2'       => 'nullable|file|mimes:jpeg,png,jpg,webp,mp4,mov,avi|max:1024',
+            'url_3'       => 'nullable|file|mimes:jpeg,png,jpg,webp,mp4,mov,avi|max:1024',
             'visible'     => 'required|in:yes,no',
         ]);
 
@@ -141,7 +142,7 @@ class GrapichDesignController extends Controller
                     if ($design->$url) {
                         Storage::disk('public')->delete($design->$url);
                     }
-                    $validated[$url] = $request->file($url)->store('graphic-designs', 'public');
+                    $validated[$url] = ImageService::compressAndStore($request->file($url), 'graphic-designs');
                 } elseif ($request->input("clear_$url") === true || $request->input("clear_$url") === 'true' || $request->input("clear_$url") === 1 || $request->input("clear_$url") === '1') {
                     if ($design->$url) {
                         Storage::disk('public')->delete($design->$url);

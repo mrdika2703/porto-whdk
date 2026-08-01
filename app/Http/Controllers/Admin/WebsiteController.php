@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Profile;
 use App\Models\Website;
+use App\Services\ImageService;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
@@ -77,14 +78,14 @@ class WebsiteController extends Controller
             'tech'        => 'nullable|string',
             'link'        => 'nullable|string',
             'origin'      => 'nullable|string',
-            'url_1'       => 'required|file|mimes:jpeg,png,jpg,webp,mp4,mov,avi|max:10240', // 10MB max
-            'url_2'       => 'nullable|file|mimes:jpeg,png,jpg,webp,mp4,mov,avi|max:3072',
-            'url_3'       => 'nullable|file|mimes:jpeg,png,jpg,webp,mp4,mov,avi|max:3072',
-            'url_4'       => 'nullable|file|mimes:jpeg,png,jpg,webp,mp4,mov,avi|max:3072',
-            'url_5'       => 'nullable|file|mimes:jpeg,png,jpg,webp,mp4,mov,avi|max:3072',
-            'url_6'       => 'nullable|file|mimes:jpeg,png,jpg,webp,mp4,mov,avi|max:3072',
-            'url_7'       => 'nullable|file|mimes:jpeg,png,jpg,webp,mp4,mov,avi|max:3072',
-            'url_8'       => 'nullable|file|mimes:jpeg,png,jpg,webp,mp4,mov,avi|max:3072',
+            'url_1'       => 'required|file|mimes:jpeg,png,jpg,webp,mp4,mov,avi|max:1024', // 10MB max
+            'url_2'       => 'nullable|file|mimes:jpeg,png,jpg,webp,mp4,mov,avi|max:1024',
+            'url_3'       => 'nullable|file|mimes:jpeg,png,jpg,webp,mp4,mov,avi|max:1024',
+            'url_4'       => 'nullable|file|mimes:jpeg,png,jpg,webp,mp4,mov,avi|max:1024',
+            'url_5'       => 'nullable|file|mimes:jpeg,png,jpg,webp,mp4,mov,avi|max:1024',
+            'url_6'       => 'nullable|file|mimes:jpeg,png,jpg,webp,mp4,mov,avi|max:1024',
+            'url_7'       => 'nullable|file|mimes:jpeg,png,jpg,webp,mp4,mov,avi|max:1024',
+            'url_8'       => 'nullable|file|mimes:jpeg,png,jpg,webp,mp4,mov,avi|max:1024',
             'visible'     => 'required|in:yes,no',
         ]);
 
@@ -93,7 +94,7 @@ class WebsiteController extends Controller
 
             foreach (['url_1', 'url_2', 'url_3', 'url_4', 'url_5', 'url_6', 'url_7', 'url_8'] as $url) {
                 if ($request->hasFile($url)) {
-                    $validated[$url] = $request->file($url)->store('Website', 'public');
+                    $validated[$url] = ImageService::compressAndStore($request->file($url), 'Website');
                 }
             }
 
@@ -135,14 +136,14 @@ class WebsiteController extends Controller
             'tech'        => 'nullable|string',
             'link'        => 'nullable|string',
             'origin'      => 'nullable|string',
-            'url_1'       => 'nullable|file|mimes:jpeg,png,jpg,webp,mp4,mov,avi|max:10240', // 10MB max
-            'url_2'       => 'nullable|file|mimes:jpeg,png,jpg,webp,mp4,mov,avi|max:3072',
-            'url_3'       => 'nullable|file|mimes:jpeg,png,jpg,webp,mp4,mov,avi|max:3072',
-            'url_4'       => 'nullable|file|mimes:jpeg,png,jpg,webp,mp4,mov,avi|max:3072',
-            'url_5'       => 'nullable|file|mimes:jpeg,png,jpg,webp,mp4,mov,avi|max:3072',
-            'url_6'       => 'nullable|file|mimes:jpeg,png,jpg,webp,mp4,mov,avi|max:3072',
-            'url_7'       => 'nullable|file|mimes:jpeg,png,jpg,webp,mp4,mov,avi|max:3072',
-            'url_8'       => 'nullable|file|mimes:jpeg,png,jpg,webp,mp4,mov,avi|max:3072',
+            'url_1'       => 'nullable|file|mimes:jpeg,png,jpg,webp,mp4,mov,avi|max:1024', // 10MB max
+            'url_2'       => 'nullable|file|mimes:jpeg,png,jpg,webp,mp4,mov,avi|max:1024',
+            'url_3'       => 'nullable|file|mimes:jpeg,png,jpg,webp,mp4,mov,avi|max:1024',
+            'url_4'       => 'nullable|file|mimes:jpeg,png,jpg,webp,mp4,mov,avi|max:1024',
+            'url_5'       => 'nullable|file|mimes:jpeg,png,jpg,webp,mp4,mov,avi|max:1024',
+            'url_6'       => 'nullable|file|mimes:jpeg,png,jpg,webp,mp4,mov,avi|max:1024',
+            'url_7'       => 'nullable|file|mimes:jpeg,png,jpg,webp,mp4,mov,avi|max:1024',
+            'url_8'       => 'nullable|file|mimes:jpeg,png,jpg,webp,mp4,mov,avi|max:1024',
             'visible'     => 'required|in:yes,no',
         ]);
 
@@ -153,7 +154,7 @@ class WebsiteController extends Controller
                     if ($websites->$url) {
                         Storage::disk('public')->delete($websites->$url);
                     }
-                    $validated[$url] = $request->file($url)->store('Website', 'public');
+                    $validated[$url] = ImageService::compressAndStore($request->file($url), 'Website');
                 } elseif ($request->input("clear_$url") === true || $request->input("clear_$url") === 'true' || $request->input("clear_$url") === 1 || $request->input("clear_$url") === '1') {
                     if ($websites->$url) {
                         Storage::disk('public')->delete($websites->$url);

@@ -1,8 +1,67 @@
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import { Link } from '@inertiajs/react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence } from 'motion/react';
 import { Website, DescriptionSection } from './index';
 import { Underline } from '@/components/underline';
+import { useIsMobile } from '@/hooks/useIsMobile';
+
+function WebsiteCardImage({ src, alt }: { src: string; alt: string }) {
+    const [isLoaded, setIsLoaded] = useState(false);
+
+    useEffect(() => {
+        setIsLoaded(false);
+    }, [src]);
+
+    return (
+        <div className="relative h-full w-full">
+            {!isLoaded && (
+                <div className="absolute inset-0 z-10 flex animate-pulse items-center justify-center rounded-2xl bg-white/10">
+                    <div className="h-6 w-6 animate-spin rounded-full border-2 border-bshine/30 border-t-bshine" />
+                </div>
+            )}
+            <img
+                src={src}
+                alt={alt}
+                loading="lazy"
+                draggable={false}
+                onLoad={() => setIsLoaded(true)}
+                onError={() => setIsLoaded(true)}
+                className={`h-full w-full object-cover transition-opacity duration-500 ${
+                    isLoaded ? 'opacity-100' : 'opacity-0'
+                }`}
+            />
+        </div>
+    );
+}
+
+function ModalImage({ src, alt }: { src: string; alt: string }) {
+    const [isLoaded, setIsLoaded] = useState(false);
+
+    useEffect(() => {
+        setIsLoaded(false);
+    }, [src]);
+
+    return (
+        <div className="relative flex w-full items-center justify-center">
+            {!isLoaded && (
+                <div className="flex h-48 w-48 animate-pulse items-center justify-center rounded-lg bg-white/5">
+                    <div className="h-8 w-8 animate-spin rounded-full border-3 border-bshine/30 border-t-bshine" />
+                </div>
+            )}
+            <img
+                src={src}
+                alt={alt}
+                loading="lazy"
+                draggable={false}
+                onLoad={() => setIsLoaded(true)}
+                onError={() => setIsLoaded(true)}
+                className={`max-h-[50vh] max-w-full rounded-lg object-contain shadow-lg transition-opacity duration-300 md:max-h-[85vh] ${
+                    isLoaded ? 'opacity-100' : 'hidden'
+                }`}
+            />
+        </div>
+    );
+}
 
 const transitionVariants = {
     enter: (direction: 'next' | 'prev') => ({
@@ -41,6 +100,7 @@ export default function WebsiteSection({
         null,
     );
     const [activeImg, setActiveImg] = useState<string | null>(null);
+    const isMobile = useIsMobile();
 
     const getImages = (item: Website | null) => {
         if (!item) return [];
@@ -145,13 +205,13 @@ export default function WebsiteSection({
                                 <span className="capitalize">{tab}</span>
                             </button>
                         ))}
-                        <Link
-                            href="/portfolio/website"
-                            className="hidden items-center justify-center rounded-full bg-bshine px-6 py-2 text-sm font-medium text-white transition-colors hover:brightness-110 md:flex dark:bg-white dark:text-secondary dark:hover:bg-gray-200"
+                        <button
+                            disabled
+                            className="hidden items-center justify-center rounded-full bg-bshine px-6 py-2 text-sm font-medium text-white transition-colors hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-50 md:flex dark:bg-white dark:text-secondary dark:hover:bg-gray-200"
                         >
                             See More
                             <i className="fa-solid fa-chevron-right ml-1.5"></i>
-                        </Link>
+                        </button>
                     </div>
 
                     {/* Main Content: 2-Column Grid */}
@@ -174,12 +234,9 @@ export default function WebsiteSection({
                                             {project.images &&
                                             project.images[1] ? (
                                                 <div className="absolute inset-0 translate-x-6 translate-y-6 scale-95 rotate-3 overflow-hidden rounded-2xl border border-white/5 bg-white/[0.02] opacity-40 shadow-2xl transition-all duration-500 group-hover:translate-x-8 group-hover:translate-y-4 group-hover:rotate-6">
-                                                    <img
+                                                    <WebsiteCardImage
                                                         src={`/storage/${project.images[1]}`}
                                                         alt="Screenshot 2"
-                                                        className="h-full w-full object-cover"
-                                                        loading="lazy"
-                                                        draggable={false}
                                                     />
                                                 </div>
                                             ) : (
@@ -190,12 +247,9 @@ export default function WebsiteSection({
                                             {project.images &&
                                                 project.images[0] && (
                                                     <div className="relative z-10 aspect-[3/2] w-full overflow-hidden rounded-2xl border border-white/10 bg-white/[0.02] shadow-2xl transition-transform duration-500 group-hover:scale-[1.02]">
-                                                        <img
+                                                        <WebsiteCardImage
                                                             src={`/storage/${project.images[0]}`}
                                                             alt="Screenshot 1"
-                                                            className="h-full w-full object-cover"
-                                                            loading="lazy"
-                                                            draggable={false}
                                                         />
                                                     </div>
                                                 )}
@@ -328,13 +382,13 @@ export default function WebsiteSection({
                     )}
 
                     <div className="flex w-full items-center justify-center md:hidden">
-                        <Link
-                            href="/portfolio/website"
-                            className="flex w-full items-center justify-center rounded-lg bg-bshine py-2 text-sm font-medium text-white transition-colors hover:brightness-110 dark:bg-white dark:text-secondary"
+                        <button
+                            disabled
+                            className="flex w-full items-center justify-center rounded-lg bg-bshine py-2 text-sm font-medium text-white transition-colors hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-50 dark:bg-white dark:text-secondary"
                         >
                             See More
                             <i className="fa-solid fa-chevron-right ml-1.5"></i>
-                        </Link>
+                        </button>
                     </div>
                 </div>
             </div>
@@ -343,18 +397,32 @@ export default function WebsiteSection({
             <AnimatePresence>
                 {selectedWebsite && (
                     <motion.div
-                        initial={{ opacity: 0 }}
+                        initial={isMobile ? false : { opacity: 0 }}
                         animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                        transition={{ duration: 0.1 }}
+                        exit={isMobile ? undefined : { opacity: 0 }}
+                        transition={
+                            isMobile ? { duration: 0 } : { duration: 0.1 }
+                        }
                         className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
                         onClick={() => setSelectedWebsite(null)}
                     >
                         <motion.div
-                            initial={{ scale: 0.95, opacity: 0, y: 10 }}
+                            initial={
+                                isMobile
+                                    ? false
+                                    : { scale: 0.95, opacity: 0, y: 10 }
+                            }
                             animate={{ scale: 1, opacity: 1, y: 0 }}
-                            exit={{ scale: 0.95, opacity: 0, y: 10 }}
-                            transition={{ ease: 'easeOut', duration: 0.1 }}
+                            exit={
+                                isMobile
+                                    ? undefined
+                                    : { scale: 0.95, opacity: 0, y: 10 }
+                            }
+                            transition={
+                                isMobile
+                                    ? { duration: 0 }
+                                    : { ease: 'easeOut', duration: 0.1 }
+                            }
                             className="relative flex w-full max-w-5xl flex-col overflow-hidden rounded-2xl border border-white/10 bg-main shadow-2xl backdrop-blur-md md:flex-row"
                             onClick={(e) => e.stopPropagation()}
                         >
@@ -369,11 +437,9 @@ export default function WebsiteSection({
                             {/* Modal Images */}
                             <div className="relative flex min-h-[280px] w-full items-center justify-center p-3 md:min-h-[480px] md:w-3/5 lg:w-2/3">
                                 {activeImg && (
-                                    <img
+                                    <ModalImage
                                         src={`/storage/${activeImg}`}
                                         alt={selectedWebsite.title}
-                                        className="max-h-[50vh] max-w-full rounded-lg object-contain shadow-lg md:max-h-[85vh]"
-                                        draggable={false}
                                     />
                                 )}
 
@@ -410,6 +476,7 @@ export default function WebsiteSection({
                                             >
                                                 <img
                                                     src={`/storage/${img}`}
+                                                    loading="lazy"
                                                     className="h-full w-full object-cover"
                                                 />
                                             </button>

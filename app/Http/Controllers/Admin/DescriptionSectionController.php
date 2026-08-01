@@ -64,7 +64,7 @@ class DescriptionSectionController extends Controller
         $validated['profile_id'] = $profile->id;
 
         DescriptionSection::create($validated);
-        Cache::forget('description_sections_array');
+        Cache::forget('all_description_sections_array');
 
         return redirect()->route('admin.description-sections.index')
             ->with('success', 'Deskripsi bagian berhasil ditambahkan!');
@@ -85,7 +85,7 @@ class DescriptionSectionController extends Controller
         ]);
 
         $descriptionSection->update($validated);
-        Cache::forget('description_sections_array');
+        Cache::forget('all_description_sections_array');
 
         return redirect()->route('admin.description-sections.index')
             ->with('success', 'Deskripsi bagian berhasil diperbarui!');

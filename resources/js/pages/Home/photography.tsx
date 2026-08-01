@@ -1,10 +1,80 @@
-import { useState, useRef, useMemo, useCallback } from 'react';
+import { useState, useEffect, useRef, useMemo, useCallback } from 'react';
 import { Link } from '@inertiajs/react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence } from 'motion/react';
 import { BgPhotograph } from '@/components/bg-photograph';
 import { PhotoVideo, DescriptionSection } from './index';
 import { useIsMobile } from '@/hooks/useIsMobile';
 import { Underline } from '@/components/underline';
+
+function PhotoVideoImageCard({
+    project,
+    onClick,
+}: {
+    project: PhotoVideo;
+    onClick: () => void;
+}) {
+    const [isLoaded, setIsLoaded] = useState(false);
+
+    return (
+        <div
+            className="group/card md:rounded-base relative w-full cursor-pointer overflow-hidden rounded-sm bg-white/5"
+            onClick={onClick}
+        >
+            {/* Loading Skeleton */}
+            {!isLoaded && (
+                <div className="absolute inset-0 z-0 flex min-h-[120px] w-full animate-pulse items-center justify-center bg-white/10 md:min-h-[160px]">
+                    <div className="h-5 w-5 animate-spin rounded-full border-2 border-bshine/30 border-t-bshine" />
+                </div>
+            )}
+
+            <img
+                src={`/storage/${project.url_1}`}
+                alt={project.title}
+                className={`h-auto w-full object-cover transition-all duration-500 group-hover/card:scale-105 ${
+                    isLoaded ? 'opacity-100' : 'opacity-0'
+                }`}
+                loading="lazy"
+                onLoad={() => setIsLoaded(true)}
+                onError={() => setIsLoaded(true)}
+            />
+
+            <div className="absolute inset-x-0 bottom-0 z-10 flex h-1/2 flex-col justify-end bg-gradient-to-t from-black/90 via-black/40 to-transparent p-4 opacity-0 transition-opacity duration-300 group-hover/card:opacity-100 md:p-5">
+                <span className="translate-y-4 text-[10px] font-medium tracking-wide text-white transition-transform duration-300 group-hover/card:translate-y-0 md:text-sm">
+                    {project.title}
+                </span>
+            </div>
+        </div>
+    );
+}
+
+function ModalImage({ src, alt }: { src: string; alt: string }) {
+    const [isLoaded, setIsLoaded] = useState(false);
+
+    useEffect(() => {
+        setIsLoaded(false);
+    }, [src]);
+
+    return (
+        <div className="relative flex w-full items-center justify-center">
+            {!isLoaded && (
+                <div className="flex h-48 w-48 animate-pulse items-center justify-center rounded-lg bg-white/5">
+                    <div className="h-8 w-8 animate-spin rounded-full border-3 border-bshine/30 border-t-bshine" />
+                </div>
+            )}
+            <img
+                src={src}
+                alt={alt}
+                loading="lazy"
+                draggable={false}
+                onLoad={() => setIsLoaded(true)}
+                onError={() => setIsLoaded(true)}
+                className={`max-h-[50vh] max-w-full rounded-lg object-contain shadow-lg transition-opacity duration-300 md:max-h-[85vh] ${
+                    isLoaded ? 'opacity-100' : 'hidden'
+                }`}
+            />
+        </div>
+    );
+}
 
 export default function PhotoVideoSection({
     photovideos = [],
@@ -70,6 +140,14 @@ export default function PhotoVideoSection({
         [filteredProjects],
     );
 
+    const mobileColumns = useMemo(() => {
+        const cols: (typeof filteredProjects)[] = [[], [], []];
+        filteredProjects.forEach((item, index) => {
+            cols[index % 3].push(item);
+        });
+        return cols;
+    }, [filteredProjects]);
+
     const scroll = useCallback((direction: 'left' | 'right') => {
         if (scrollRef.current) {
             const { scrollLeft, clientWidth, scrollWidth } = scrollRef.current;
@@ -104,9 +182,7 @@ export default function PhotoVideoSection({
         <section className="relative flex min-h-[500px] w-full flex-col items-center overflow-hidden py-16 pb-14 md:py-24 md:pb-32">
             {/* BgPhotograph SVG (71KB, 400 path) — skip di mobile untuk performa */}
             <div className="absolute top-0 left-0 z-1 h-full w-full">
-                {!isMobile && (
-                    <BgPhotograph className="text-amber-900 dark:text-cyan-600" />
-                )}
+                <BgPhotograph className="h-full w-full object-cover text-amber-900 dark:text-cyan-600" />
             </div>
 
             {/* TOP FADE GRADIENT */}
@@ -137,7 +213,7 @@ export default function PhotoVideoSection({
                         </h2>
                     </div>
                     {/* Teks preview disembunyikan di layar HP paling kecil agar bersih */}
-                    <p className="hidden text-sm font-light text-tmain sm:block md:text-base">
+                    <p className="text-xs font-light text-tmain md:text-base">
                         {description_sections?.photovideo_section ||
                             'Preview Project'}
                     </p>
@@ -169,19 +245,40 @@ export default function PhotoVideoSection({
                             Videography
                         </button>
 
-                        <Link
-                            href="/portfolio/media"
-                            className="flex hidden items-center justify-center rounded-3xl bg-bshine px-4 py-1.5 text-xs font-medium text-white transition-colors hover:brightness-110 sm:text-sm md:block md:px-6 md:py-2 md:text-base dark:bg-white dark:text-secondary dark:hover:bg-gray-200"
+                        <button
+                            disabled
+                            className="hidden items-center justify-center rounded-3xl bg-bshine px-4 py-1.5 text-xs font-medium text-white transition-colors hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-50 sm:text-sm md:flex md:px-6 md:py-2 md:text-base dark:bg-white dark:text-secondary dark:hover:bg-gray-200"
                         >
                             See More
                             <i className="fa-solid fa-chevron-right ml-1"></i>
-                        </Link>
+                        </button>
                     </div>
 
-                    {/* --- MAIN MASONRY SLIDER CONTENT --- */}
-                    <div className="group/nav relative z-20 w-full md:mt-6">
+                    {/* KONTEN GAMBAR */}
+                    {/* Mode Mobile: Masonry 3 Kolom Flex (tanpa scroll horizontal & tanpa gap Y berlebih) */}
+                    <div className="flex w-full gap-2 pt-2 md:hidden">
+                        {mobileColumns.map((col, colIdx) => (
+                            <div
+                                key={colIdx}
+                                className="flex flex-1 flex-col gap-2"
+                            >
+                                {col.map((project) => (
+                                    <PhotoVideoImageCard
+                                        key={project.id}
+                                        project={project}
+                                        onClick={() => {
+                                            setSelectedPhotoVideo(project);
+                                            setActiveImg(project.url_1);
+                                        }}
+                                    />
+                                ))}
+                            </div>
+                        ))}
+                    </div>
+
+                    {/* Mode Desktop: MAIN MASONRY SLIDER CONTENT */}
+                    <div className="group/nav relative z-20 hidden w-full md:block md:mt-6">
                         {/* Tombol Panah Kiri */}
-                        {/* Digeser agak ke dalam (left-1) untuk HP agar tombol bisa diklik */}
                         <button
                             onClick={() => scroll('left')}
                             className="absolute top-1/2 left-1 z-30 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full bg-gray-400/60 text-white opacity-0 shadow-lg transition-all duration-300 group-hover/nav:opacity-100 md:-left-4 md:h-12 md:w-12 md:-translate-x-6 md:backdrop-blur-md dark:bg-black/60"
@@ -217,33 +314,19 @@ export default function PhotoVideoSection({
                                 {projectColumns.map((column, colIndex) => (
                                     <div
                                         key={colIndex}
-                                        // Lebar kolom responsif (220px di HP, membesar di tablet/desktop)
                                         className="flex w-[110px] shrink-0 snap-start flex-col gap-4 md:w-[150px] md:gap-6 lg:w-[275px]"
                                     >
                                         {column.map((project) => (
-                                            <div
+                                            <PhotoVideoImageCard
                                                 key={project.id}
-                                                className="group/card md:rounded-base relative w-full cursor-pointer overflow-hidden rounded-sm bg-white/5"
+                                                project={project}
                                                 onClick={() => {
                                                     setSelectedPhotoVideo(
                                                         project,
                                                     );
                                                     setActiveImg(project.url_1);
                                                 }}
-                                            >
-                                                <img
-                                                    src={`/storage/${project.url_1}`}
-                                                    alt={project.title}
-                                                    className="h-auto w-full object-cover transition-transform duration-700 group-hover/card:scale-105"
-                                                    loading="lazy"
-                                                />
-
-                                                <div className="absolute inset-x-0 bottom-0 z-10 flex h-1/2 flex-col justify-end bg-gradient-to-t from-black/90 via-black/40 to-transparent p-4 opacity-0 transition-opacity duration-300 group-hover/card:opacity-100 md:p-5">
-                                                    <span className="translate-y-4 text-[10px] font-medium tracking-wide text-white transition-transform duration-300 group-hover/card:translate-y-0 md:text-sm">
-                                                        {project.title}
-                                                    </span>
-                                                </div>
-                                            </div>
+                                            />
                                         ))}
                                     </div>
                                 ))}
@@ -276,13 +359,13 @@ export default function PhotoVideoSection({
 
                     {/* Tombol see more berpindah saat mode hp */}
                     <div className="relative z-20 flex w-full flex-wrap items-center justify-center">
-                        <Link
-                            href="/portfolio/media"
-                            className="flex w-full items-center justify-center rounded-lg bg-bshine py-1.5 text-xs font-medium text-white transition-colors hover:brightness-110 sm:text-sm md:hidden md:px-6 md:py-2 md:text-base dark:bg-white dark:text-secondary dark:hover:bg-gray-200"
+                        <button
+                            disabled
+                            className="flex w-full items-center justify-center rounded-lg bg-bshine py-1.5 text-xs font-medium text-white transition-colors hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-50 sm:text-sm md:hidden md:px-6 md:py-2 md:text-base dark:bg-white dark:text-secondary dark:hover:bg-gray-200"
                         >
                             See More
                             <i className="fa-solid fa-chevron-right ml-1"></i>
-                        </Link>
+                        </button>
                     </div>
                 </div>
             </div>
@@ -291,18 +374,32 @@ export default function PhotoVideoSection({
             <AnimatePresence>
                 {selectedPhotoVideo && (
                     <motion.div
-                        initial={{ opacity: 0 }}
+                        initial={isMobile ? false : { opacity: 0 }}
                         animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                        transition={{ duration: 0.1 }}
+                        exit={isMobile ? undefined : { opacity: 0 }}
+                        transition={
+                            isMobile ? { duration: 0 } : { duration: 0.1 }
+                        }
                         className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
                         onClick={() => setSelectedPhotoVideo(null)}
                     >
                         <motion.div
-                            initial={{ scale: 0.95, opacity: 0, y: 10 }}
+                            initial={
+                                isMobile
+                                    ? false
+                                    : { scale: 0.95, opacity: 0, y: 10 }
+                            }
                             animate={{ scale: 1, opacity: 1, y: 0 }}
-                            exit={{ scale: 0.95, opacity: 0, y: 10 }}
-                            transition={{ ease: 'easeOut', duration: 0.1 }}
+                            exit={
+                                isMobile
+                                    ? undefined
+                                    : { scale: 0.95, opacity: 0, y: 10 }
+                            }
+                            transition={
+                                isMobile
+                                    ? { duration: 0 }
+                                    : { ease: 'easeOut', duration: 0.1 }
+                            }
                             className="relative flex w-full max-w-5xl flex-col overflow-hidden rounded-2xl border border-white/10 bg-main shadow-2xl backdrop-blur-md md:flex-row"
                             onClick={(e) => e.stopPropagation()}
                         >
@@ -317,11 +414,9 @@ export default function PhotoVideoSection({
                             {/* Image side (more space) */}
                             <div className="relative flex min-h-[280px] w-full items-center justify-center p-3 md:min-h-[480px] md:w-3/5 lg:w-2/3">
                                 {activeImg && (
-                                    <img
+                                    <ModalImage
                                         src={`/storage/${activeImg}`}
                                         alt={selectedPhotoVideo.title}
-                                        className="max-h-[50vh] max-w-full rounded-lg object-contain shadow-lg md:max-h-[85vh]"
-                                        draggable={false}
                                     />
                                 )}
 
@@ -360,6 +455,7 @@ export default function PhotoVideoSection({
                                             >
                                                 <img
                                                     src={`/storage/${img}`}
+                                                    loading="lazy"
                                                     className="h-full w-full object-cover"
                                                 />
                                             </button>
