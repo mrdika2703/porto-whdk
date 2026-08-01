@@ -93,7 +93,7 @@ export default function DesignGraphicSection({
     const scrollRef = useRef<HTMLDivElement>(null);
     const isMobile = useIsMobile();
 
-    // console.log('Isi data designs:', designs);
+    // console.log('full object:', JSON.stringify(description_sections));
 
     const getImages = (item: Design | null) => {
         if (!item) return [];

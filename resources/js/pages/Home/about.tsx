@@ -7,9 +7,15 @@ import { Underline } from '@/components/underline';
 
 function ProfilePhoto({ src }: { src: string }) {
     const [isLoaded, setIsLoaded] = useState(false);
+    const imgRef = useRef<HTMLImageElement>(null);
 
     useEffect(() => {
         setIsLoaded(false);
+        // Check if image already cached by browser
+        const img = imgRef.current;
+        if (img && img.complete && img.naturalHeight > 0) {
+            setIsLoaded(true);
+        }
     }, [src]);
 
     return (
@@ -22,6 +28,7 @@ function ProfilePhoto({ src }: { src: string }) {
                 </div>
             )}
             <img
+                ref={imgRef}
                 src={src}
                 alt="Wahyu Adam Anandika"
                 onLoad={() => setIsLoaded(true)}

@@ -57,7 +57,7 @@ class HomeController extends Controller
             'all_description_sections_array',
             3600,
             function () {
-                return DescriptionSection::first();
+                return DescriptionSection::first()?->toArray();
             }
         );
 
