@@ -101,6 +101,15 @@ export default function PhotoVideoSection({
     const scrollRef = useRef<HTMLDivElement>(null);
     const isMobile = useIsMobile();
 
+    useEffect(() => {
+        setActiveImg(null);
+    }, [selectedPhotoVideo]);
+
+    useEffect(() => {
+        setSelectedPhotoVideo(null);
+        setActiveImg(null);
+    }, [activeTab]);
+
     const getImages = (item: PhotoVideo | null) => {
         if (!item) return [];
         return [

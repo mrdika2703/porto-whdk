@@ -109,6 +109,15 @@ export default function WebsiteSection({
     const [activeImg, setActiveImg] = useState<string | null>(null);
     const isMobile = useIsMobile();
 
+    useEffect(() => {
+        setActiveImg(null);
+    }, [selectedWebsite]);
+
+    useEffect(() => {
+        setSelectedWebsite(null);
+        setActiveImg(null);
+    }, [activeTab]);
+
     const getImages = (item: Website | null) => {
         if (!item) return [];
         return item.images || [];

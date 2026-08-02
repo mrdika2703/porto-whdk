@@ -53,6 +53,15 @@ export default function CertificateSection({
     const [activeImg, setActiveImg] = useState<string | null>(null);
     const isMobile = useIsMobile();
 
+    useEffect(() => {
+        setActiveImg(null);
+    }, [selectedCert]);
+
+    useEffect(() => {
+        setSelectedCert(null);
+        setActiveImg(null);
+    }, [viewMode]);
+
     const filteredCertificates = useMemo(
         () =>
             certificates.filter(

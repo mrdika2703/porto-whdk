@@ -104,6 +104,15 @@ export default function DesignGraphicSection({
     const scrollRef = useRef<HTMLDivElement>(null);
     const isMobile = useIsMobile();
 
+    useEffect(() => {
+        setActiveImg(null);
+    }, [selectedDesign]);
+
+    useEffect(() => {
+        setSelectedDesign(null);
+        setActiveImg(null);
+    }, [activeCategory]);
+
     // console.log('full object:', JSON.stringify(description_sections));
 
     const getImages = (item: Design | null) => {
@@ -269,7 +278,10 @@ export default function DesignGraphicSection({
                                     <DesignImageCard
                                         key={item.id}
                                         design={item}
-                                        onClick={() => setSelectedDesign(item)}
+                                        onClick={() => {
+                                            setSelectedDesign(item);
+                                            setActiveImg(null);
+                                        }}
                                     />
                                 ))}
                             </div>
@@ -287,7 +299,10 @@ export default function DesignGraphicSection({
                                     <DesignImageCard
                                         key={item.id}
                                         design={item}
-                                        onClick={() => setSelectedDesign(item)}
+                                        onClick={() => {
+                                            setSelectedDesign(item);
+                                            setActiveImg(null);
+                                        }}
                                     />
                                 ))}
                             </div>

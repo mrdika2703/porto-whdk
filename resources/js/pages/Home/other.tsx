@@ -81,6 +81,10 @@ export default function OtherSection({
     const [activeImg, setActiveImg] = useState<string | null>(null);
     const isMobile = useIsMobile();
 
+    useEffect(() => {
+        setActiveImg(null);
+    }, [selectedOther]);
+
     const scrollRef = useRef<HTMLDivElement>(null);
     const [isDragging, setIsDragging] = useState(false);
     const [startX, setStartX] = useState(0);
