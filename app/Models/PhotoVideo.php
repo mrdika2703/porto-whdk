@@ -16,6 +16,7 @@ class PhotoVideo extends Model
         'title',
         'description',
         'type',
+        'thumbnail',
         'link',
         'url_1',
         'url_2',

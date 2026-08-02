@@ -37,14 +37,22 @@ function DesignImageCard({
 
             {/* Gambar */}
             <img
-                src={`/storage/${design.url_1}`}
+                src={
+                    design.thumbnail || design.url_1
+                        ? `/storage/${design.thumbnail || design.url_1}`
+                        : '/assets/sample/sampleimages-3_2.webp'
+                }
                 alt={design.title}
                 className={`h-auto w-full object-cover transition-all duration-500 group-hover/card:scale-105 ${
                     isLoaded ? 'opacity-100' : 'opacity-0'
                 }`}
                 loading="lazy"
                 onLoad={() => setIsLoaded(true)}
-                onError={() => setIsLoaded(true)}
+                onError={(e) => {
+                    (e.currentTarget as HTMLImageElement).src =
+                        '/assets/sample/sampleimages-3_2.webp';
+                    setIsLoaded(true);
+                }}
             />
         </div>
     );
@@ -68,12 +76,15 @@ function ModalImage({ src, alt }: { src: string; alt: string }) {
             <img
                 src={src}
                 alt={alt}
-                loading="lazy"
                 draggable={false}
                 onLoad={() => setIsLoaded(true)}
-                onError={() => setIsLoaded(true)}
+                onError={(e) => {
+                    (e.currentTarget as HTMLImageElement).src =
+                        '/assets/sample/sampleimages-3_2.webp';
+                    setIsLoaded(true);
+                }}
                 className={`max-h-[50vh] max-w-full rounded-lg object-contain shadow-lg transition-opacity duration-300 md:max-h-[85vh] ${
-                    isLoaded ? 'opacity-100' : 'hidden'
+                    isLoaded ? 'opacity-100' : 'absolute opacity-0'
                 }`}
             />
         </div>
@@ -441,6 +452,12 @@ export default function DesignGraphicSection({
                                                     src={`/storage/${img}`}
                                                     loading="lazy"
                                                     className="h-full w-full object-cover"
+                                                    onError={(e) => {
+                                                        (
+                                                            e.currentTarget as HTMLImageElement
+                                                        ).src =
+                                                            '/assets/sample/sampleimages-3_2.webp';
+                                                    }}
                                                 />
                                             </button>
                                         ))}

@@ -28,14 +28,22 @@ function PhotoVideoImageCard({
             )}
 
             <img
-                src={`/storage/${project.url_1}`}
+                src={
+                    project.thumbnail || project.url_1
+                        ? `/storage/${project.thumbnail || project.url_1}`
+                        : '/assets/sample/sampleimages-3_2.webp'
+                }
                 alt={project.title}
                 className={`h-auto w-full object-cover transition-all duration-500 group-hover/card:scale-105 ${
                     isLoaded ? 'opacity-100' : 'opacity-0'
                 }`}
                 loading="lazy"
                 onLoad={() => setIsLoaded(true)}
-                onError={() => setIsLoaded(true)}
+                onError={(e) => {
+                    (e.currentTarget as HTMLImageElement).src =
+                        '/assets/sample/sampleimages-3_2.webp';
+                    setIsLoaded(true);
+                }}
             />
 
             <div className="absolute inset-x-0 bottom-0 z-10 flex h-1/2 flex-col justify-end bg-gradient-to-t from-black/90 via-black/40 to-transparent p-4 opacity-0 transition-opacity duration-300 group-hover/card:opacity-100 md:p-5">
@@ -64,12 +72,15 @@ function ModalImage({ src, alt }: { src: string; alt: string }) {
             <img
                 src={src}
                 alt={alt}
-                loading="lazy"
                 draggable={false}
                 onLoad={() => setIsLoaded(true)}
-                onError={() => setIsLoaded(true)}
+                onError={(e) => {
+                    (e.currentTarget as HTMLImageElement).src =
+                        '/assets/sample/sampleimages-3_2.webp';
+                    setIsLoaded(true);
+                }}
                 className={`max-h-[50vh] max-w-full rounded-lg object-contain shadow-lg transition-opacity duration-300 md:max-h-[85vh] ${
-                    isLoaded ? 'opacity-100' : 'hidden'
+                    isLoaded ? 'opacity-100' : 'opacity-0 absolute'
                 }`}
             />
         </div>
@@ -102,7 +113,8 @@ export default function PhotoVideoSection({
     };
 
     const activeImages = getImages(selectedPhotoVideo);
-    const activeIndex = activeImg ? activeImages.indexOf(activeImg) : 0;
+    const currentImg = activeImg || selectedPhotoVideo?.url_1 || null;
+    const activeIndex = currentImg ? activeImages.indexOf(currentImg) : 0;
 
     const handlePrev = useCallback(() => {
         if (activeImages.length <= 1) return;
@@ -457,6 +469,12 @@ export default function PhotoVideoSection({
                                                     src={`/storage/${img}`}
                                                     loading="lazy"
                                                     className="h-full w-full object-cover"
+                                                    onError={(e) => {
+                                                        (
+                                                            e.currentTarget as HTMLImageElement
+                                                        ).src =
+                                                            '/assets/sample/sampleimages-3_2.webp';
+                                                    }}
                                                 />
                                             </button>
                                         ))}

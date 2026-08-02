@@ -25,7 +25,11 @@ function WebsiteCardImage({ src, alt }: { src: string; alt: string }) {
                 loading="lazy"
                 draggable={false}
                 onLoad={() => setIsLoaded(true)}
-                onError={() => setIsLoaded(true)}
+                onError={(e) => {
+                    (e.currentTarget as HTMLImageElement).src =
+                        '/assets/sample/sampleimages-3_2.webp';
+                    setIsLoaded(true);
+                }}
                 className={`h-full w-full object-cover transition-opacity duration-500 ${
                     isLoaded ? 'opacity-100' : 'opacity-0'
                 }`}
@@ -51,12 +55,15 @@ function ModalImage({ src, alt }: { src: string; alt: string }) {
             <img
                 src={src}
                 alt={alt}
-                loading="lazy"
                 draggable={false}
                 onLoad={() => setIsLoaded(true)}
-                onError={() => setIsLoaded(true)}
+                onError={(e) => {
+                    (e.currentTarget as HTMLImageElement).src =
+                        '/assets/sample/sampleimages-3_2.webp';
+                    setIsLoaded(true);
+                }}
                 className={`max-h-[50vh] max-w-full rounded-lg object-contain shadow-lg transition-opacity duration-300 md:max-h-[85vh] ${
-                    isLoaded ? 'opacity-100' : 'hidden'
+                    isLoaded ? 'opacity-100' : 'absolute opacity-0'
                 }`}
             />
         </div>
@@ -233,26 +240,27 @@ export default function WebsiteSection({
                                             {/* Behind Image (Image 2) */}
                                             {project.images &&
                                             project.images[1] ? (
-                                                <div className="absolute inset-0 translate-x-6 translate-y-6 scale-95 rotate-3 overflow-hidden rounded-2xl border border-white/5 bg-white/[0.02] opacity-40 shadow-2xl transition-all duration-500 group-hover:translate-x-8 group-hover:translate-y-4 group-hover:rotate-6">
+                                                <div className="absolute inset-0 hidden translate-x-6 translate-y-6 scale-95 rotate-3 overflow-hidden rounded-2xl border border-white/5 bg-white/[0.02] opacity-40 shadow-md transition-all duration-500 group-hover:translate-x-8 group-hover:translate-y-4 group-hover:rotate-6 md:block">
                                                     <WebsiteCardImage
                                                         src={`/storage/${project.images[1]}`}
                                                         alt="Screenshot 2"
                                                     />
                                                 </div>
                                             ) : (
-                                                <div className="absolute inset-0 translate-x-6 translate-y-6 scale-95 rotate-3 rounded-2xl border border-white/5 bg-bshine/5 opacity-20 shadow-2xl transition-all duration-500 group-hover:translate-x-8 group-hover:translate-y-4 group-hover:rotate-6" />
+                                                <div className="absolute inset-0 translate-x-6 translate-y-6 scale-95 rotate-3 rounded-2xl border border-white/5 bg-bshine/5 opacity-20 shadow-md transition-all duration-500 group-hover:translate-x-8 group-hover:translate-y-4 group-hover:rotate-6" />
                                             )}
 
-                                            {/* Front Image (Image 1) */}
-                                            {project.images &&
-                                                project.images[0] && (
-                                                    <div className="relative z-10 aspect-[3/2] w-full overflow-hidden rounded-2xl border border-white/10 bg-white/[0.02] shadow-2xl transition-transform duration-500 group-hover:scale-[1.02]">
-                                                        <WebsiteCardImage
-                                                            src={`/storage/${project.images[0]}`}
-                                                            alt="Screenshot 1"
-                                                        />
-                                                    </div>
-                                                )}
+                                            {/* Front Image (Image 1 or Thumbnail) */}
+                                            {(project.thumbnail ||
+                                                (project.images &&
+                                                    project.images[0])) && (
+                                                <div className="relative z-10 aspect-[3/2] w-full overflow-hidden rounded-2xl border border-white/10 bg-white/[0.02] shadow-md transition-transform duration-500 group-hover:scale-[1.02]">
+                                                    <WebsiteCardImage
+                                                        src={`/storage/${project.thumbnail || project.images[0]}`}
+                                                        alt="Screenshot 1"
+                                                    />
+                                                </div>
+                                            )}
                                         </div>
                                     </div>
 
@@ -271,7 +279,7 @@ export default function WebsiteSection({
                                             </p>
                                         </div>
 
-                                        <p className="max-w-[540px] text-sm leading-relaxed text-gray-300">
+                                        <p className="max-w-[540px] text-sm leading-relaxed text-gray-500 dark:text-gray-300">
                                             {project.description}
                                         </p>
 
@@ -478,6 +486,12 @@ export default function WebsiteSection({
                                                     src={`/storage/${img}`}
                                                     loading="lazy"
                                                     className="h-full w-full object-cover"
+                                                    onError={(e) => {
+                                                        (
+                                                            e.currentTarget as HTMLImageElement
+                                                        ).src =
+                                                            '/assets/sample/sampleimages-3_2.webp';
+                                                    }}
                                                 />
                                             </button>
                                         ))}

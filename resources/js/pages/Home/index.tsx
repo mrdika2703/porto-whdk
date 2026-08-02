@@ -85,6 +85,7 @@ export interface Design {
     title: string;
     type: string;
     link: string | null;
+    thumbnail: string | null;
     url_1: string;
     url_2: string | null;
     url_3: string | null;
@@ -97,6 +98,7 @@ export interface PhotoVideo {
     description: string;
     type: string;
     link: string | null;
+    thumbnail: string | null;
     url_1: string;
     url_2: string | null;
     url_3: string | null;
@@ -112,6 +114,7 @@ export interface Website {
     description: string;
     tech: string;
     link: string | null;
+    thumbnail: string | null;
     images: string[];
 }
 
@@ -120,6 +123,7 @@ export interface Other {
     category: string;
     title: string;
     description: string;
+    thumbnail: string | null;
     url_1: string;
     url_2: string | null;
     url_3: string | null;

@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
 use App\Services\ImageService;
+use App\Services\ThumbnaillService;
 use Inertia\Inertia;
 
 class GrapichDesignController extends Controller
@@ -92,6 +93,10 @@ class GrapichDesignController extends Controller
                 }
             }
 
+            if ($request->hasFile('url_1')) {
+                $validated['thumbnail'] = ThumbnaillService::compressAndStore($request->file('url_1'), 'graphic-designs/thumbnail');
+            }
+
             GrapichDesign::create($validated);
             Cache::forget('all_design_array');
 
@@ -152,6 +157,20 @@ class GrapichDesignController extends Controller
                     // Mencegah nilai tertimpa null jika file tidak diunggah ulang
                     unset($validated[$url]);
                 }
+            }
+
+            // Update thumbnail based on url_1 changes
+            if ($request->hasFile('url_1')) {
+                // Delete old thumbnail
+                if ($design->thumbnail) {
+                    Storage::disk('public')->delete($design->thumbnail);
+                }
+                $validated['thumbnail'] = ThumbnaillService::compressAndStore($request->file('url_1'), 'graphic-designs/thumbnail');
+            } elseif ($request->input('clear_url_1') === true || $request->input('clear_url_1') === 'true' || $request->input('clear_url_1') === 1 || $request->input('clear_url_1') === '1') {
+                if ($design->thumbnail) {
+                    Storage::disk('public')->delete($design->thumbnail);
+                }
+                $validated['thumbnail'] = null;
             }
 
             $design->update($validated);

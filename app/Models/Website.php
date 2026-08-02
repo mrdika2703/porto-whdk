@@ -18,6 +18,7 @@ class Website extends Model
         'tech',
         'link',
         'origin',
+        'thumbnail',
         'url_1',
         'url_2',
         'url_3',

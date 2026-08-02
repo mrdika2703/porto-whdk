@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Other; // Pastikan Model sudah dibuat
 use App\Models\Profile;
 use App\Services\ImageService;
+use App\Services\ThumbnaillService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
@@ -92,6 +93,10 @@ class OtherController extends Controller
                 }
             }
 
+            if ($request->hasFile('url_1')) {
+                $validated['thumbnail'] = ThumbnaillService::compressAndStore($request->file('url_1'), 'others/thumbnail');
+            }
+
             Other::create($validated);
             Cache::forget('all_others_array');
 
@@ -153,6 +158,21 @@ class OtherController extends Controller
                     unset($validated[$url]);
                 }
             }
+
+            // Update thumbnail based on url_1 changes
+            if ($request->hasFile('url_1')) {
+                // Delete old thumbnail
+                if ($others->thumbnail) {
+                    Storage::disk('public')->delete($others->thumbnail);
+                }
+                $validated['thumbnail'] = ThumbnaillService::compressAndStore($request->file('url_1'), 'others/thumbnail');
+            } elseif ($request->input('clear_url_1') === true || $request->input('clear_url_1') === 'true' || $request->input('clear_url_1') === 1 || $request->input('clear_url_1') === '1') {
+                if ($others->thumbnail) {
+                    Storage::disk('public')->delete($others->thumbnail);
+                }
+                $validated['thumbnail'] = null;
+            }
+
 
             $others->update($validated);
             Cache::forget('all_others_array');

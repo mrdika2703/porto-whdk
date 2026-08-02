@@ -11,6 +11,7 @@ class Other extends Model
         'category',
         'title',
         'description',
+        'thumbnail',
         'url_1',
         'url_2',
         'url_3',

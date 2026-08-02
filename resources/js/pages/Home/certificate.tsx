@@ -21,12 +21,15 @@ function ModalImage({ src, alt }: { src: string; alt: string }) {
             <img
                 src={src}
                 alt={alt}
-                loading="lazy"
                 draggable={false}
                 onLoad={() => setIsLoaded(true)}
-                onError={() => setIsLoaded(true)}
+                onError={(e) => {
+                    (e.currentTarget as HTMLImageElement).src =
+                        '/assets/sample/sampleimages-3_2.webp';
+                    setIsLoaded(true);
+                }}
                 className={`max-h-[50vh] max-w-full rounded-lg object-contain shadow-lg transition-opacity duration-300 md:max-h-[85vh] ${
-                    isLoaded ? 'opacity-100' : 'hidden'
+                    isLoaded ? 'opacity-100' : 'opacity-0 absolute'
                 }`}
             />
         </div>
@@ -293,6 +296,12 @@ export default function CertificateSection({
                                                 src={`/storage/${selectedCert.url_1}`}
                                                 loading="lazy"
                                                 className="h-full w-full object-cover"
+                                                onError={(e) => {
+                                                    (
+                                                        e.currentTarget as HTMLImageElement
+                                                    ).src =
+                                                        '/assets/sample/sampleimages-3_2.webp';
+                                                }}
                                             />
                                         </button>
                                         <button
@@ -309,6 +318,12 @@ export default function CertificateSection({
                                                 src={`/storage/${selectedCert.url_2}`}
                                                 loading="lazy"
                                                 className="h-full w-full object-cover"
+                                                onError={(e) => {
+                                                    (
+                                                        e.currentTarget as HTMLImageElement
+                                                    ).src =
+                                                        '/assets/sample/sampleimages-3_2.webp';
+                                                }}
                                             />
                                         </button>
                                     </div>

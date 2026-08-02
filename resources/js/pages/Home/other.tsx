@@ -24,7 +24,11 @@ function OtherCardImage({ src, alt }: { src: string; alt: string }) {
                 loading="lazy"
                 draggable={false}
                 onLoad={() => setIsLoaded(true)}
-                onError={() => setIsLoaded(true)}
+                onError={(e) => {
+                    (e.currentTarget as HTMLImageElement).src =
+                        '/assets/sample/sampleimages-3_2.webp';
+                    setIsLoaded(true);
+                }}
                 className={`h-full w-full object-cover transition-all duration-500 group-hover:scale-105 ${
                     isLoaded ? 'opacity-100' : 'opacity-0'
                 }`}
@@ -50,12 +54,15 @@ function ModalImage({ src, alt }: { src: string; alt: string }) {
             <img
                 src={src}
                 alt={alt}
-                loading="lazy"
                 draggable={false}
                 onLoad={() => setIsLoaded(true)}
-                onError={() => setIsLoaded(true)}
+                onError={(e) => {
+                    (e.currentTarget as HTMLImageElement).src =
+                        '/assets/sample/sampleimages-3_2.webp';
+                    setIsLoaded(true);
+                }}
                 className={`max-h-[50vh] max-w-full rounded-lg object-contain shadow-lg transition-opacity duration-300 md:max-h-[85vh] ${
-                    isLoaded ? 'opacity-100' : 'hidden'
+                    isLoaded ? 'opacity-100' : 'opacity-0 absolute'
                 }`}
             />
         </div>
@@ -117,7 +124,8 @@ export default function OtherSection({
     };
 
     const activeImages = getImages(selectedOther);
-    const activeIndex = activeImg ? activeImages.indexOf(activeImg) : 0;
+    const currentImg = activeImg || selectedOther?.url_1 || null;
+    const activeIndex = currentImg ? activeImages.indexOf(currentImg) : 0;
 
     const handlePrev = () => {
         if (activeImages.length <= 1) return;
@@ -246,7 +254,7 @@ export default function OtherSection({
 
                                         {/* Image */}
                                         <OtherCardImage
-                                            src={`/storage/${item.url_1}`}
+                                            src={`/storage/${item.thumbnail || item.url_1}`}
                                             alt={item.title}
                                         />
 
@@ -352,6 +360,12 @@ export default function OtherSection({
                                                     src={`/storage/${img}`}
                                                     loading="lazy"
                                                     className="h-full w-full object-cover"
+                                                    onError={(e) => {
+                                                        (
+                                                            e.currentTarget as HTMLImageElement
+                                                        ).src =
+                                                            '/assets/sample/sampleimages-3_2.webp';
+                                                    }}
                                                 />
                                             </button>
                                         ))}

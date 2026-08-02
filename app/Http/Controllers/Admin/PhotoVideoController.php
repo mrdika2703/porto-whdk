@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\Profile;
 use App\Models\PhotoVideo;
 use App\Services\ImageService;
+use App\Services\ThumbnaillService;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
@@ -94,6 +95,10 @@ class PhotoVideoController extends Controller
                 }
             }
 
+            if ($request->hasFile('url_1')) {
+                $validated['thumbnail'] = ThumbnaillService::compressAndStore($request->file('url_1'), 'PhotoVideo/thumbnail');
+            }
+
             PhotoVideo::create($validated);
             Cache::forget('all_photovideo_array');
 
@@ -156,6 +161,20 @@ class PhotoVideoController extends Controller
                     // Mencegah nilai tertimpa null jika file tidak diunggah ulang
                     unset($validated[$url]);
                 }
+            }
+
+            // Update thumbnail based on url_1 changes
+            if ($request->hasFile('url_1')) {
+                // Delete old thumbnail
+                if ($photovideos->thumbnail) {
+                    Storage::disk('public')->delete($photovideos->thumbnail);
+                }
+                $validated['thumbnail'] = ThumbnaillService::compressAndStore($request->file('url_1'), 'PhotoVideo/thumbnail');
+            } elseif ($request->input('clear_url_1') === true || $request->input('clear_url_1') === 'true' || $request->input('clear_url_1') === 1 || $request->input('clear_url_1') === '1') {
+                if ($photovideos->thumbnail) {
+                    Storage::disk('public')->delete($photovideos->thumbnail);
+                }
+                $validated['thumbnail'] = null;
             }
 
             $photovideos->update($validated);
