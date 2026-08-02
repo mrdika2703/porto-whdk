@@ -22,7 +22,7 @@ function ProfilePhoto({ src }: { src: string }) {
         <>
             {!isLoaded && (
                 <div className="absolute bottom-0 left-1/2 z-10 flex h-auto w-[220px] -translate-x-1/2 items-center justify-center sm:w-[280px] md:w-[387px]">
-                    <div className="flex h-40 w-full animate-pulse items-center justify-center rounded-2xl bg-white/5">
+                    <div className="flex h-40 w-full animate-pulse items-center justify-center rounded-2xl bg-gray-400/30">
                         <div className="h-8 w-8 animate-spin rounded-full border-3 border-bshine/30 border-t-bshine" />
                     </div>
                 </div>
@@ -248,7 +248,9 @@ export default function About({
                                 className="relative mt-8 flex w-full justify-center lg:mt-0 lg:w-[40%]"
                             >
                                 <div className="relative h-[320px] w-full max-w-[350px] sm:h-[420px]">
-                                    <ProfilePhoto src={`/storage/${profile?.photo}`} />
+                                    <ProfilePhoto
+                                        src={`/storage/${profile?.photo}`}
+                                    />
 
                                     {/* Kutipan Animasi Melayang (Floating Badge) — CSS animation untuk performa */}
                                     <div className="absolute -bottom-4 left-1/2 z-20 w-[90%] -translate-x-1/2 sm:bottom-12 sm:left-4 sm:w-auto sm:translate-x-0 lg:-left-20">

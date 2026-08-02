@@ -22,7 +22,7 @@ function PhotoVideoImageCard({
         >
             {/* Loading Skeleton */}
             {!isLoaded && (
-                <div className="absolute inset-0 z-0 flex min-h-[120px] w-full animate-pulse items-center justify-center bg-white/10 md:min-h-[160px]">
+                <div className="absolute inset-0 z-0 flex min-h-[120px] w-full animate-pulse items-center justify-center bg-gray-400/30 md:min-h-[160px]">
                     <div className="h-5 w-5 animate-spin rounded-full border-2 border-bshine/30 border-t-bshine" />
                 </div>
             )}
@@ -80,7 +80,7 @@ function ModalImage({ src, alt }: { src: string; alt: string }) {
                     setIsLoaded(true);
                 }}
                 className={`max-h-[50vh] max-w-full rounded-lg object-contain shadow-lg transition-opacity duration-300 md:max-h-[85vh] ${
-                    isLoaded ? 'opacity-100' : 'opacity-0 absolute'
+                    isLoaded ? 'opacity-100' : 'absolute opacity-0'
                 }`}
             />
         </div>
@@ -134,23 +134,13 @@ export default function PhotoVideoSection({
         [photovideos, activeTab],
     );
 
-    // 2. Fungsi memecah data menjadi kolom-kolom (Maks 2-3 item per kolom ala Pinterest)
-    const getColumns = (items: typeof photovideos) => {
-        const columns: (typeof items)[] = [];
-        let i = 0;
-        const total = items.length;
-        const chunkSize = total < 7 ? 2 : total < 14 ? 3 : 4;
-        while (i < items.length) {
-            columns.push(items.slice(i, i + chunkSize));
-            i += chunkSize;
-        }
-        return columns;
-    };
-
-    const projectColumns = useMemo(
-        () => getColumns(filteredProjects),
-        [filteredProjects],
-    );
+    const desktopColumns = useMemo(() => {
+        const cols: (typeof filteredProjects)[] = [[], [], [], []];
+        filteredProjects.forEach((item, index) => {
+            cols[index % 4].push(item);
+        });
+        return cols;
+    }, [filteredProjects]);
 
     const mobileColumns = useMemo(() => {
         const cols: (typeof filteredProjects)[] = [[], [], []];
@@ -234,28 +224,37 @@ export default function PhotoVideoSection({
                 {/* --- TABS (Filter & See More) --- */}
                 <div className="relative z-20 mt-10 flex w-full flex-col items-center justify-center gap-3 md:mt-12 md:gap-6">
                     <div className="flex w-full flex-wrap items-center justify-center gap-3 md:gap-6">
-                        <button
-                            onClick={() => setActiveTab('photo')}
-                            // Ukuran tombol diperkecil di HP
-                            className={`flex items-center justify-center rounded-full px-4 py-1.5 text-xs transition-all duration-300 sm:text-sm md:px-6 md:py-2 md:text-base ${
-                                activeTab === 'photo'
-                                    ? 'border bg-gradient-to-r from-bsecond to-stone-500 font-medium text-white dark:border-white dark:bg-white/10 dark:bg-none dark:shadow-[0_0_30px_rgba(255,255,255,0.3)]'
-                                    : 'border border-bsecond font-normal text-tmain hover:bg-bsecond/5 dark:hover:bg-white/10'
-                            }`}
-                        >
-                            Photography
-                        </button>
+                        {['photo', 'video'].map((type) => {
+                            const count = Array.isArray(photovideos)
+                                ? photovideos.filter(
+                                      (item) => item.type === type,
+                                  ).length
+                                : 0;
+                            const label =
+                                type === 'photo'
+                                    ? 'Photography'
+                                    : 'Videography';
 
-                        <button
-                            onClick={() => setActiveTab('video')}
-                            className={`flex items-center justify-center rounded-full px-4 py-1.5 text-xs transition-all duration-300 sm:text-sm md:px-6 md:py-2 md:text-base ${
-                                activeTab === 'video'
-                                    ? 'border bg-gradient-to-r from-bsecond to-stone-500 font-medium text-white dark:border-white dark:bg-white/10 dark:bg-none dark:shadow-[0_0_30px_rgba(255,255,255,0.3)]'
-                                    : 'border border-bsecond font-normal text-tmain hover:bg-bsecond/5 dark:hover:bg-white/10'
-                            }`}
-                        >
-                            Videography
-                        </button>
+                            return (
+                                <button
+                                    key={type}
+                                    onClick={() => setActiveTab(type)}
+                                    // Ukuran tombol diperkecil di HP
+                                    className={`flex items-center justify-center gap-2 rounded-full px-4 py-1.5 text-xs transition-all duration-300 sm:text-sm md:px-6 md:py-2 md:text-base ${
+                                        activeTab === type
+                                            ? 'border bg-gradient-to-r from-bsecond to-stone-500 font-medium text-white dark:border-white dark:bg-white/10 dark:bg-none dark:shadow-[0_0_30px_rgba(255,255,255,0.3)]'
+                                            : 'border border-bsecond font-normal text-tmain hover:bg-bsecond/5 dark:hover:bg-white/10'
+                                    }`}
+                                >
+                                    <span>
+                                        <span className="font-regular size-90">
+                                            {count}{' '}
+                                        </span>{' '}
+                                        {label}
+                                    </span>
+                                </button>
+                            );
+                        })}
 
                         <button
                             disabled
@@ -288,85 +287,25 @@ export default function PhotoVideoSection({
                         ))}
                     </div>
 
-                    {/* Mode Desktop: MAIN MASONRY SLIDER CONTENT */}
-                    <div className="group/nav relative z-20 hidden w-full md:block md:mt-6">
-                        {/* Tombol Panah Kiri */}
-                        <button
-                            onClick={() => scroll('left')}
-                            className="absolute top-1/2 left-1 z-30 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full bg-gray-400/60 text-white opacity-0 shadow-lg transition-all duration-300 group-hover/nav:opacity-100 md:-left-4 md:h-12 md:w-12 md:-translate-x-6 md:backdrop-blur-md dark:bg-black/60"
-                            aria-label="Previous"
-                        >
-                            <svg
-                                width="20"
-                                height="20"
-                                className="md:h-6 md:w-6"
-                                fill="none"
-                                stroke="currentColor"
-                                strokeWidth="2.5"
-                                viewBox="0 0 24 24"
-                            >
-                                <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    d="M15 19l-7-7 7-7"
-                                />
-                            </svg>
-                        </button>
-
-                        {/* Area Konten Masonry Columns */}
-                        <div className="relative w-full">
+                    {/* Mode Desktop: Masonry 4 Kolom Flex (Tanpa Scroll Horizontal) */}
+                    <div className="relative z-20 hidden w-full gap-4 pt-4 md:flex md:gap-6">
+                        {desktopColumns.map((col, colIdx) => (
                             <div
-                                ref={scrollRef}
-                                className="hide-scrollbar flex w-full snap-x snap-mandatory items-start gap-4 overflow-x-auto px-2 pt-4 pb-0 md:gap-6 md:px-4 md:pb-20"
-                                style={{
-                                    scrollbarWidth: 'none',
-                                    msOverflowStyle: 'none',
-                                }}
+                                key={colIdx}
+                                className="flex flex-1 flex-col gap-4 md:gap-6"
                             >
-                                {projectColumns.map((column, colIndex) => (
-                                    <div
-                                        key={colIndex}
-                                        className="flex w-[110px] shrink-0 snap-start flex-col gap-4 md:w-[150px] md:gap-6 lg:w-[275px]"
-                                    >
-                                        {column.map((project) => (
-                                            <PhotoVideoImageCard
-                                                key={project.id}
-                                                project={project}
-                                                onClick={() => {
-                                                    setSelectedPhotoVideo(
-                                                        project,
-                                                    );
-                                                    setActiveImg(project.url_1);
-                                                }}
-                                            />
-                                        ))}
-                                    </div>
+                                {col.map((project) => (
+                                    <PhotoVideoImageCard
+                                        key={project.id}
+                                        project={project}
+                                        onClick={() => {
+                                            setSelectedPhotoVideo(project);
+                                            setActiveImg(project.url_1);
+                                        }}
+                                    />
                                 ))}
                             </div>
-                        </div>
-
-                        {/* Tombol Panah Kanan */}
-                        <button
-                            onClick={() => scroll('right')}
-                            className="absolute top-1/2 right-1 z-30 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full bg-gray-400/60 text-white opacity-0 shadow-lg transition-all duration-300 group-hover/nav:opacity-100 md:-right-4 md:h-12 md:w-12 md:translate-x-6 md:backdrop-blur-md dark:bg-black/60"
-                            aria-label="Next"
-                        >
-                            <svg
-                                width="20"
-                                height="20"
-                                className="md:h-6 md:w-6"
-                                fill="none"
-                                stroke="currentColor"
-                                strokeWidth="2.5"
-                                viewBox="0 0 24 24"
-                            >
-                                <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    d="M9 5l7 7-7 7"
-                                />
-                            </svg>
-                        </button>
+                        ))}
                     </div>
 
                     {/* Tombol see more berpindah saat mode hp */}

@@ -14,7 +14,7 @@ function OtherCardImage({ src, alt }: { src: string; alt: string }) {
     return (
         <div className="relative h-full w-full">
             {!isLoaded && (
-                <div className="absolute inset-0 z-10 flex animate-pulse items-center justify-center bg-white/10">
+                <div className="absolute inset-0 z-10 flex animate-pulse items-center justify-center bg-gray-400/30">
                     <div className="h-6 w-6 animate-spin rounded-full border-2 border-bshine/30 border-t-bshine" />
                 </div>
             )}
@@ -62,7 +62,7 @@ function ModalImage({ src, alt }: { src: string; alt: string }) {
                     setIsLoaded(true);
                 }}
                 className={`max-h-[50vh] max-w-full rounded-lg object-contain shadow-lg transition-opacity duration-300 md:max-h-[85vh] ${
-                    isLoaded ? 'opacity-100' : 'opacity-0 absolute'
+                    isLoaded ? 'opacity-100' : 'absolute opacity-0'
                 }`}
             />
         </div>

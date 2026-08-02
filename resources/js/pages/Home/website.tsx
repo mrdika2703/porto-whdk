@@ -15,7 +15,7 @@ function WebsiteCardImage({ src, alt }: { src: string; alt: string }) {
     return (
         <div className="relative h-full w-full">
             {!isLoaded && (
-                <div className="absolute inset-0 z-10 flex animate-pulse items-center justify-center rounded-2xl bg-white/10">
+                <div className="absolute inset-0 z-10 flex animate-pulse items-center justify-center rounded-2xl bg-gray-400/30">
                     <div className="h-6 w-6 animate-spin rounded-full border-2 border-bshine/30 border-t-bshine" />
                 </div>
             )}
@@ -199,19 +199,34 @@ export default function WebsiteSection({
                 {/* Tabs & Content Container */}
                 <div className="mt-10 flex flex-col items-center gap-8">
                     <div className="flex w-full flex-wrap items-center justify-center gap-4">
-                        {['project', 'develop'].map((tab) => (
-                            <button
-                                key={tab}
-                                onClick={() => setActiveTab(tab)}
-                                className={`flex items-center justify-center rounded-full px-6 py-2 text-sm transition-all duration-300 md:text-base ${
-                                    activeTab === tab
-                                        ? 'border bg-gradient-to-r from-bsecond to-stone-500 font-medium text-white dark:border-white dark:bg-white/10 dark:bg-none dark:shadow-[0_0_30px_rgba(255,255,255,0.3)]'
-                                        : 'border border-bsecond font-normal text-tmain hover:bg-bsecond/5 dark:hover:bg-white/10'
-                                }`}
-                            >
-                                <span className="capitalize">{tab}</span>
-                            </button>
-                        ))}
+                        {['project', 'develop'].map((tab) => {
+                            const count = Array.isArray(websites)
+                                ? websites.filter(
+                                      (item) => item.category === tab,
+                                  ).length
+                                : 0;
+
+                            return (
+                                <button
+                                    key={tab}
+                                    onClick={() => setActiveTab(tab)}
+                                    className={`flex items-center justify-center gap-2 rounded-full px-6 py-2 text-sm transition-all duration-300 md:text-base ${
+                                        activeTab === tab
+                                            ? 'border bg-gradient-to-r from-bsecond to-stone-500 font-medium text-white dark:border-white dark:bg-white/10 dark:bg-none dark:shadow-[0_0_30px_rgba(255,255,255,0.3)]'
+                                            : 'border border-bsecond font-normal text-tmain hover:bg-bsecond/5 dark:hover:bg-white/10'
+                                    }`}
+                                >
+                                    <span>
+                                        <span className="font-regular size-90">
+                                            {count}{' '}
+                                        </span>{' '}
+                                        <span className="capitalize">
+                                            {tab}
+                                        </span>
+                                    </span>
+                                </button>
+                            );
+                        })}
                         <button
                             disabled
                             className="hidden items-center justify-center rounded-full bg-bshine px-6 py-2 text-sm font-medium text-white transition-colors hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-50 md:flex dark:bg-white dark:text-secondary dark:hover:bg-gray-200"

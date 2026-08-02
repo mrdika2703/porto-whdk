@@ -23,7 +23,7 @@ function DesignImageCard({
         >
             {/* Loading Skeleton */}
             {!isLoaded && (
-                <div className="absolute inset-0 z-0 flex min-h-[120px] w-full animate-pulse items-center justify-center bg-white/10 md:min-h-[160px]">
+                <div className="absolute inset-0 z-0 flex min-h-[120px] w-full animate-pulse items-center justify-center bg-gray-400/30 md:min-h-[160px]">
                     <div className="h-5 w-5 animate-spin rounded-full border-2 border-bshine/30 border-t-bshine" />
                 </div>
             )}
@@ -136,22 +136,13 @@ export default function DesignGraphicSection({
         [designs, activeCategory],
     );
 
-    const getColumns = (items: typeof designs) => {
-        const columns: (typeof items)[] = [];
-        let i = 0;
-        const total = items.length;
-        const chunkSize = total < 7 ? 2 : total < 14 ? 3 : 4;
-        while (i < items.length) {
-            columns.push(items.slice(i, i + chunkSize));
-            i += chunkSize;
-        }
-        return columns;
-    };
-
-    const designsColumns = useMemo(
-        () => getColumns(filteredDesigns),
-        [filteredDesigns],
-    );
+    const desktopColumns = useMemo(() => {
+        const cols: (typeof filteredDesigns)[] = [[], [], [], []];
+        filteredDesigns.forEach((item, index) => {
+            cols[index % 4].push(item);
+        });
+        return cols;
+    }, [filteredDesigns]);
 
     const mobileColumns = useMemo(() => {
         const cols: (typeof filteredDesigns)[] = [[], [], []];
@@ -230,20 +221,33 @@ export default function DesignGraphicSection({
                 <div className="relative z-20 mt-10 flex w-full flex-col items-center gap-3 md:mt-12 md:gap-6">
                     {/* TABS */}
                     <div className="flex w-full flex-wrap items-center justify-center gap-2 md:gap-6">
-                        {categories.map((cat) => (
-                            <button
-                                key={cat}
-                                onClick={() => setActiveCategory(cat)}
-                                // Padding dan teks diperkecil di HP
-                                className={`flex items-center justify-center rounded-3xl px-3 py-1 text-xs transition-all duration-300 sm:text-sm md:px-6 md:py-2 md:text-base ${
-                                    activeCategory === cat
-                                        ? 'border bg-gradient-to-r from-bsecond to-stone-500 font-medium text-white dark:border-white dark:bg-white/10 dark:bg-none dark:shadow-[0_0_30px_rgba(255,255,255,0.3)]'
-                                        : 'border border-bsecond font-normal text-tmain hover:bg-bsecond/5 dark:hover:bg-white/10'
-                                }`}
-                            >
-                                {cat}
-                            </button>
-                        ))}
+                        {categories.map((cat) => {
+                            const count = Array.isArray(designs)
+                                ? designs.filter(
+                                      (item) => item.category === cat,
+                                  ).length
+                                : 0;
+
+                            return (
+                                <button
+                                    key={cat}
+                                    onClick={() => setActiveCategory(cat)}
+                                    // Padding dan teks diperkecil di HP
+                                    className={`flex items-center justify-center gap-2 rounded-3xl px-3 py-1 text-xs transition-all duration-300 sm:text-sm md:px-6 md:py-2 md:text-base ${
+                                        activeCategory === cat
+                                            ? 'border bg-gradient-to-r from-bsecond to-stone-500 font-medium text-white dark:border-white dark:bg-white/10 dark:bg-none dark:shadow-[0_0_30px_rgba(255,255,255,0.3)]'
+                                            : 'border border-bsecond font-normal text-tmain hover:bg-bsecond/5 dark:hover:bg-white/10'
+                                    }`}
+                                >
+                                    <span>
+                                        <span className="font-regular size-90">
+                                            {count}{' '}
+                                        </span>{' '}
+                                        {cat}
+                                    </span>
+                                </button>
+                            );
+                        })}
                         <button
                             disabled
                             className="hidden items-center justify-center rounded-3xl bg-bshine px-4 py-1.5 text-xs font-medium text-white transition-colors hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-50 sm:text-sm md:flex md:px-6 md:py-2 md:text-base dark:bg-white dark:text-secondary dark:hover:bg-gray-200"
@@ -254,7 +258,7 @@ export default function DesignGraphicSection({
                     </div>
 
                     {/* KONTEN GAMBAR */}
-                    {/* Mode Mobile: Masonry 3 Kolom Flex (tanpa scroll horizontal & tanpa gap Y berlebih) */}
+                    {/* Mode Mobile: Masonry 3 Kolom Flex */}
                     <div className="flex w-full gap-2 pt-2 md:hidden">
                         {mobileColumns.map((col, colIdx) => (
                             <div
@@ -272,84 +276,22 @@ export default function DesignGraphicSection({
                         ))}
                     </div>
 
-                    {/* Mode Desktop: SLIDER CONTAINER */}
-                    <div className="group/nav relative hidden w-full md:block">
-                        {/* Tombol Kiri */}
-                        <button
-                            onClick={() => scroll('left')}
-                            className="absolute top-1/2 left-1 z-30 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full bg-gray-400/60 text-white opacity-0 shadow-lg transition-opacity group-hover/nav:opacity-100 md:-left-4 md:h-12 md:w-12 md:-translate-x-1/2 md:backdrop-blur-sm dark:bg-black/60"
-                            aria-label="Previous"
-                        >
-                            <svg
-                                width="20"
-                                height="20"
-                                className="md:h-6 md:w-6"
-                                fill="none"
-                                stroke="currentColor"
-                                strokeWidth="2.5"
-                                viewBox="0 0 24 24"
-                            >
-                                <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    d="M15 19l-7-7 7-7"
-                                />
-                            </svg>
-                        </button>
-
-                        {/* Area Konten Carousel Kolom */}
-                        <div className="relative w-full">
+                    {/* Mode Desktop: Masonry 4 Kolom Flex (Tanpa Scroll Horizontal) */}
+                    <div className="hidden w-full gap-4 pt-4 md:flex md:gap-6">
+                        {desktopColumns.map((col, colIdx) => (
                             <div
-                                ref={scrollRef}
-                                className="hide-scrollbar flex w-full snap-x snap-mandatory items-start gap-4 overflow-x-auto px-2 pt-4 pb-2 md:gap-6 md:px-4 md:pb-20"
-                                style={{
-                                    scrollbarWidth: 'none',
-                                    msOverflowStyle: 'none',
-                                }}
+                                key={colIdx}
+                                className="flex flex-1 flex-col gap-4 md:gap-6"
                             >
-                                {designsColumns.map((column, colIndex) => (
-                                    <div
-                                        key={colIndex}
-                                        className="flex w-[110px] shrink-0 snap-start flex-col gap-4 md:w-[150px] md:gap-6 lg:w-[275px]"
-                                    >
-                                        {column.map((designs) => (
-                                            <DesignImageCard
-                                                key={designs.id}
-                                                design={designs}
-                                                onClick={() =>
-                                                    setSelectedDesign(designs)
-                                                }
-                                            />
-                                        ))}
-                                    </div>
+                                {col.map((item) => (
+                                    <DesignImageCard
+                                        key={item.id}
+                                        design={item}
+                                        onClick={() => setSelectedDesign(item)}
+                                    />
                                 ))}
-                                {/* Gradient fade disesuaikan tinggi dan transparansinya */}
-                                <div className="from-bg-sec pointer-events-none absolute bottom-0 left-0 z-20 h-32 w-full bg-gradient-to-t to-transparent md:h-48"></div>
                             </div>
-                        </div>
-
-                        {/* Tombol Kanan */}
-                        <button
-                            onClick={() => scroll('right')}
-                            className="absolute top-1/2 right-1 z-30 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full bg-gray-400/60 text-white opacity-0 shadow-lg transition-opacity group-hover/nav:opacity-100 md:-right-4 md:h-12 md:w-12 md:translate-x-1/2 md:backdrop-blur-sm dark:bg-black/60"
-                            aria-label="Next"
-                        >
-                            <svg
-                                width="20"
-                                height="20"
-                                className="md:h-6 md:w-6"
-                                fill="none"
-                                stroke="currentColor"
-                                strokeWidth="2.5"
-                                viewBox="0 0 24 24"
-                            >
-                                <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    d="M9 5l7 7-7 7"
-                                />
-                            </svg>
-                        </button>
+                        ))}
                     </div>
 
                     {/* Tombol see more berpindah saat mode hp */}
