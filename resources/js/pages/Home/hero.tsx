@@ -211,7 +211,7 @@ export default function PortfolioHero({ viewMode, setViewMode }: HeroProps) {
                                     <span className="text-xs font-light tracking-[0.2em] text-tmain/70 uppercase md:text-sm">
                                         Build With
                                     </span>
-                                    <h1 className="hidden font-montserrat-alt text-2xl font-semibold text-tmain md:block md:text-4xl">
+                                    <h2 className="hidden font-montserrat-alt text-2xl font-semibold text-tmain md:block md:text-4xl">
                                         Laravel 13{' '}
                                         <span className="mx-1 text-bshine md:mx-2">
                                             |
@@ -221,12 +221,12 @@ export default function PortfolioHero({ viewMode, setViewMode }: HeroProps) {
                                             |
                                         </span>{' '}
                                         Full Tailwind
-                                    </h1>
-                                    <h1 className="flex flex-col gap-3 text-center font-montserrat-alt text-2xl font-semibold text-tmain md:hidden">
+                                    </h2>
+                                    <h2 className="flex flex-col gap-3 text-center font-montserrat-alt text-2xl font-semibold text-tmain md:hidden">
                                         <p className="mx-auto">Laravel 13</p>
                                         <p className="mx-auto">React</p>
                                         <p className="mx-auto">Full Tailwind</p>
-                                    </h1>
+                                    </h2>
                                 </motion.div>
                             ) : (
                                 // TEKS UTAMA (Muncul setelah intro selesai)

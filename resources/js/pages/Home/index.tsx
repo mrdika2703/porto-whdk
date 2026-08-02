@@ -218,9 +218,49 @@ export default function Home({
         };
     }, [viewMode]);
 
+    const mainProfile = profiles[0] || null;
+    const pageTitle = mainProfile
+        ? `Portofolio ${mainProfile.name} - Web Developer & Creative Professional`
+        : 'Portofolio - Wahyu Adam Anandika';
+    const pageDescription = mainProfile?.about
+        ? mainProfile.about.slice(0, 160)
+        : 'Portofolio Wahyu Adam Anandika - Web Developer, Graphic Designer, Photography & Videography Specialist.';
+    const profileImage = mainProfile?.photo
+        ? `/storage/${mainProfile.photo}`
+        : '/apple-touch-icon.png';
+
+    // JSON-LD Structured Data Schema (Person)
+    const jsonLd = {
+        '@context': 'https://schema.org',
+        '@type': 'Person',
+        name: mainProfile?.name || 'Wahyu Adam Anandika',
+        alternateName: mainProfile?.nickname || 'Wahyu',
+        jobTitle: 'Full Stack Web Developer & Multimedia Specialist',
+        description: pageDescription,
+        image: profileImage,
+        sameAs: footers.length > 0
+            ? [
+                  footers[0].github,
+                  footers[0].linkedin,
+                  footers[0].instagram,
+              ].filter(Boolean)
+            : [],
+    };
+
     return (
         <>
-            <Head title="Portofolio - Wahyu Adam Anandika" />
+            <Head title={pageTitle}>
+                <meta name="description" content={pageDescription} />
+                <meta property="og:title" content={pageTitle} />
+                <meta property="og:description" content={pageDescription} />
+                <meta property="og:image" content={profileImage} />
+                <meta name="twitter:title" content={pageTitle} />
+                <meta name="twitter:description" content={pageDescription} />
+                <meta name="twitter:image" content={profileImage} />
+                <script type="application/ld+json">
+                    {JSON.stringify(jsonLd)}
+                </script>
+            </Head>
             <Layout footers={footers}>
                 <div className="relative w-full overflow-x-hidden">
                     <div className="relative z-0">
