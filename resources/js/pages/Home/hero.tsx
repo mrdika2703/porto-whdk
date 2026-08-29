@@ -319,7 +319,7 @@ export default function PortfolioHero({ viewMode, setViewMode }: HeroProps) {
                         }}
                         className="mt-25 flex flex-col justify-center gap-3"
                     >
-                        <h2 className="font-regular text-center text-sm text-gray-700 italic md:text-base">
+                        <h2 className="font-regular text-center text-sm text-gray-700 italic md:text-base dark:text-gray-300">
                             What do you want to see ?
                         </h2>
 
@@ -335,7 +335,7 @@ export default function PortfolioHero({ viewMode, setViewMode }: HeroProps) {
                                 {viewMode === 'All' && (
                                     <motion.div
                                         layoutId="active-view-mode-pill"
-                                        className="absolute inset-0 -z-10 rounded-full border border-bshine bg-bshine dark:bg-hbshine"
+                                        className="absolute inset-0 -z-10 rounded-full border border-bshine bg-bshine"
                                         transition={{
                                             type: 'spring',
                                             stiffness: 300,
@@ -370,7 +370,7 @@ export default function PortfolioHero({ viewMode, setViewMode }: HeroProps) {
                                 {viewMode === 'Multimedia' && (
                                     <motion.div
                                         layoutId="active-view-mode-pill"
-                                        className="absolute inset-0 -z-10 rounded-full border border-bshine bg-bshine dark:bg-hbshine"
+                                        className="absolute inset-0 -z-10 rounded-full border border-bshine bg-bshine"
                                         transition={{
                                             type: 'spring',
                                             stiffness: 300,
@@ -405,7 +405,7 @@ export default function PortfolioHero({ viewMode, setViewMode }: HeroProps) {
                                 {viewMode === 'Programming' && (
                                     <motion.div
                                         layoutId="active-view-mode-pill"
-                                        className="absolute inset-0 -z-10 rounded-full border border-bshine bg-bshine dark:bg-hbshine"
+                                        className="absolute inset-0 -z-10 rounded-full border border-bshine bg-bshine"
                                         transition={{
                                             type: 'spring',
                                             stiffness: 300,

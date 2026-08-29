@@ -144,6 +144,7 @@ export interface Footers {
 
 // Definisikan Props yang diterima dari Laravel Controller
 interface HomeProps {
+    initialViewMode?: 'All' | 'Multimedia' | 'Programming';
     profiles: Profile[];
     skills: Skill[];
     description_sections: DescriptionSection | null;
@@ -158,6 +159,7 @@ interface HomeProps {
 }
 
 export default function Home({
+    initialViewMode = 'All',
     profiles = [],
     skills = [],
     description_sections = null,
@@ -170,13 +172,28 @@ export default function Home({
     others = [],
     footers = [],
 }: HomeProps) {
+    const resolveModeFromUrl = (): 'All' | 'Multimedia' | 'Programming' => {
+        if (typeof window !== 'undefined') {
+            const pathname = window.location.pathname.toLowerCase();
+            if (pathname.includes('multimedia')) return 'Multimedia';
+            if (pathname.includes('programming')) return 'Programming';
+            if (pathname.includes('all')) return 'All';
+            const urlParams = new URLSearchParams(window.location.search);
+            const mode = urlParams.get('mode')?.toLowerCase();
+            if (mode === 'multimedia') return 'Multimedia';
+            if (mode === 'programming') return 'Programming';
+            if (mode === 'all') return 'All';
+        }
+        return initialViewMode || 'All';
+    };
+
     const [viewMode, setViewMode] = useState<
         'All' | 'Multimedia' | 'Programming'
-    >('All');
+    >(resolveModeFromUrl);
     const [isChangingMode, setIsChangingMode] = useState(false);
     const [transitionMode, setTransitionMode] = useState<
         'All' | 'Multimedia' | 'Programming'
-    >('All');
+    >(resolveModeFromUrl);
 
     // Lazy load section berat — hanya render saat mendekati viewport (200px sebelum terlihat)
     const designSection = useLazySection('300px');
@@ -186,10 +203,22 @@ export default function Home({
 
     const handleViewModeChange = (
         newMode: 'All' | 'Multimedia' | 'Programming',
+        updateUrl: boolean = true,
     ) => {
-        if (newMode === viewMode) return;
+        if (newMode === viewMode && !isChangingMode) return;
         setTransitionMode(newMode);
         setIsChangingMode(true);
+
+        if (updateUrl && typeof window !== 'undefined') {
+            const targetPath =
+                newMode === 'Multimedia'
+                    ? '/multimedia'
+                    : newMode === 'Programming'
+                      ? '/programming'
+                      : '/';
+            window.history.pushState({ mode: newMode }, '', targetPath);
+        }
+
         setTimeout(() => {
             setViewMode(newMode);
             setIsChangingMode(false);
@@ -206,7 +235,14 @@ export default function Home({
             >;
             handleViewModeChange(customEvent.detail);
         };
+
+        const handlePopState = () => {
+            const currentMode = resolveModeFromUrl();
+            handleViewModeChange(currentMode, false);
+        };
+
         window.addEventListener('change-viewmode', handleRequest);
+        window.addEventListener('popstate', handlePopState);
 
         // Dispatch current viewMode to any listening component on mount/update
         window.dispatchEvent(
@@ -215,8 +251,9 @@ export default function Home({
 
         return () => {
             window.removeEventListener('change-viewmode', handleRequest);
+            window.removeEventListener('popstate', handlePopState);
         };
-    }, [viewMode]);
+    }, [viewMode, isChangingMode]);
 
     const mainProfile = profiles[0] || null;
     const pageTitle = mainProfile

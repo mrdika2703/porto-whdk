@@ -19,6 +19,9 @@ use App\Http\Controllers\Admin\DescriptionSectionController;
 
 Route::name('guest')->group(function () {
     Route::get('/', [HomeController::class, 'index'])->name('home');
+    Route::get('/all', [HomeController::class, 'all'])->name('all');
+    Route::get('/multimedia', [HomeController::class, 'multimedia'])->name('multimedia');
+    Route::get('/programming', [HomeController::class, 'programming'])->name('programming');
 });
 
 Route::middleware('guest')->prefix('admin')->name('admin.')->group(function () {

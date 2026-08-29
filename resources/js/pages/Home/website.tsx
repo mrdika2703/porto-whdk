@@ -124,7 +124,12 @@ export default function WebsiteSection({
     };
 
     const activeImages = getImages(selectedWebsite);
-    const activeIndex = activeImg ? activeImages.indexOf(activeImg) : 0;
+    const currentImg =
+        activeImg ||
+        (selectedWebsite?.images && selectedWebsite.images.length > 0
+            ? selectedWebsite.images[0]
+            : null);
+    const activeIndex = currentImg ? activeImages.indexOf(currentImg) : 0;
 
     const handlePrevImg = useCallback(() => {
         if (activeImages.length <= 1) return;
@@ -154,20 +159,33 @@ export default function WebsiteSection({
         setDirection('next');
     }, [activeTab]);
 
+    const ITEMS_PER_PAGE = 2;
+
     const handleNextProject = useCallback(() => {
         setDirection('next');
-        setProjectIndex((prev) => (prev + 1) % filteredProjects.length);
+        setProjectIndex((prev) => {
+            const next = prev + ITEMS_PER_PAGE;
+            return next >= filteredProjects.length ? 0 : next;
+        });
     }, [filteredProjects.length]);
 
     const handlePrevProject = useCallback(() => {
         setDirection('prev');
-        setProjectIndex(
-            (prev) =>
-                (prev - 1 + filteredProjects.length) % filteredProjects.length,
-        );
+        setProjectIndex((prev) => {
+            const next = prev - ITEMS_PER_PAGE;
+            return next < 0
+                ? Math.floor((filteredProjects.length - 1) / ITEMS_PER_PAGE) *
+                      ITEMS_PER_PAGE
+                : next;
+        });
     }, [filteredProjects.length]);
 
-    const project = filteredProjects[projectIndex];
+    const totalPages = Math.ceil(filteredProjects.length / ITEMS_PER_PAGE);
+    const pageIndex = Math.floor(projectIndex / ITEMS_PER_PAGE);
+    const pagedProjects = filteredProjects.slice(
+        pageIndex * ITEMS_PER_PAGE,
+        pageIndex * ITEMS_PER_PAGE + ITEMS_PER_PAGE,
+    );
 
     return (
         <section
@@ -245,111 +263,116 @@ export default function WebsiteSection({
                         </button>
                     </div>
 
-                    {/* Main Content: 2-Column Grid */}
-                    <div className="relative flex min-h-[420px] w-full items-center">
-                        <AnimatePresence mode="wait" custom={direction}>
-                            {project ? (
-                                <motion.div
-                                    key={project.id}
-                                    custom={direction}
-                                    variants={transitionVariants}
-                                    initial="enter"
-                                    animate="center"
-                                    exit="exit"
-                                    className="group grid w-full grid-cols-1 items-center gap-12 md:grid-cols-2 md:gap-16"
-                                >
-                                    {/* Left Column: Stacked Images (3:2 Ratio) */}
-                                    <div className="flex items-center justify-center">
-                                        <div className="relative aspect-[3/2] w-full max-w-[480px]">
-                                            {/* Behind Image (Image 2) */}
-                                            {project.images &&
-                                            project.images[1] ? (
-                                                <div className="absolute inset-0 hidden translate-x-6 translate-y-6 scale-95 rotate-3 overflow-hidden rounded-2xl border border-white/5 bg-white/[0.02] opacity-40 shadow-md transition-all duration-500 group-hover:translate-x-8 group-hover:translate-y-4 group-hover:rotate-6 md:block">
+                    {/* 2-per-page Card Grid */}
+                    <AnimatePresence mode="wait" custom={direction}>
+                        {pagedProjects.length > 0 ? (
+                            <motion.div
+                                key={`page-${pageIndex}-${activeTab}`}
+                                custom={direction}
+                                variants={transitionVariants}
+                                initial="enter"
+                                animate="center"
+                                exit="exit"
+                                className="grid w-full grid-cols-1 gap-5 md:grid-cols-2 md:gap-6"
+                            >
+                                {pagedProjects.map((proj) => (
+                                    <div
+                                        key={proj.id}
+                                        className="group flex flex-col overflow-hidden rounded-2xl border border-white/10 bg-white/[0.02] transition-all duration-300 hover:border-bshine/30 hover:bg-white/[0.04] hover:shadow-[0_0_30px_rgba(192,104,0,0.06)]"
+                                    >
+                                        {/* 2-Layer Stacked Image (3:2 ratio) */}
+                                        <div className="relative p-4 pb-0">
+                                            <div className="relative aspect-[3/2] w-full">
+                                                {/* Behind layer */}
+                                                {proj.images &&
+                                                proj.images[1] ? (
+                                                    <div className="absolute inset-0 translate-x-3 translate-y-3 scale-[0.97] rotate-1 overflow-hidden rounded-xl border border-white/5 bg-white/[0.02] opacity-40 shadow-sm transition-all duration-500 group-hover:translate-x-4 group-hover:translate-y-4 group-hover:rotate-2">
+                                                        <WebsiteCardImage
+                                                            src={`/storage/${proj.images[1]}`}
+                                                            alt="Screenshot 2"
+                                                        />
+                                                    </div>
+                                                ) : (
+                                                    <div className="absolute inset-0 translate-x-3 translate-y-3 scale-[0.97] rotate-1 rounded-xl border border-white/5 bg-bshine/5 opacity-20 shadow-sm transition-all duration-500 group-hover:translate-x-4 group-hover:translate-y-4 group-hover:rotate-2" />
+                                                )}
+                                                {/* Front layer */}
+                                                <div className="relative z-10 h-full w-full overflow-hidden rounded-xl border border-white/10 shadow-md transition-transform duration-500 group-hover:scale-[1.02]">
                                                     <WebsiteCardImage
-                                                        src={`/storage/${project.images[1]}`}
-                                                        alt="Screenshot 2"
+                                                        src={`/storage/${proj.thumbnail || proj.images?.[0]}`}
+                                                        alt={proj.title}
                                                     />
                                                 </div>
-                                            ) : (
-                                                <div className="absolute inset-0 translate-x-6 translate-y-6 scale-95 rotate-3 rounded-2xl border border-white/5 bg-bshine/5 opacity-20 shadow-md transition-all duration-500 group-hover:translate-x-8 group-hover:translate-y-4 group-hover:rotate-6" />
-                                            )}
-
-                                            {/* Front Image (Image 1 or Thumbnail) */}
-                                            {(project.thumbnail ||
-                                                (project.images &&
-                                                    project.images[0])) && (
-                                                <div className="relative z-10 aspect-[3/2] w-full overflow-hidden rounded-2xl border border-white/10 bg-white/[0.02] shadow-md transition-transform duration-500 group-hover:scale-[1.02]">
-                                                    <WebsiteCardImage
-                                                        src={`/storage/${project.thumbnail || project.images[0]}`}
-                                                        alt="Screenshot 1"
-                                                    />
-                                                </div>
-                                            )}
-                                        </div>
-                                    </div>
-
-                                    {/* Right Column: Explanations */}
-                                    <div className="flex flex-col gap-6 text-left">
-                                        <div className="flex flex-col gap-2">
-                                            <span className="w-fit rounded-full border border-bshine/10 bg-bshine/20 px-3 py-1 text-xs font-semibold text-bshine capitalize backdrop-blur-sm">
-                                                {project.category}
-                                            </span>
-                                            <h3 className="font-montserrat-alt text-2xl leading-tight font-bold text-tmain sm:text-3xl">
-                                                {project.title}
-                                            </h3>
-                                            <p className="flex items-center gap-1.5 text-xs font-semibold tracking-wider text-hbshine uppercase">
-                                                <i className="fa-regular fa-building text-bshine" />
-                                                {project.origin}
-                                            </p>
+                                            </div>
                                         </div>
 
-                                        <p className="max-w-[540px] text-sm leading-relaxed text-gray-500 dark:text-gray-300">
-                                            {project.description}
-                                        </p>
+                                        {/* Card Info */}
+                                        <div className="flex flex-1 flex-col gap-3 p-4 md:p-5">
+                                            <div className="flex flex-col gap-1">
+                                                <h3 className="font-montserrat-alt text-base font-bold leading-tight text-tmain md:text-lg">
+                                                    {proj.title}
+                                                </h3>
+                                                <p className="flex items-center gap-1.5 text-[11px] font-semibold tracking-wider text-hbshine uppercase">
+                                                    <i className="fa-regular fa-building text-bshine" />
+                                                    {proj.origin}
+                                                </p>
+                                            </div>
 
-                                        <div className="border-l-2 border-bshine pl-4">
-                                            <p className="text-xs font-bold tracking-wider text-gray-500 uppercase">
-                                                Tech Stack
+                                            <p className="line-clamp-2 text-xs leading-relaxed text-gray-500 dark:text-gray-400">
+                                                {proj.description}
                                             </p>
-                                            <p className="mt-0.5 text-sm font-medium text-tmain italic">
-                                                {project.tech}
-                                            </p>
-                                        </div>
 
-                                        {/* Action Buttons */}
-                                        <div className="mt-2 flex flex-wrap gap-4">
-                                            <button
-                                                onClick={() =>
-                                                    openModal(project)
-                                                }
-                                                className="flex items-center justify-center gap-2 rounded-full border border-bshine/50 bg-bshine/10 px-6 py-2.5 text-sm font-semibold text-bshine backdrop-blur-sm transition-all duration-300 hover:border-bshine hover:bg-bshine/20 hover:shadow-[0_0_20px_rgba(192,104,0,0.3)]"
-                                            >
-                                                <i className="fa-solid fa-circle-info" />
-                                                Detail Project
-                                            </button>
-                                            {filteredProjects.length > 1 && (
+                                            <div className="border-l-2 border-bshine pl-3">
+                                                <p className="text-[10px] font-bold tracking-wider text-gray-500 uppercase">
+                                                    Tech Stack
+                                                </p>
+                                                <p className="mt-0.5 text-xs font-medium text-tmain italic">
+                                                    {proj.tech}
+                                                </p>
+                                            </div>
+
+                                            {/* Actions */}
+                                            <div className="mt-auto flex gap-3 pt-1">
                                                 <button
-                                                    onClick={handleNextProject}
-                                                    className="flex items-center justify-center gap-2 rounded-full border border-tmain/10 bg-tmain/5 px-6 py-2.5 text-sm font-semibold text-tmain transition-all duration-300 hover:border-tmain/20 hover:bg-tmain/10"
+                                                    onClick={() =>
+                                                        openModal(proj)
+                                                    }
+                                                    className="flex flex-1 items-center justify-center gap-2 rounded-full border border-bshine/50 bg-bshine/10 px-4 py-2 text-xs font-semibold text-bshine transition-all duration-300 hover:border-bshine hover:bg-bshine/20"
                                                 >
-                                                    Next Project
-                                                    <i className="fa-solid fa-arrow-right-long" />
+                                                    <i className="fa-solid fa-circle-info" />
+                                                    Detail
                                                 </button>
-                                            )}
+                                                {proj.link && (
+                                                    <a
+                                                        href={
+                                                            proj.link.match(
+                                                                /^https?:\/\//,
+                                                            )
+                                                                ? proj.link
+                                                                : `https://${proj.link}`
+                                                        }
+                                                        target="_blank"
+                                                        rel="noopener noreferrer"
+                                                        className="flex flex-1 items-center justify-center gap-2 rounded-full border border-tmain/10 bg-tmain/5 px-4 py-2 text-xs font-semibold text-tmain transition-all duration-300 hover:border-tmain/20 hover:bg-tmain/10"
+                                                    >
+                                                        <i className="fa-solid fa-arrow-up-right-from-square" />
+                                                        Visit
+                                                    </a>
+                                                )}
+                                            </div>
                                         </div>
                                     </div>
-                                </motion.div>
-                            ) : (
-                                <p className="w-full py-12 text-center text-gray-500 italic">
-                                    Belum ada project.
-                                </p>
-                            )}
-                        </AnimatePresence>
-                    </div>
+                                ))}
+                            </motion.div>
+                        ) : (
+                            <p className="w-full py-12 text-center text-gray-500 italic">
+                                Belum ada project.
+                            </p>
+                        )}
+                    </AnimatePresence>
 
-                    {/* Pagination Indicators (Arrows + Dots) */}
-                    {filteredProjects.length > 1 && (
-                        <div className="mt-8 flex items-center gap-4 md:gap-8">
+                    {/* Simple Pagination */}
+                    {totalPages > 1 && (
+                        <div className="flex items-center gap-4 md:gap-8">
                             <button
                                 onClick={handlePrevProject}
                                 className="flex h-10 w-10 items-center justify-center rounded-full text-tmain/50 transition-colors hover:bg-white/10 hover:text-tmain"
@@ -371,24 +394,28 @@ export default function WebsiteSection({
                             </button>
 
                             <div className="flex items-center gap-2 md:gap-3">
-                                {filteredProjects.map((_, idx) => (
-                                    <div
-                                        key={`dot-${idx}`}
-                                        className={`h-2 cursor-pointer rounded-full transition-all duration-500 md:h-2.5 ${
-                                            idx === projectIndex
-                                                ? 'w-8 bg-bshine md:w-10'
-                                                : 'w-2 bg-gray-600 hover:bg-gray-400 md:w-2.5'
-                                        }`}
-                                        onClick={() => {
-                                            setDirection(
-                                                idx > projectIndex
-                                                    ? 'next'
-                                                    : 'prev',
-                                            );
-                                            setProjectIndex(idx);
-                                        }}
-                                    />
-                                ))}
+                                {Array.from({ length: totalPages }).map(
+                                    (_, idx) => (
+                                        <div
+                                            key={`dot-${idx}`}
+                                            className={`h-2 cursor-pointer rounded-full transition-all duration-500 md:h-2.5 ${
+                                                idx === pageIndex
+                                                    ? 'w-8 bg-bshine md:w-10'
+                                                    : 'w-2 bg-gray-600 hover:bg-gray-400 md:w-2.5'
+                                            }`}
+                                            onClick={() => {
+                                                setDirection(
+                                                    idx > pageIndex
+                                                        ? 'next'
+                                                        : 'prev',
+                                                );
+                                                setProjectIndex(
+                                                    idx * ITEMS_PER_PAGE,
+                                                );
+                                            }}
+                                        />
+                                    ),
+                                )}
                             </div>
 
                             <button
@@ -468,13 +495,14 @@ export default function WebsiteSection({
 
                             {/* Modal Images */}
                             <div className="relative flex min-h-[280px] w-full items-center justify-center p-3 md:min-h-[480px] md:w-3/5 lg:w-2/3">
-                                {activeImg && (
+                                {currentImg && (
                                     <ModalImage
-                                        src={`/storage/${activeImg}`}
+                                        src={`/storage/${currentImg}`}
                                         alt={selectedWebsite.title}
                                     />
                                 )}
 
+                                {/* Arrow Navigation */}
                                 {activeImages.length > 1 && (
                                     <>
                                         <button
@@ -501,7 +529,7 @@ export default function WebsiteSection({
                                                     setActiveImg(img)
                                                 }
                                                 className={`h-10 w-14 overflow-hidden rounded border transition-all ${
-                                                    activeImg === img
+                                                    currentImg === img
                                                         ? 'scale-105 border-bshine'
                                                         : 'border-white/20 opacity-60 hover:opacity-100'
                                                 }`}

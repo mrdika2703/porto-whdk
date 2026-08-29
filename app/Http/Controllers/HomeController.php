@@ -20,8 +20,18 @@ use Inertia\Inertia;
 
 class HomeController extends Controller
 {
-    public function index(Request $request)
+    public function index(Request $request, ?string $mode = null)
     {
+        $modeParam = $mode ?? $request->query('mode');
+        $initialViewMode = 'All';
+        if ($modeParam) {
+            $lowerMode = strtolower($modeParam);
+            if ($lowerMode === 'multimedia') {
+                $initialViewMode = 'Multimedia';
+            } elseif ($lowerMode === 'programming') {
+                $initialViewMode = 'Programming';
+            }
+        }
         // --- LOGIKA TRACKING PENGUNJUNG (UPDATE DATETIME) ---
         $ip = $request->ip();
         $userAgent = $request->userAgent();
@@ -143,6 +153,7 @@ class HomeController extends Controller
         });
 
         return Inertia::render('Home/index', [
+            'initialViewMode' => $initialViewMode,
             'profiles' => $profile,
             'skills' => $skill,
             'description_sections' => $descriptionSections,
@@ -155,5 +166,20 @@ class HomeController extends Controller
             'others' => $others,
             'footers' => $profile,
         ]);
+    }
+
+    public function all(Request $request)
+    {
+        return $this->index($request, 'All');
+    }
+
+    public function multimedia(Request $request)
+    {
+        return $this->index($request, 'Multimedia');
+    }
+
+    public function programming(Request $request)
+    {
+        return $this->index($request, 'Programming');
     }
 }

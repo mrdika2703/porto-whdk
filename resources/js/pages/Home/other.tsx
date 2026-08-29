@@ -320,9 +320,9 @@ export default function OtherSection({
 
                             {/* Image side (more space) */}
                             <div className="relative flex min-h-[280px] w-full items-center justify-center p-3 md:min-h-[480px] md:w-3/5 lg:w-2/3">
-                                {activeImg && (
+                                {currentImg && (
                                     <ModalImage
-                                        src={`/storage/${activeImg}`}
+                                        src={`/storage/${currentImg}`}
                                         alt={selectedOther.title}
                                     />
                                 )}
@@ -355,7 +355,7 @@ export default function OtherSection({
                                                     setActiveImg(img)
                                                 }
                                                 className={`h-10 w-14 overflow-hidden rounded border transition-all ${
-                                                    activeImg === img
+                                                    currentImg === img
                                                         ? 'scale-105 border-bshine'
                                                         : 'border-white/20 opacity-60 hover:opacity-100'
                                                 }`}

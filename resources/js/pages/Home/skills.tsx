@@ -36,6 +36,39 @@ import {
 import { Skill } from './index';
 import { Underline } from '@/components/underline';
 
+function SkillPill({ skill }: { skill: Skill }) {
+    return (
+        <div className="relative flex h-[30px] w-auto items-center gap-0 md:h-8">
+            {/* Nama Skill */}
+            <span
+                className={`flex h-full min-w-0 flex-1 items-center ${
+                    skill.level
+                        ? 'justify-start rounded-l-full border-y border-l'
+                        : 'justify-center rounded-full border'
+                } border-white/20 bg-white/5 px-2.5 text-white backdrop-blur-sm transition-all duration-300 hover:border-bshine/40 hover:bg-white/10 md:px-3.5`}
+            >
+                {skill.icon && (
+                    <span className="mr-1.5 shrink-0 text-bshine md:mr-2">
+                        <i className={skill.icon}></i>
+                    </span>
+                )}
+                <span className="min-w-0 truncate text-[10px] font-normal md:text-xs">
+                    {skill.name_skills}
+                </span>
+            </span>
+
+            {/* Level Skill */}
+            {skill.level && (
+                <span className="flex h-full shrink-0 items-center rounded-r-full border-y border-r border-white/20 bg-white/10 px-2 text-white backdrop-blur-sm md:px-3">
+                    <span className="font-regular truncate text-[9px] text-white md:text-xs">
+                        {skill.level}
+                    </span>
+                </span>
+            )}
+        </div>
+    );
+}
+
 function MarqueeRow({
     children,
     direction = 'left',
@@ -218,6 +251,44 @@ export default function Skills({
         },
     };
 
+    // Separate skills by category type
+    const softSkills = filteredSkills.filter((s) =>
+        s.category.toLowerCase().includes('soft'),
+    );
+    const techSkills = filteredSkills.filter(
+        (s) => !s.category.toLowerCase().includes('soft'),
+    );
+
+    // Group tech skills by viewmode for 2-grid split
+    const multimediaSkills = techSkills.filter(
+        (s) =>
+            s.viewmode === 'Multimedia' || s.viewmode === 'All' || !s.viewmode,
+    );
+    const programmingSkills = techSkills.filter(
+        (s) =>
+            s.viewmode === 'Programming' || s.viewmode === 'All' || !s.viewmode,
+    );
+
+    // When a specific viewMode is selected, show only that side
+    const leftSkills =
+        viewMode === 'Programming'
+            ? []
+            : multimediaSkills.filter(
+                  (s) =>
+                      !s.viewmode ||
+                      s.viewmode === 'All' ||
+                      s.viewmode === 'Multimedia',
+              );
+    const rightSkills =
+        viewMode === 'Multimedia'
+            ? []
+            : programmingSkills.filter(
+                  (s) =>
+                      !s.viewmode ||
+                      s.viewmode === 'All' ||
+                      s.viewmode === 'Programming',
+              );
+
     return (
         <div
             id="skills"
@@ -250,45 +321,100 @@ export default function Skills({
                     </motion.div>
                 </div>
 
-                <section>
-                    <div
-                        key={viewMode}
-                        className="mt-4 grid grid-cols-2 gap-3 md:flex md:flex-wrap md:items-center md:justify-between md:gap-x-2 md:gap-y-7 md:after:w-[20%] md:after:flex-auto md:after:content-['']"
-                    >
-                        {filteredSkills.map((skill) => (
-                            <div
-                                key={skill.id}
-                                // w-full di HP agar mengisi kolom grid, w-auto di Desktop agar memadat
-                                className="relative flex h-[30px] w-full items-center gap-0 md:h-8 md:w-auto"
-                            >
-                                {/* Nama Skill */}
-                                <span
-                                    className={`flex h-full min-w-0 flex-1 items-center ${
-                                        skill.level
-                                            ? 'justify-start rounded-l-full border-y border-l'
-                                            : 'justify-center rounded-full border'
-                                    } border-white/50 bg-white/10 px-2 text-white md:px-3.5 md:backdrop-blur-sm`}
-                                >
-                                    {skill.icon && (
-                                        <span className="mr-1.5 hidden shrink-0 md:mr-2 md:block">
-                                            <i className={skill.icon}></i>
-                                        </span>
-                                    )}
-                                    <span className="min-w-0 truncate text-[9px] font-normal md:text-xs">
-                                        {skill.name_skills}
-                                    </span>
-                                </span>
-
-                                {/* Level Skill */}
-                                {skill.level && (
-                                    <span className="flex h-full shrink-0 items-center rounded-r-full border-y border-r border-white/50 bg-white/20 px-2 md:px-3.5 md:backdrop-blur-sm">
-                                        <span className="font-regular truncate text-[9px] text-white md:text-xs md:font-medium">
-                                            {skill.level}
-                                        </span>
-                                    </span>
-                                )}
+                <section className="flex flex-col gap-6">
+                    {/* ── Soft Skills: Full Width Card ── */}
+                    {softSkills.length > 0 && (
+                        <motion.div
+                            initial={{ opacity: 0, y: 20 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            viewport={{ once: true, amount: 0.1 }}
+                            transition={{ duration: 0.5, delay: 0.1 }}
+                            className="flex w-full flex-col gap-4 rounded-2xl border border-white/15 bg-white/1.5 px-6 py-5 md:px-8 md:py-6"
+                        >
+                            <div className="flex items-center justify-between border-b border-white/5 pb-3">
+                                <h3 className="flex items-center font-montserrat-alt text-base font-bold text-white md:text-lg">
+                                    <i className="fa-solid fa-brain mr-2.5 text-bshine" />
+                                    Soft Skills
+                                </h3>
                             </div>
-                        ))}
+                            <div
+                                key={viewMode + '-soft'}
+                                className="flex flex-wrap gap-2.5 pt-1"
+                            >
+                                {softSkills.map((skill) => (
+                                    <SkillPill key={skill.id} skill={skill} />
+                                ))}
+                            </div>
+                        </motion.div>
+                    )}
+
+                    {/* ── Tech Skills: 2-Grid (Multimedia | Programming) ── */}
+                    <div
+                        className={`grid gap-6 ${
+                            viewMode === 'All'
+                                ? 'grid-cols-1 md:grid-cols-2'
+                                : 'grid-cols-1'
+                        }`}
+                    >
+                        {/* Multimedia Card */}
+                        {viewMode !== 'Programming' &&
+                            leftSkills.length > 0 && (
+                                <motion.div
+                                    initial={{ opacity: 0, y: 20 }}
+                                    whileInView={{ opacity: 1, y: 0 }}
+                                    viewport={{ once: true, amount: 0.1 }}
+                                    transition={{ duration: 0.5, delay: 0.15 }}
+                                    className="flex flex-col gap-4 rounded-2xl border border-white/15 bg-white/1.5 px-6 py-5 md:px-8 md:py-6"
+                                >
+                                    <div className="flex items-center justify-between border-b border-white/5 pb-3">
+                                        <h3 className="flex items-center font-montserrat-alt text-base font-bold text-white md:text-lg">
+                                            <i className="fa-solid fa-photo-film mr-2.5 text-bshine" />
+                                            Multimedia Skills
+                                        </h3>
+                                    </div>
+                                    <div
+                                        key={viewMode + '-multi'}
+                                        className="flex flex-wrap gap-2.5 pt-1"
+                                    >
+                                        {leftSkills.map((skill) => (
+                                            <SkillPill
+                                                key={skill.id}
+                                                skill={skill}
+                                            />
+                                        ))}
+                                    </div>
+                                </motion.div>
+                            )}
+
+                        {/* Programming Card */}
+                        {viewMode !== 'Multimedia' &&
+                            rightSkills.length > 0 && (
+                                <motion.div
+                                    initial={{ opacity: 0, y: 20 }}
+                                    whileInView={{ opacity: 1, y: 0 }}
+                                    viewport={{ once: true, amount: 0.1 }}
+                                    transition={{ duration: 0.5, delay: 0.2 }}
+                                    className="flex flex-col gap-4 rounded-2xl border border-white/15 bg-white/1.5 px-6 py-5 md:px-8 md:py-6"
+                                >
+                                    <div className="flex items-center justify-between border-b border-white/5 pb-3">
+                                        <h3 className="flex items-center font-montserrat-alt text-base font-bold text-white md:text-lg">
+                                            <i className="fa-solid fa-code mr-2.5 text-bshine" />
+                                            Programming Skills
+                                        </h3>
+                                    </div>
+                                    <div
+                                        key={viewMode + '-prog'}
+                                        className="flex flex-wrap gap-2.5 pt-1"
+                                    >
+                                        {rightSkills.map((skill) => (
+                                            <SkillPill
+                                                key={skill.id}
+                                                skill={skill}
+                                            />
+                                        ))}
+                                    </div>
+                                </motion.div>
+                            )}
                     </div>
                 </section>
             </div>

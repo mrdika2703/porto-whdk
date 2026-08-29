@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import type { Certificate } from './index';
 import { Underline } from '@/components/underline';
@@ -88,6 +88,29 @@ export default function CertificateSection({
             ),
         [filteredCertificates],
     );
+
+    const activeImages = useMemo(() => {
+        if (!selectedCert) return [];
+        return [selectedCert.url_1, selectedCert.url_2].filter(
+            Boolean,
+        ) as string[];
+    }, [selectedCert]);
+
+    const currentImg = activeImg || selectedCert?.url_1 || null;
+    const activeIndex = currentImg ? activeImages.indexOf(currentImg) : 0;
+
+    const handlePrev = useCallback(() => {
+        if (activeImages.length <= 1) return;
+        const newIndex =
+            (activeIndex - 1 + activeImages.length) % activeImages.length;
+        setActiveImg(activeImages[newIndex]);
+    }, [activeImages, activeIndex]);
+
+    const handleNext = useCallback(() => {
+        if (activeImages.length <= 1) return;
+        const newIndex = (activeIndex + 1) % activeImages.length;
+        setActiveImg(activeImages[newIndex]);
+    }, [activeImages, activeIndex]);
 
     const openModal = (cert: Certificate) => {
         setSelectedCert(cert);
@@ -249,38 +272,24 @@ export default function CertificateSection({
 
                             {/* Image side (more space) */}
                             <div className="relative flex min-h-[280px] w-full items-center justify-center p-3 md:min-h-[480px] md:w-3/5 lg:w-2/3">
-                                {activeImg && (
+                                {currentImg && (
                                     <ModalImage
-                                        src={`/storage/${activeImg}`}
+                                        src={`/storage/${currentImg}`}
                                         alt={selectedCert.title}
                                     />
                                 )}
 
-                                {/* Arrow Navigation if url_2 exists */}
-                                {selectedCert.url_2 && (
+                                {/* Arrow Navigation if multiple images exist */}
+                                {activeImages.length > 1 && (
                                     <>
                                         <button
-                                            onClick={() =>
-                                                setActiveImg(
-                                                    activeImg ===
-                                                        selectedCert.url_1
-                                                        ? selectedCert.url_2
-                                                        : selectedCert.url_1,
-                                                )
-                                            }
+                                            onClick={handlePrev}
                                             className="absolute top-1/2 left-6 z-10 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-white/10 bg-black/60 text-white backdrop-blur-sm transition-all hover:scale-105 hover:border-bshine hover:bg-hbshine/50"
                                         >
                                             <i className="fa-solid fa-chevron-left text-sm" />
                                         </button>
                                         <button
-                                            onClick={() =>
-                                                setActiveImg(
-                                                    activeImg ===
-                                                        selectedCert.url_1
-                                                        ? selectedCert.url_2
-                                                        : selectedCert.url_1,
-                                                )
-                                            }
+                                            onClick={handleNext}
                                             className="absolute top-1/2 right-6 z-10 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-white/10 bg-black/60 text-white backdrop-blur-sm transition-all hover:scale-105 hover:border-bshine hover:bg-hbshine/50"
                                         >
                                             <i className="fa-solid fa-chevron-right text-sm" />
@@ -288,53 +297,34 @@ export default function CertificateSection({
                                     </>
                                 )}
 
-                                {/* Thumbnail Switcher if url_2 exists */}
-                                {selectedCert.url_2 && (
+                                {/* Thumbnail Switcher if multiple images exist */}
+                                {activeImages.length > 1 && (
                                     <div className="absolute bottom-4 left-1/2 flex -translate-x-1/2 gap-3 rounded-lg border border-white/5 bg-black/60 p-2 backdrop-blur-md">
-                                        <button
-                                            onClick={() =>
-                                                setActiveImg(selectedCert.url_1)
-                                            }
-                                            className={`h-10 w-14 overflow-hidden rounded border transition-all ${
-                                                activeImg === selectedCert.url_1
-                                                    ? 'scale-105 border-bshine'
-                                                    : 'border-white/20 opacity-60 hover:opacity-100'
-                                            }`}
-                                        >
-                                            <img
-                                                src={`/storage/${selectedCert.url_1}`}
-                                                loading="lazy"
-                                                className="h-full w-full object-cover"
-                                                onError={(e) => {
-                                                    (
-                                                        e.currentTarget as HTMLImageElement
-                                                    ).src =
-                                                        '/assets/sample/sampleimages-3_2.webp';
-                                                }}
-                                            />
-                                        </button>
-                                        <button
-                                            onClick={() =>
-                                                setActiveImg(selectedCert.url_2)
-                                            }
-                                            className={`h-10 w-14 overflow-hidden rounded border transition-all ${
-                                                activeImg === selectedCert.url_2
-                                                    ? 'scale-105 border-bshine'
-                                                    : 'border-white/20 opacity-60 hover:opacity-100'
-                                            }`}
-                                        >
-                                            <img
-                                                src={`/storage/${selectedCert.url_2}`}
-                                                loading="lazy"
-                                                className="h-full w-full object-cover"
-                                                onError={(e) => {
-                                                    (
-                                                        e.currentTarget as HTMLImageElement
-                                                    ).src =
-                                                        '/assets/sample/sampleimages-3_2.webp';
-                                                }}
-                                            />
-                                        </button>
+                                        {activeImages.map((img, idx) => (
+                                            <button
+                                                key={idx}
+                                                onClick={() =>
+                                                    setActiveImg(img)
+                                                }
+                                                className={`h-10 w-14 overflow-hidden rounded border transition-all ${
+                                                    currentImg === img
+                                                        ? 'scale-105 border-bshine'
+                                                        : 'border-white/20 opacity-60 hover:opacity-100'
+                                                }`}
+                                            >
+                                                <img
+                                                    src={`/storage/${img}`}
+                                                    loading="lazy"
+                                                    className="h-full w-full object-cover"
+                                                    onError={(e) => {
+                                                        (
+                                                            e.currentTarget as HTMLImageElement
+                                                        ).src =
+                                                            '/assets/sample/sampleimages-3_2.webp';
+                                                    }}
+                                                />
+                                            </button>
+                                        ))}
                                     </div>
                                 )}
                             </div>
