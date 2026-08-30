@@ -238,23 +238,23 @@ export default function DesignGraphicSection({
                                 : 0;
 
                             return (
-                                <button
-                                    key={cat}
-                                    onClick={() => setActiveCategory(cat)}
-                                    // Padding dan teks diperkecil di HP
-                                    className={`flex items-center justify-center gap-2 rounded-3xl px-3 py-1 text-xs transition-all duration-300 sm:text-sm md:px-6 md:py-2 md:text-base ${
-                                        activeCategory === cat
-                                            ? 'border bg-gradient-to-r from-bsecond to-stone-500 font-medium text-white dark:border-white dark:bg-white/10 dark:bg-none dark:shadow-[0_0_30px_rgba(255,255,255,0.3)]'
-                                            : 'border border-bsecond font-normal text-tmain hover:bg-bsecond/5 dark:hover:bg-white/10'
-                                    }`}
-                                >
-                                    <span>
-                                        <span className="font-regular size-90">
-                                            {count}{' '}
-                                        </span>{' '}
+                                <div key={cat} className="relative">
+                                    {count > 0 && (
+                                        <span className="absolute -top-1 -right-1 z-10 flex h-5 min-w-5 items-center justify-center rounded-full bg-bshine px-1 text-[10px] font-bold text-white shadow-md">
+                                            {count}
+                                        </span>
+                                    )}
+                                    <button
+                                        onClick={() => setActiveCategory(cat)}
+                                        className={`flex items-center justify-center rounded-3xl px-3 py-1 text-xs transition-all duration-300 sm:text-sm md:px-6 md:py-2 md:text-base ${
+                                            activeCategory === cat
+                                                ? 'border bg-gradient-to-r from-bsecond to-stone-500 font-medium text-white dark:border-white dark:bg-white/10 dark:bg-none dark:shadow-[0_0_30px_rgba(255,255,255,0.3)]'
+                                                : 'border border-bsecond font-normal text-tmain hover:bg-bsecond/5 dark:hover:bg-white/10'
+                                        }`}
+                                    >
                                         {cat}
-                                    </span>
-                                </button>
+                                    </button>
+                                </div>
                             );
                         })}
                         <button

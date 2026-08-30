@@ -69,6 +69,44 @@ function ModalImage({ src, alt }: { src: string; alt: string }) {
     );
 }
 
+// Render description: supports newlines and list items (- / • prefix)
+function renderDescription(text: string) {
+    const lines = text.split('\n');
+    const elements: React.ReactNode[] = [];
+    let listItems: string[] = [];
+    const flushList = (key: string) => {
+        if (listItems.length > 0) {
+            elements.push(
+                <ul key={key} className="mt-1 space-y-1 pl-1">
+                    {listItems.map((item, i) => (
+                        <li key={i} className="flex items-start gap-2">
+                            <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-bshine" />
+                            <span>{item}</span>
+                        </li>
+                    ))}
+                </ul>,
+            );
+            listItems = [];
+        }
+    };
+    lines.forEach((line, idx) => {
+        const trimmed = line.trim();
+        const isList = /^[-•*]\s+/.test(trimmed);
+        if (isList) {
+            listItems.push(trimmed.replace(/^[-•*]\s+/, ''));
+        } else {
+            flushList(`list-${idx}`);
+            if (trimmed === '') {
+                elements.push(<div key={`br-${idx}`} className="h-2" />);
+            } else {
+                elements.push(<p key={`p-${idx}`} className="leading-relaxed">{trimmed}</p>);
+            }
+        }
+    });
+    flushList('list-end');
+    return elements;
+}
+
 export default function OtherSection({
     others,
     description_sections,
@@ -395,11 +433,12 @@ export default function OtherSection({
                                     </h4>
 
                                     <div
-                                        className="mt-2.5 max-h-[160px] overflow-y-auto pr-2 text-sm leading-relaxed text-tmain md:max-h-[260px]"
+                                        className="mt-2.5 max-h-[160px] overflow-y-auto pr-2 text-sm text-tmain md:max-h-[260px]"
                                         style={{ scrollbarWidth: 'thin' }}
                                     >
-                                        {selectedOther.description ||
-                                            'Tidak ada deskripsi.'}
+                                        {selectedOther.description
+                                            ? renderDescription(selectedOther.description)
+                                            : 'Tidak ada deskripsi.'}
                                     </div>
                                 </div>
                             </div>

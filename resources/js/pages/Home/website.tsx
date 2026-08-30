@@ -107,6 +107,50 @@ const transitionVariants = {
 const TABS = ['all', 'project', 'develop'] as const;
 type TabType = (typeof TABS)[number];
 
+// Render description: supports newlines and list items (- / • prefix)
+function renderDescription(text: string) {
+    const lines = text.split('\n');
+    const elements: React.ReactNode[] = [];
+    let listItems: string[] = [];
+
+    const flushList = (key: string) => {
+        if (listItems.length > 0) {
+            elements.push(
+                <ul key={key} className="mt-1 space-y-1 pl-1">
+                    {listItems.map((item, i) => (
+                        <li key={i} className="flex items-start gap-2">
+                            <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-bshine" />
+                            <span>{item}</span>
+                        </li>
+                    ))}
+                </ul>,
+            );
+            listItems = [];
+        }
+    };
+
+    lines.forEach((line, idx) => {
+        const trimmed = line.trim();
+        const isList = /^[-•*]\s+/.test(trimmed);
+        if (isList) {
+            listItems.push(trimmed.replace(/^[-•*]\s+/, ''));
+        } else {
+            flushList(`list-${idx}`);
+            if (trimmed === '') {
+                elements.push(<div key={`br-${idx}`} className="h-2" />);
+            } else {
+                elements.push(
+                    <p key={`p-${idx}`} className="leading-relaxed">
+                        {trimmed}
+                    </p>,
+                );
+            }
+        }
+    });
+    flushList('list-end');
+    return elements;
+}
+
 export default function WebsiteSection({
     websites = [],
     description_sections,
@@ -236,10 +280,10 @@ export default function WebsiteSection({
                     </p>
                 </motion.div>
 
-                {description_sections?.design_section && (
+                {description_sections?.website_section && (
                     <div className="flex w-full flex-col items-start">
                         <p className="text-xs font-light text-tmain/70 md:text-sm">
-                            {description_sections.design_section}
+                            {description_sections.website_section}
                         </p>
                     </div>
                 )}
@@ -250,9 +294,9 @@ export default function WebsiteSection({
                         {TABS.map((tab) => {
                             const count =
                                 tab === 'all'
-                                    ? (Array.isArray(websites)
-                                          ? websites.length
-                                          : 0)
+                                    ? Array.isArray(websites)
+                                        ? websites.length
+                                        : 0
                                     : Array.isArray(websites)
                                       ? websites.filter(
                                             (item) => item.category === tab,
@@ -260,24 +304,26 @@ export default function WebsiteSection({
                                       : 0;
 
                             return (
-                                <button
-                                    key={tab}
-                                    onClick={() => setActiveTab(tab)}
-                                    className={`flex items-center justify-center gap-2 rounded-full px-6 py-2 text-sm transition-all duration-300 md:text-base ${
-                                        activeTab === tab
-                                            ? 'border bg-gradient-to-r from-bsecond to-stone-500 font-medium text-white dark:border-white dark:bg-white/10 dark:bg-none dark:shadow-[0_0_30px_rgba(255,255,255,0.3)]'
-                                            : 'border border-bsecond font-normal text-tmain hover:bg-bsecond/5 dark:hover:bg-white/10'
-                                    }`}
-                                >
-                                    <span>
-                                        <span className="font-regular size-90">
-                                            {count}{' '}
-                                        </span>{' '}
+                                <div key={tab} className="relative">
+                                    {/* Badge count — notif style */}
+                                    {count > 0 && (
+                                        <span className="absolute -top-1 -right-1 z-10 flex h-5 min-w-5 items-center justify-center rounded-full bg-bshine px-1 text-[10px] font-bold text-white shadow-md">
+                                            {count}
+                                        </span>
+                                    )}
+                                    <button
+                                        onClick={() => setActiveTab(tab)}
+                                        className={`flex items-center justify-center rounded-full px-6 py-2 text-sm transition-all duration-300 md:text-base ${
+                                            activeTab === tab
+                                                ? 'border bg-gradient-to-r from-bsecond to-stone-500 font-medium text-white dark:border-white dark:bg-white/10 dark:bg-none dark:shadow-[0_0_30px_rgba(255,255,255,0.3)]'
+                                                : 'border border-bsecond font-normal text-tmain hover:bg-bsecond/5 dark:hover:bg-white/10'
+                                        }`}
+                                    >
                                         <span className="capitalize">
                                             {tab}
                                         </span>
-                                    </span>
-                                </button>
+                                    </button>
+                                </div>
                             );
                         })}
                         <button
@@ -312,14 +358,14 @@ export default function WebsiteSection({
                                                 {/* Behind layer */}
                                                 {proj.images &&
                                                 proj.images[1] ? (
-                                                    <div className="absolute inset-0 translate-x-2 translate-y-2 scale-[0.97] rotate-1 overflow-hidden rounded-lg border border-white/5 bg-white/[0.02] opacity-40 shadow-sm transition-all duration-500 group-hover:translate-x-3 group-hover:translate-y-3 group-hover:rotate-2">
+                                                    <div className="absolute inset-0 translate-x-0 translate-y-0 rotate-0 overflow-hidden rounded-lg border border-white/5 bg-white/[0.02] opacity-0 shadow-sm transition-all duration-500 group-hover:translate-x-3 group-hover:translate-y-3 group-hover:rotate-2 group-hover:opacity-40">
                                                         <WebsiteCardImage
                                                             src={`/storage/${proj.images[1]}`}
                                                             alt="Screenshot 2"
                                                         />
                                                     </div>
                                                 ) : (
-                                                    <div className="absolute inset-0 translate-x-2 translate-y-2 scale-[0.97] rotate-1 rounded-lg border border-white/5 bg-bshine/5 opacity-20 shadow-sm transition-all duration-500 group-hover:translate-x-3 group-hover:translate-y-3 group-hover:rotate-2" />
+                                                    <div className="absolute inset-0 translate-x-0 translate-y-0 rotate-0 rounded-lg border border-white/5 bg-bshine/5 opacity-0 shadow-sm transition-all duration-500 group-hover:translate-x-3 group-hover:translate-y-3 group-hover:rotate-2 group-hover:opacity-20" />
                                                 )}
                                                 {/* Front layer */}
                                                 <div className="absolute inset-0 z-10 overflow-hidden rounded-lg border border-white/10 shadow-md transition-transform duration-500 group-hover:scale-[1.02]">
@@ -334,7 +380,7 @@ export default function WebsiteSection({
                                         {/* Card Info */}
                                         <div className="flex flex-1 flex-col gap-3 p-5">
                                             <div className="flex flex-col gap-1">
-                                                <h3 className="font-montserrat-alt text-base font-bold leading-tight text-tmain md:text-lg">
+                                                <h3 className="font-montserrat-alt text-base leading-tight font-bold text-tmain md:text-lg">
                                                     {proj.title}
                                                 </h3>
                                                 <p className="flex items-center gap-1 text-xs font-semibold tracking-wider text-hbshine uppercase">
@@ -609,11 +655,14 @@ export default function WebsiteSection({
                                     </h4>
 
                                     <div
-                                        className="mt-2.5 max-h-[160px] overflow-y-auto pr-2 text-sm leading-relaxed text-tmain md:max-h-[220px]"
+                                        className="mt-2.5 max-h-[160px] overflow-y-auto pr-2 text-sm text-tmain md:max-h-[220px]"
                                         style={{ scrollbarWidth: 'thin' }}
                                     >
-                                        {selectedWebsite.description ||
-                                            'Tidak ada deskripsi.'}
+                                        {selectedWebsite.description
+                                            ? renderDescription(
+                                                  selectedWebsite.description,
+                                              )
+                                            : 'Tidak ada deskripsi.'}
                                     </div>
 
                                     {selectedWebsite.link && (
