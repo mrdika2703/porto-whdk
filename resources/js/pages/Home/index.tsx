@@ -115,6 +115,7 @@ export interface Website {
     tech: string;
     link: string | null;
     thumbnail: string | null;
+    created_at: string | null;
     images: string[];
 }
 

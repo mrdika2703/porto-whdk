@@ -307,7 +307,7 @@ export default function OtherSection({
                                     ? { duration: 0 }
                                     : { ease: 'easeOut', duration: 0.1 }
                             }
-                            className="relative flex w-full max-w-5xl flex-col overflow-hidden rounded-2xl border border-white/10 bg-main shadow-2xl backdrop-blur-md md:flex-row"
+                            className="relative flex w-[90vw] max-w-[90vw] flex-col overflow-hidden rounded-2xl border border-white/10 bg-main shadow-2xl backdrop-blur-md md:flex-row"
                             onClick={(e) => e.stopPropagation()}
                         >
                             {/* Close */}

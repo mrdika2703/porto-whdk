@@ -107,13 +107,10 @@ class HomeController extends Controller
                 ->toArray();
         });
 
-        $website = Cache::remember('all_website_array', 3600, function () {
+        $website = Cache::remember('all_website_array_v2', 3600, function () {
             return Website::where('visible', 'yes')
+                ->orderBy('created_at', 'desc')
                 ->get()
-                ->groupBy('category')
-                ->flatMap(function ($group) {
-                    return $group->shuffle()->take(20);
-                })
                 ->map(function ($web) {
                     // Menggabungkan semua kolom url ke dalam satu array
                     $rawImages = [
@@ -127,14 +124,16 @@ class HomeController extends Controller
                         $web->url_8
                     ];
                     return [
-                        'id' => $web->id,
-                        'category' => $web->category,
-                        'title' => $web->title,
-                        'origin' => $web->origin,
-                        'link' => $web->link,
-                        'description' => $web->description,
-                        'tech' => $web->tech,
-                        'images' => array_values(array_filter($rawImages)),
+                        'id'         => $web->id,
+                        'category'   => $web->category,
+                        'title'      => $web->title,
+                        'origin'     => $web->origin,
+                        'link'       => $web->link,
+                        'description'=> $web->description,
+                        'tech'       => $web->tech,
+                        'thumbnail'  => $web->thumbnail,
+                        'created_at' => $web->created_at,
+                        'images'     => array_values(array_filter($rawImages)),
                     ];
                 })
                 ->values()

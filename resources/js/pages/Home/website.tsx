@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, useCallback } from 'react';
+import { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import { Link } from '@inertiajs/react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Website, DescriptionSection } from './index';
@@ -7,9 +7,14 @@ import { useIsMobile } from '@/hooks/useIsMobile';
 
 function WebsiteCardImage({ src, alt }: { src: string; alt: string }) {
     const [isLoaded, setIsLoaded] = useState(false);
+    const imgRef = useRef<HTMLImageElement>(null);
 
     useEffect(() => {
         setIsLoaded(false);
+        // If image is already cached/complete, mark loaded immediately
+        if (imgRef.current?.complete && imgRef.current.naturalWidth > 0) {
+            setIsLoaded(true);
+        }
     }, [src]);
 
     return (
@@ -20,6 +25,7 @@ function WebsiteCardImage({ src, alt }: { src: string; alt: string }) {
                 </div>
             )}
             <img
+                ref={imgRef}
                 src={src}
                 alt={alt}
                 loading="lazy"
@@ -40,9 +46,13 @@ function WebsiteCardImage({ src, alt }: { src: string; alt: string }) {
 
 function ModalImage({ src, alt }: { src: string; alt: string }) {
     const [isLoaded, setIsLoaded] = useState(false);
+    const imgRef = useRef<HTMLImageElement>(null);
 
     useEffect(() => {
         setIsLoaded(false);
+        if (imgRef.current?.complete && imgRef.current.naturalWidth > 0) {
+            setIsLoaded(true);
+        }
     }, [src]);
 
     return (
@@ -53,6 +63,7 @@ function ModalImage({ src, alt }: { src: string; alt: string }) {
                 </div>
             )}
             <img
+                ref={imgRef}
                 src={src}
                 alt={alt}
                 draggable={false}
@@ -93,6 +104,9 @@ const transitionVariants = {
     }),
 };
 
+const TABS = ['all', 'project', 'develop'] as const;
+type TabType = (typeof TABS)[number];
+
 export default function WebsiteSection({
     websites = [],
     description_sections,
@@ -100,7 +114,7 @@ export default function WebsiteSection({
     websites: Website[];
     description_sections?: DescriptionSection | null;
 }) {
-    const [activeTab, setActiveTab] = useState('project');
+    const [activeTab, setActiveTab] = useState<TabType>('all');
     const [projectIndex, setProjectIndex] = useState(0);
     const [direction, setDirection] = useState<'next' | 'prev'>('next');
     const [selectedWebsite, setSelectedWebsite] = useState<Website | null>(
@@ -149,17 +163,24 @@ export default function WebsiteSection({
         setActiveImg(project.images[0] || null);
     };
 
-    const filteredProjects = useMemo(
-        () => websites.filter((item) => item.category === activeTab),
-        [websites, activeTab],
-    );
+    const filteredProjects = useMemo(() => {
+        if (activeTab === 'all') {
+            // Sort by created_at desc for "all" tab
+            return [...websites].sort((a, b) => {
+                const da = a.created_at ? new Date(a.created_at).getTime() : 0;
+                const db = b.created_at ? new Date(b.created_at).getTime() : 0;
+                return db - da;
+            });
+        }
+        return websites.filter((item) => item.category === activeTab);
+    }, [websites, activeTab]);
 
     useEffect(() => {
         setProjectIndex(0);
         setDirection('next');
     }, [activeTab]);
 
-    const ITEMS_PER_PAGE = 2;
+    const ITEMS_PER_PAGE = 3;
 
     const handleNextProject = useCallback(() => {
         setDirection('next');
@@ -224,14 +245,19 @@ export default function WebsiteSection({
                 )}
 
                 {/* Tabs & Content Container */}
-                <div className="mt-10 flex flex-col items-center gap-8">
+                <div className="mt-10 flex flex-col items-center gap-6">
                     <div className="flex w-full flex-wrap items-center justify-center gap-4">
-                        {['project', 'develop'].map((tab) => {
-                            const count = Array.isArray(websites)
-                                ? websites.filter(
-                                      (item) => item.category === tab,
-                                  ).length
-                                : 0;
+                        {TABS.map((tab) => {
+                            const count =
+                                tab === 'all'
+                                    ? (Array.isArray(websites)
+                                          ? websites.length
+                                          : 0)
+                                    : Array.isArray(websites)
+                                      ? websites.filter(
+                                            (item) => item.category === tab,
+                                        ).length
+                                      : 0;
 
                             return (
                                 <button
@@ -263,7 +289,7 @@ export default function WebsiteSection({
                         </button>
                     </div>
 
-                    {/* 2-per-page Card Grid */}
+                    {/* 4-per-page Card Grid */}
                     <AnimatePresence mode="wait" custom={direction}>
                         {pagedProjects.length > 0 ? (
                             <motion.div
@@ -273,30 +299,30 @@ export default function WebsiteSection({
                                 initial="enter"
                                 animate="center"
                                 exit="exit"
-                                className="grid w-full grid-cols-1 gap-5 md:grid-cols-2 md:gap-6"
+                                className="mx-auto grid w-full grid-cols-1 gap-6 md:grid-cols-3"
                             >
                                 {pagedProjects.map((proj) => (
                                     <div
-                                        key={proj.id}
-                                        className="group flex flex-col overflow-hidden rounded-2xl border border-white/10 bg-white/[0.02] transition-all duration-300 hover:border-bshine/30 hover:bg-white/[0.04] hover:shadow-[0_0_30px_rgba(192,104,0,0.06)]"
+                                        key={`${activeTab}-${proj.id}`}
+                                        className="group flex flex-col overflow-hidden rounded-xl border border-gray-200 bg-white shadow-md transition-all duration-300 hover:border-bshine/50 hover:shadow-[0_6px_30px_rgba(192,104,0,0.12)] dark:border-white/10 dark:bg-white/[0.03] dark:shadow-sm dark:hover:border-bshine/30 dark:hover:bg-white/[0.06] dark:hover:shadow-[0_4px_24px_rgba(192,104,0,0.08)]"
                                     >
-                                        {/* 2-Layer Stacked Image (3:2 ratio) */}
+                                        {/* Stacked Image — 16:9 */}
                                         <div className="relative p-4 pb-0">
-                                            <div className="relative aspect-[3/2] w-full">
+                                            <div className="relative aspect-[16/9] w-full">
                                                 {/* Behind layer */}
                                                 {proj.images &&
                                                 proj.images[1] ? (
-                                                    <div className="absolute inset-0 translate-x-3 translate-y-3 scale-[0.97] rotate-1 overflow-hidden rounded-xl border border-white/5 bg-white/[0.02] opacity-40 shadow-sm transition-all duration-500 group-hover:translate-x-4 group-hover:translate-y-4 group-hover:rotate-2">
+                                                    <div className="absolute inset-0 translate-x-2 translate-y-2 scale-[0.97] rotate-1 overflow-hidden rounded-lg border border-white/5 bg-white/[0.02] opacity-40 shadow-sm transition-all duration-500 group-hover:translate-x-3 group-hover:translate-y-3 group-hover:rotate-2">
                                                         <WebsiteCardImage
                                                             src={`/storage/${proj.images[1]}`}
                                                             alt="Screenshot 2"
                                                         />
                                                     </div>
                                                 ) : (
-                                                    <div className="absolute inset-0 translate-x-3 translate-y-3 scale-[0.97] rotate-1 rounded-xl border border-white/5 bg-bshine/5 opacity-20 shadow-sm transition-all duration-500 group-hover:translate-x-4 group-hover:translate-y-4 group-hover:rotate-2" />
+                                                    <div className="absolute inset-0 translate-x-2 translate-y-2 scale-[0.97] rotate-1 rounded-lg border border-white/5 bg-bshine/5 opacity-20 shadow-sm transition-all duration-500 group-hover:translate-x-3 group-hover:translate-y-3 group-hover:rotate-2" />
                                                 )}
                                                 {/* Front layer */}
-                                                <div className="relative z-10 h-full w-full overflow-hidden rounded-xl border border-white/10 shadow-md transition-transform duration-500 group-hover:scale-[1.02]">
+                                                <div className="absolute inset-0 z-10 overflow-hidden rounded-lg border border-white/10 shadow-md transition-transform duration-500 group-hover:scale-[1.02]">
                                                     <WebsiteCardImage
                                                         src={`/storage/${proj.thumbnail || proj.images?.[0]}`}
                                                         alt={proj.title}
@@ -306,37 +332,37 @@ export default function WebsiteSection({
                                         </div>
 
                                         {/* Card Info */}
-                                        <div className="flex flex-1 flex-col gap-3 p-4 md:p-5">
+                                        <div className="flex flex-1 flex-col gap-3 p-5">
                                             <div className="flex flex-col gap-1">
                                                 <h3 className="font-montserrat-alt text-base font-bold leading-tight text-tmain md:text-lg">
                                                     {proj.title}
                                                 </h3>
-                                                <p className="flex items-center gap-1.5 text-[11px] font-semibold tracking-wider text-hbshine uppercase">
+                                                <p className="flex items-center gap-1 text-xs font-semibold tracking-wider text-hbshine uppercase">
                                                     <i className="fa-regular fa-building text-bshine" />
                                                     {proj.origin}
                                                 </p>
                                             </div>
 
-                                            <p className="line-clamp-2 text-xs leading-relaxed text-gray-500 dark:text-gray-400">
+                                            <p className="line-clamp-2 text-sm leading-relaxed text-gray-500 dark:text-gray-400">
                                                 {proj.description}
                                             </p>
 
                                             <div className="border-l-2 border-bshine pl-3">
-                                                <p className="text-[10px] font-bold tracking-wider text-gray-500 uppercase">
+                                                <p className="text-[11px] font-bold tracking-wider text-gray-500 uppercase">
                                                     Tech Stack
                                                 </p>
-                                                <p className="mt-0.5 text-xs font-medium text-tmain italic">
+                                                <p className="mt-0.5 text-sm font-medium text-tmain italic">
                                                     {proj.tech}
                                                 </p>
                                             </div>
 
                                             {/* Actions */}
-                                            <div className="mt-auto flex gap-3 pt-1">
+                                            <div className="mt-auto flex gap-2 pt-1">
                                                 <button
                                                     onClick={() =>
                                                         openModal(proj)
                                                     }
-                                                    className="flex flex-1 items-center justify-center gap-2 rounded-full border border-bshine/50 bg-bshine/10 px-4 py-2 text-xs font-semibold text-bshine transition-all duration-300 hover:border-bshine hover:bg-bshine/20"
+                                                    className="flex flex-1 items-center justify-center gap-1.5 rounded-full border border-bshine/50 bg-bshine/10 px-4 py-2 text-sm font-semibold text-bshine transition-all duration-300 hover:border-bshine hover:bg-bshine/20"
                                                 >
                                                     <i className="fa-solid fa-circle-info" />
                                                     Detail
@@ -352,7 +378,7 @@ export default function WebsiteSection({
                                                         }
                                                         target="_blank"
                                                         rel="noopener noreferrer"
-                                                        className="flex flex-1 items-center justify-center gap-2 rounded-full border border-tmain/10 bg-tmain/5 px-4 py-2 text-xs font-semibold text-tmain transition-all duration-300 hover:border-tmain/20 hover:bg-tmain/10"
+                                                        className="flex flex-1 items-center justify-center gap-1.5 rounded-full border border-tmain/10 bg-tmain/5 px-4 py-2 text-sm font-semibold text-tmain transition-all duration-300 hover:border-tmain/20 hover:bg-tmain/10"
                                                     >
                                                         <i className="fa-solid fa-arrow-up-right-from-square" />
                                                         Visit
@@ -482,7 +508,7 @@ export default function WebsiteSection({
                                     ? { duration: 0 }
                                     : { ease: 'easeOut', duration: 0.1 }
                             }
-                            className="relative flex w-full max-w-5xl flex-col overflow-hidden rounded-2xl border border-white/10 bg-main shadow-2xl backdrop-blur-md md:flex-row"
+                            className="relative flex w-[90vw] max-w-[90vw] flex-col overflow-hidden rounded-2xl border border-white/10 bg-main shadow-2xl backdrop-blur-md md:flex-row"
                             onClick={(e) => e.stopPropagation()}
                         >
                             {/* Close Button */}
