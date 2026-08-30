@@ -66,9 +66,41 @@ export default function DirectSection({
                         transition={{ duration: 0.5 }}
                         className="flex justify-center text-center"
                     >
-                        <h2 className="font-montserrat-alt text-5xl font-bold text-bshine">
-                            <span className="text-tmain">Quick Direct </span>
-                            Portofolio
+                        <h2 className="font-montserrat-alt text-5xl font-bold">
+                            <span className="relative inline-block">
+                                <span className="text-bshine">
+                                    <span className="text-tmain">Quick Direct </span>
+                                    Portofolio
+                                </span>
+                                {/* Layer Kilau Shimmer */}
+                                <motion.span
+                                    aria-hidden="true"
+                                    animate={{
+                                        backgroundPosition: [
+                                            '-200% 0',
+                                            '200% 0',
+                                        ],
+                                    }}
+                                    transition={{
+                                        duration: 4,
+                                        repeat: Infinity,
+                                        repeatDelay: 3,
+                                        ease: 'easeInOut',
+                                    }}
+                                    style={{
+                                        backgroundImage:
+                                            'linear-gradient(90deg, transparent 0%, transparent 30%, var(--color-bshine, #c06800) 50%, transparent 70%, transparent 100%)',
+                                        backgroundSize: '200% 100%',
+                                        backgroundRepeat: 'no-repeat',
+                                        WebkitBackgroundClip: 'text',
+                                        WebkitTextFillColor: 'transparent',
+                                    }}
+                                    className="pointer-events-none absolute top-0 left-0 h-full w-full select-none text-center"
+                                >
+                                    <span className="text-tmain">Quick Direct </span>
+                                    Portofolio
+                                </motion.span>
+                            </span>
                         </h2>
                     </motion.div>
 

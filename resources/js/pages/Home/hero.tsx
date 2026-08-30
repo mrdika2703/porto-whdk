@@ -35,6 +35,8 @@ export default function PortfolioHero({ viewMode, setViewMode }: HeroProps) {
         return () => clearTimeout(introTimer);
     }, []);
 
+    const [isTypingDone, setIsTypingDone] = useState(false);
+
     // 2. Logika Efek Ngetik (Hanya berjalan setelah Intro selesai)
     useEffect(() => {
         if (showIntro) return;
@@ -47,6 +49,7 @@ export default function PortfolioHero({ viewMode, setViewMode }: HeroProps) {
                 i++;
                 if (i >= fullText.length) {
                     clearInterval(intervalId);
+                    setIsTypingDone(true);
                 }
             }, 100);
         }, 500); // Delay 0.5 detik setelah transisi masuk teks utama
@@ -211,7 +214,7 @@ export default function PortfolioHero({ viewMode, setViewMode }: HeroProps) {
                                     <span className="text-xs font-light tracking-[0.2em] text-tmain/70 uppercase md:text-sm">
                                         Build With
                                     </span>
-                                    <h2 className="hidden font-montserrat-alt text-2xl font-semibold text-tmain md:block md:text-4xl">
+                                    <h2 className="hidden font-montserrat-alt text-2xl font-semibold tracking-tighter text-tmain md:block md:text-4xl">
                                         Laravel 13{' '}
                                         <span className="mx-1 text-bshine md:mx-2">
                                             |
@@ -222,10 +225,16 @@ export default function PortfolioHero({ viewMode, setViewMode }: HeroProps) {
                                         </span>{' '}
                                         Full Tailwind
                                     </h2>
-                                    <h2 className="flex flex-col gap-3 text-center font-montserrat-alt text-2xl font-semibold text-tmain md:hidden">
-                                        <p className="mx-auto">Laravel 13</p>
-                                        <p className="mx-auto">React</p>
-                                        <p className="mx-auto">Full Tailwind</p>
+                                    <h2 className="flex flex-col gap-2 text-center font-montserrat-alt text-2xl leading-tight font-semibold tracking-tighter text-tmain md:hidden">
+                                        <p className="mx-auto tracking-tighter">
+                                            Laravel 13
+                                        </p>
+                                        <p className="mx-auto tracking-tighter">
+                                            React
+                                        </p>
+                                        <p className="mx-auto tracking-tighter">
+                                            Full Tailwind
+                                        </p>
                                     </h2>
                                 </motion.div>
                             ) : (
@@ -269,7 +278,7 @@ export default function PortfolioHero({ viewMode, setViewMode }: HeroProps) {
                                         ></motion.div>
                                     </motion.div>
 
-                                    {/* Nama Animasi Ketik */}
+                                    {/* Nama Animasi Ketik dengan Shimmer Gradien bshine */}
                                     <motion.h1
                                         initial={{
                                             opacity: 0,
@@ -279,17 +288,58 @@ export default function PortfolioHero({ viewMode, setViewMode }: HeroProps) {
                                         }}
                                         animate={textShadowAnimation}
                                         transition={textShadowTransition}
-                                        className="mb-4 px-2 font-montserrat-alt text-[55px] leading-tight font-bold md:mb-6 md:text-6xl"
+                                        className="mb-4 px-2 font-montserrat-alt text-[62px] leading-tight font-bold tracking-tighter text-tmain md:mb-6 md:text-7xl"
                                     >
-                                        {typedText}
-                                        <motion.span
-                                            initial={{ opacity: 0 }}
-                                            animate={cursorAnimation}
-                                            transition={cursorTransition}
-                                            className="font-light"
-                                        >
-                                            |
-                                        </motion.span>
+                                        {/* Container Teks + Kursor + Shimmer Berpasangan Pas */}
+                                        <span className="relative inline-block text-center">
+                                            {/* Teks Dasar + Kursor Berdampingan */}
+                                            <span>{typedText}</span>
+                                            <motion.span
+                                                initial={{ opacity: 0 }}
+                                                animate={cursorAnimation}
+                                                transition={cursorTransition}
+                                                className="ml-0.5 inline-block font-light text-tmain"
+                                            >
+                                                |
+                                            </motion.span>
+
+                                            {/* Layer Kilau bshine: Posisi 100% presisi pixel-perfect di atas huruf (Desktop & Mobile) */}
+                                            {isTypingDone && (
+                                                <motion.span
+                                                    aria-hidden="true"
+                                                    animate={{
+                                                        backgroundPosition: [
+                                                            '-200% 0',
+                                                            '200% 0',
+                                                        ],
+                                                    }}
+                                                    transition={{
+                                                        duration: 4,
+                                                        repeat: Infinity,
+                                                        repeatDelay: 3,
+                                                        ease: 'easeInOut',
+                                                    }}
+                                                    style={{
+                                                        backgroundImage:
+                                                            'linear-gradient(90deg, transparent 0%, transparent 30%, var(--color-bshine, #c06800) 50%, transparent 70%, transparent 100%)',
+                                                        backgroundSize:
+                                                            '200% 100%',
+                                                        backgroundRepeat:
+                                                            'no-repeat',
+                                                        WebkitBackgroundClip:
+                                                            'text',
+                                                        WebkitTextFillColor:
+                                                            'transparent',
+                                                    }}
+                                                    className="pointer-events-none absolute inset-0 block h-full w-full select-none text-center"
+                                                >
+                                                    {typedText}
+                                                    <span className="ml-0.5 inline-block font-light opacity-0">
+                                                        |
+                                                    </span>
+                                                </motion.span>
+                                            )}
+                                        </span>
                                     </motion.h1>
 
                                     {/* Sub-kategori */}
@@ -302,7 +352,7 @@ export default function PortfolioHero({ viewMode, setViewMode }: HeroProps) {
                                         }}
                                         className="text-xs font-light tracking-widest text-tmain md:text-sm"
                                     >
-                                        Design Graphic | Photography | Website
+                                        Graphic Design | Photography | Website
                                         Development
                                     </motion.p>
                                 </motion.div>

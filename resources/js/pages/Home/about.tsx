@@ -174,11 +174,11 @@ export default function About({
                         {/* Header & Sapaan */}
                         <div
                             ref={typingRef}
-                            className="mb-16 flex flex-col items-center gap-4 text-center md:mb-20 md:gap-6"
+                            className="mb-5 flex flex-col items-center gap-4 text-center md:mb-20 md:gap-6"
                         >
                             <div className="relative inline-flex items-center">
                                 <div className="relative rounded-full border border-bsecond bg-bsecond/80 px-5 py-1.5 md:px-6 md:py-2 md:backdrop-blur-md dark:bg-bsecond/10">
-                                    <span className="text-lg font-medium text-white md:text-xl">
+                                    <span className="text-sm font-medium text-white md:text-base">
                                         Hello!
                                     </span>
                                 </div>
@@ -205,7 +205,7 @@ export default function About({
                         </div>
 
                         {/* Layout 2 Kolom (Teks & Foto) */}
-                        <div className="mb-10 flex w-full flex-col items-center justify-between gap-8 lg:flex-row lg:items-start">
+                        <div className="mb-10 flex w-full flex-col items-center justify-between gap-3 lg:flex-row lg:items-start">
                             {/* Kolom Kiri: Deskripsi */}
                             <motion.div
                                 initial={{ opacity: 0, x: -30 }}
@@ -213,15 +213,47 @@ export default function About({
                                 viewport={{ once: true, amount: 0.3 }}
                                 transition={{ duration: 0.8, delay: 0.2 }}
                                 // Memastikan alignment rata kiri-tengah agar rapi
-                                className="flex w-full flex-col items-start gap-5 md:gap-6 lg:w-[60%]"
+                                className="flex w-full flex-col items-start gap-2.5 md:gap-3 lg:w-[60%]"
                             >
-                                <h2 className="max-w-2xl text-2xl leading-relaxed font-bold text-tmain md:text-3xl">
-                                    {profile?.name || 'Nama Lengkap'}
+                                <h2 className="max-w-2xl font-montserrat-alt text-2xl leading-relaxed font-bold tracking-tighter text-tmain md:text-3xl">
+                                    <span className="relative inline-block">
+                                        <span>
+                                            {profile?.name || 'Nama Lengkap'}
+                                        </span>
+                                        {/* Layer Kilau bshine Shimmer */}
+                                        <motion.span
+                                            aria-hidden="true"
+                                            animate={{
+                                                backgroundPosition: [
+                                                    '-200% 0',
+                                                    '200% 0',
+                                                ],
+                                            }}
+                                            transition={{
+                                                duration: 4,
+                                                repeat: Infinity,
+                                                repeatDelay: 3,
+                                                ease: 'easeInOut',
+                                            }}
+                                            style={{
+                                                backgroundImage:
+                                                    'linear-gradient(90deg, transparent 0%, transparent 30%, var(--color-bshine, #c06800) 50%, transparent 70%, transparent 100%)',
+                                                backgroundSize: '200% 100%',
+                                                backgroundRepeat: 'no-repeat',
+                                                WebkitBackgroundClip: 'text',
+                                                WebkitTextFillColor:
+                                                    'transparent',
+                                            }}
+                                            className="pointer-events-none absolute top-0 left-0 h-full w-full select-none text-left"
+                                        >
+                                            {profile?.name || 'Nama Lengkap'}
+                                        </motion.span>
+                                    </span>
                                 </h2>
-                                <p className="font-regular max-w-2xl text-sm leading-relaxed text-tmain md:text-lg lg:w-[70%]">
+                                <p className="font-regular max-w-2xl text-sm leading-normal tracking-normal text-tmain md:text-lg lg:w-[70%]">
                                     {currentAbout || 'About'}
                                 </p>
-                                <div className="mt-4 flex flex-wrap gap-4 md:mt-8 md:gap-5">
+                                <div className="mt-2 flex flex-wrap gap-4 md:mt-4 md:gap-5">
                                     <a
                                         href={`https://wa.me/62${profile?.whatsapp}`}
                                         className="rounded-xl bg-gradient-to-r from-bsecond to-stone-500 px-6 py-2.5 text-center text-xs font-semibold text-main hover:brightness-120 md:text-base dark:from-bshine dark:to-cyan-100"
@@ -245,7 +277,7 @@ export default function About({
                                 whileInView={{ opacity: 1, x: 0 }}
                                 viewport={{ once: true, amount: 0.3 }}
                                 transition={{ duration: 0.8, delay: 0.2 }}
-                                className="relative mt-8 flex w-full justify-center lg:mt-0 lg:w-[40%]"
+                                className="relative mt-2 flex w-full justify-center lg:mt-0 lg:w-[40%]"
                             >
                                 <div className="relative h-[320px] w-full max-w-[350px] sm:h-[420px]">
                                     <ProfilePhoto
