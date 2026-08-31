@@ -307,17 +307,20 @@ export default function PortfolioHero({ viewMode, setViewMode }: HeroProps) {
                                             {isTypingDone && (
                                                 <motion.span
                                                     aria-hidden="true"
-                                                    animate={{
+                                                    whileInView={{
                                                         backgroundPosition: [
                                                             '-200% 0',
                                                             '200% 0',
                                                         ],
                                                     }}
+                                                    viewport={{
+                                                        amount: 1,
+                                                    }}
                                                     transition={{
-                                                        duration: 4,
+                                                        duration: 3,
                                                         repeat: Infinity,
-                                                        repeatDelay: 3,
-                                                        ease: 'easeInOut',
+                                                        repeatDelay: 1,
+                                                        ease: 'easeOut',
                                                     }}
                                                     style={{
                                                         backgroundImage:
@@ -331,7 +334,7 @@ export default function PortfolioHero({ viewMode, setViewMode }: HeroProps) {
                                                         WebkitTextFillColor:
                                                             'transparent',
                                                     }}
-                                                    className="pointer-events-none absolute inset-0 block h-full w-full select-none text-center"
+                                                    className="pointer-events-none absolute inset-0 block h-full w-full text-center select-none"
                                                 >
                                                     {typedText}
                                                     <span className="ml-0.5 inline-block font-light opacity-0">

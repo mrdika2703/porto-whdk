@@ -73,7 +73,7 @@ export default function About({
     const [displayedText, setDisplayedText] = useState('');
     const [isDeleting, setIsDeleting] = useState(false);
     const typingRef = useRef(null);
-    const isTypingInView = useInView(typingRef, { once: true, amount: 0.5 });
+    const isTypingInView = useInView(typingRef, { once: true, amount: 0.8 });
 
     // Reset typing effect when viewMode changes
     useEffect(() => {
@@ -210,7 +210,7 @@ export default function About({
                             <motion.div
                                 initial={{ opacity: 0, x: -30 }}
                                 whileInView={{ opacity: 1, x: 0 }}
-                                viewport={{ once: true, amount: 0.3 }}
+                                viewport={{ once: true, amount: 0.6 }}
                                 transition={{ duration: 0.8, delay: 0.2 }}
                                 // Memastikan alignment rata kiri-tengah agar rapi
                                 className="flex w-full flex-col items-start gap-2.5 md:gap-3 lg:w-[60%]"
@@ -223,17 +223,20 @@ export default function About({
                                         {/* Layer Kilau bshine Shimmer */}
                                         <motion.span
                                             aria-hidden="true"
-                                            animate={{
+                                            whileInView={{
                                                 backgroundPosition: [
                                                     '-200% 0',
                                                     '200% 0',
                                                 ],
                                             }}
+                                            viewport={{
+                                                amount: 0.8,
+                                            }}
                                             transition={{
-                                                duration: 4,
+                                                duration: 3,
                                                 repeat: Infinity,
-                                                repeatDelay: 3,
-                                                ease: 'easeInOut',
+                                                repeatDelay: 1,
+                                                ease: 'easeOut',
                                             }}
                                             style={{
                                                 backgroundImage:
@@ -244,13 +247,13 @@ export default function About({
                                                 WebkitTextFillColor:
                                                     'transparent',
                                             }}
-                                            className="pointer-events-none absolute top-0 left-0 h-full w-full select-none text-left"
+                                            className="pointer-events-none absolute top-0 left-0 h-full w-full text-left select-none"
                                         >
                                             {profile?.name || 'Nama Lengkap'}
                                         </motion.span>
                                     </span>
                                 </h2>
-                                <p className="font-regular max-w-2xl text-sm leading-normal tracking-normal text-tmain md:text-lg lg:w-[70%]">
+                                <p className="font-regular max-w-2xl text-sm leading-relaxed tracking-normal text-tmain whitespace-pre-line md:text-lg lg:w-[70%]">
                                     {currentAbout || 'About'}
                                 </p>
                                 <div className="mt-2 flex flex-wrap gap-4 md:mt-4 md:gap-5">
@@ -275,7 +278,7 @@ export default function About({
                             <motion.div
                                 initial={{ opacity: 0, x: 30 }}
                                 whileInView={{ opacity: 1, x: 0 }}
-                                viewport={{ once: true, amount: 0.3 }}
+                                viewport={{ once: true, amount: 0.6 }}
                                 transition={{ duration: 0.8, delay: 0.2 }}
                                 className="relative mt-2 flex w-full justify-center lg:mt-0 lg:w-[40%]"
                             >

@@ -117,7 +117,11 @@ function renderDescription(text: string) {
             if (trimmed === '') {
                 elements.push(<div key={`br-${idx}`} className="h-2" />);
             } else {
-                elements.push(<p key={`p-${idx}`} className="leading-relaxed">{trimmed}</p>);
+                elements.push(
+                    <p key={`p-${idx}`} className="leading-relaxed">
+                        {trimmed}
+                    </p>,
+                );
             }
         }
     });
@@ -242,7 +246,7 @@ export default function PhotoVideoSection({
                 <motion.div
                     initial={{ opacity: 0, y: -20 }}
                     whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true, amount: 0.2 }}
+                    viewport={{ once: true, amount: 0.8 }}
                     transition={{ duration: 0.6, ease: 'easeOut', delay: 0.2 }}
                     className="relative z-20 flex flex-col items-center gap-2 text-center md:gap-4"
                 >
@@ -262,7 +266,7 @@ export default function PhotoVideoSection({
                         </h2>
                     </div>
                     {/* Teks preview disembunyikan di layar HP paling kecil agar bersih */}
-                    <p className="text-xs font-light text-tmain md:text-base">
+                    <p className="text-xs font-light leading-relaxed text-tmain whitespace-pre-line md:text-base">
                         {description_sections?.photovideo_section ||
                             'Preview Project'}
                     </p>

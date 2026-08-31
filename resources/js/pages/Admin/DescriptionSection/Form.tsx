@@ -182,18 +182,23 @@ export default function Form({
                         </h3>
 
                         <div>
-                            <label className="mb-2 block text-xs font-semibold tracking-wider text-tmuted uppercase">
-                                Graphic Design Section
-                            </label>
+                            <div className="mb-2 flex items-center justify-between">
+                                <label className="text-xs font-semibold tracking-wider text-tmuted uppercase">
+                                    Graphic Design Section
+                                </label>
+                                <span className="text-[11px] text-tmuted">
+                                    Format paragraf (Enter)
+                                </span>
+                            </div>
                             <textarea
                                 disabled={processing}
-                                rows={4}
+                                rows={5}
                                 value={data.design_section}
                                 onChange={(e) =>
                                     setData('design_section', e.target.value)
                                 }
-                                className="w-full resize-none rounded-xl border border-bmain/30 bg-main/40 px-4 py-3 text-sm text-htext transition-colors focus:border-accent focus:outline-none disabled:opacity-50 dark:text-tmain"
-                                placeholder="Tulis deskripsi untuk bagian Graphic Design..."
+                                className="w-full min-h-[120px] resize-y rounded-xl border border-bmain/30 bg-main/40 px-4 py-3 text-sm leading-relaxed text-htext transition-colors focus:border-accent focus:outline-none disabled:opacity-50 dark:text-tmain"
+                                placeholder="Tulis deskripsi pengantar untuk bagian Graphic Design...&#10;&#10;Gunakan Enter untuk membuat paragraf baru."
                             />
                             {errors.design_section && (
                                 <p className="mt-1 text-xs text-red-500">
@@ -203,18 +208,23 @@ export default function Form({
                         </div>
 
                         <div>
-                            <label className="mb-2 block text-xs font-semibold tracking-wider text-tmuted uppercase">
-                                Photo & Video Section
-                            </label>
+                            <div className="mb-2 flex items-center justify-between">
+                                <label className="text-xs font-semibold tracking-wider text-tmuted uppercase">
+                                    Photo & Video Section
+                                </label>
+                                <span className="text-[11px] text-tmuted">
+                                    Format paragraf (Enter)
+                                </span>
+                            </div>
                             <textarea
                                 disabled={processing}
-                                rows={4}
+                                rows={5}
                                 value={data.photovideo_section}
                                 onChange={(e) =>
                                     setData('photovideo_section', e.target.value)
                                 }
-                                className="w-full resize-none rounded-xl border border-bmain/30 bg-main/40 px-4 py-3 text-sm text-htext transition-colors focus:border-accent focus:outline-none disabled:opacity-50 dark:text-tmain"
-                                placeholder="Tulis deskripsi untuk bagian Photo & Video..."
+                                className="w-full min-h-[120px] resize-y rounded-xl border border-bmain/30 bg-main/40 px-4 py-3 text-sm leading-relaxed text-htext transition-colors focus:border-accent focus:outline-none disabled:opacity-50 dark:text-tmain"
+                                placeholder="Tulis deskripsi pengantar untuk bagian Photo & Video...&#10;&#10;Gunakan Enter untuk membuat paragraf baru."
                             />
                             {errors.photovideo_section && (
                                 <p className="mt-1 text-xs text-red-500">
@@ -224,18 +234,23 @@ export default function Form({
                         </div>
 
                         <div>
-                            <label className="mb-2 block text-xs font-semibold tracking-wider text-tmuted uppercase">
-                                Websites Section
-                            </label>
+                            <div className="mb-2 flex items-center justify-between">
+                                <label className="text-xs font-semibold tracking-wider text-tmuted uppercase">
+                                    Websites Section
+                                </label>
+                                <span className="text-[11px] text-tmuted">
+                                    Format paragraf (Enter)
+                                </span>
+                            </div>
                             <textarea
                                 disabled={processing}
-                                rows={4}
+                                rows={5}
                                 value={data.website_section}
                                 onChange={(e) =>
                                     setData('website_section', e.target.value)
                                 }
-                                className="w-full resize-none rounded-xl border border-bmain/30 bg-main/40 px-4 py-3 text-sm text-htext transition-colors focus:border-accent focus:outline-none disabled:opacity-50 dark:text-tmain"
-                                placeholder="Tulis deskripsi untuk bagian Websites..."
+                                className="w-full min-h-[120px] resize-y rounded-xl border border-bmain/30 bg-main/40 px-4 py-3 text-sm leading-relaxed text-htext transition-colors focus:border-accent focus:outline-none disabled:opacity-50 dark:text-tmain"
+                                placeholder="Tulis deskripsi pengantar untuk bagian Websites...&#10;&#10;Gunakan Enter untuk membuat paragraf baru."
                             />
                             {errors.website_section && (
                                 <p className="mt-1 text-xs text-red-500">
@@ -245,18 +260,23 @@ export default function Form({
                         </div>
 
                         <div>
-                            <label className="mb-2 block text-xs font-semibold tracking-wider text-tmuted uppercase">
-                                Others Section
-                            </label>
+                            <div className="mb-2 flex items-center justify-between">
+                                <label className="text-xs font-semibold tracking-wider text-tmuted uppercase">
+                                    Others Section
+                                </label>
+                                <span className="text-[11px] text-tmuted">
+                                    Format paragraf (Enter)
+                                </span>
+                            </div>
                             <textarea
                                 disabled={processing}
-                                rows={4}
+                                rows={5}
                                 value={data.other_section}
                                 onChange={(e) =>
                                     setData('other_section', e.target.value)
                                 }
-                                className="w-full resize-none rounded-xl border border-bmain/30 bg-main/40 px-4 py-3 text-sm text-htext transition-colors focus:border-accent focus:outline-none disabled:opacity-50 dark:text-tmain"
-                                placeholder="Tulis deskripsi untuk bagian Others..."
+                                className="w-full min-h-[120px] resize-y rounded-xl border border-bmain/30 bg-main/40 px-4 py-3 text-sm leading-relaxed text-htext transition-colors focus:border-accent focus:outline-none disabled:opacity-50 dark:text-tmain"
+                                placeholder="Tulis deskripsi pengantar untuk bagian Others...&#10;&#10;Gunakan Enter untuk membuat paragraf baru."
                             />
                             {errors.other_section && (
                                 <p className="mt-1 text-xs text-red-500">

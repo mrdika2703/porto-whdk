@@ -305,7 +305,7 @@ export default function Skills({
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{
                             once: true,
-                            amount: 0.2,
+                            amount: 0.8,
                         }}
                         transition={{
                             duration: 0.6,
@@ -327,7 +327,7 @@ export default function Skills({
                         <motion.div
                             initial={{ opacity: 0, y: 20 }}
                             whileInView={{ opacity: 1, y: 0 }}
-                            viewport={{ once: true, amount: 0.1 }}
+                            viewport={{ once: true, amount: 0.3 }}
                             transition={{ duration: 0.5, delay: 0.1 }}
                             className="flex w-full flex-col gap-4 rounded-2xl border border-white/15 bg-white/1.5 px-6 py-5 md:px-8 md:py-6"
                         >
@@ -362,7 +362,7 @@ export default function Skills({
                                 <motion.div
                                     initial={{ opacity: 0, y: 20 }}
                                     whileInView={{ opacity: 1, y: 0 }}
-                                    viewport={{ once: true, amount: 0.1 }}
+                                    viewport={{ once: true, amount: 0.3 }}
                                     transition={{ duration: 0.5, delay: 0.15 }}
                                     className="flex flex-col gap-4 rounded-2xl border border-white/15 bg-white/1.5 px-6 py-5 md:px-8 md:py-6"
                                 >
@@ -392,7 +392,7 @@ export default function Skills({
                                 <motion.div
                                     initial={{ opacity: 0, y: 20 }}
                                     whileInView={{ opacity: 1, y: 0 }}
-                                    viewport={{ once: true, amount: 0.1 }}
+                                    viewport={{ once: true, amount: 0.3 }}
                                     transition={{ duration: 0.5, delay: 0.2 }}
                                     className="flex flex-col gap-4 rounded-2xl border border-white/15 bg-white/1.5 px-6 py-5 md:px-8 md:py-6"
                                 >

@@ -62,29 +62,34 @@ export default function DirectSection({
                     <motion.div
                         initial={{ opacity: 0, y: 30 }}
                         whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: true, margin: '-100px' }}
+                        viewport={{ once: true, margin: '-100px', amount: 0.5 }}
                         transition={{ duration: 0.5 }}
                         className="flex justify-center text-center"
                     >
                         <h2 className="font-montserrat-alt text-5xl font-bold">
                             <span className="relative inline-block">
                                 <span className="text-bshine">
-                                    <span className="text-tmain">Quick Direct </span>
+                                    <span className="text-tmain">
+                                        Quick Direct{' '}
+                                    </span>
                                     Portofolio
                                 </span>
                                 {/* Layer Kilau Shimmer */}
                                 <motion.span
                                     aria-hidden="true"
-                                    animate={{
+                                    whileInView={{
                                         backgroundPosition: [
                                             '-200% 0',
                                             '200% 0',
                                         ],
                                     }}
+                                    viewport={{
+                                        amount: 0.8,
+                                    }}
                                     transition={{
-                                        duration: 4,
+                                        duration: 3,
                                         repeat: Infinity,
-                                        repeatDelay: 3,
+                                        repeatDelay: 1,
                                         ease: 'easeInOut',
                                     }}
                                     style={{
@@ -95,9 +100,11 @@ export default function DirectSection({
                                         WebkitBackgroundClip: 'text',
                                         WebkitTextFillColor: 'transparent',
                                     }}
-                                    className="pointer-events-none absolute top-0 left-0 h-full w-full select-none text-center"
+                                    className="pointer-events-none absolute top-0 left-0 h-full w-full text-center select-none"
                                 >
-                                    <span className="text-tmain">Quick Direct </span>
+                                    <span className="text-tmain">
+                                        Quick Direct{' '}
+                                    </span>
                                     Portofolio
                                 </motion.span>
                             </span>
@@ -110,7 +117,11 @@ export default function DirectSection({
                                 key={item.name}
                                 initial={{ opacity: 0, y: 40 }}
                                 whileInView={{ opacity: 1, y: 0 }}
-                                viewport={{ once: true, margin: '-100px' }}
+                                viewport={{
+                                    once: true,
+                                    margin: '-100px',
+                                    amount: 0.5,
+                                }}
                                 transition={{
                                     duration: 0.5,
                                     delay: index * 0.1,

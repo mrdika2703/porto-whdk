@@ -107,7 +107,7 @@ class HomeController extends Controller
                 ->toArray();
         });
 
-        $website = Cache::remember('all_website_array_v2', 3600, function () {
+        $website = Cache::remember('all_website_array', 3600, function () {
             return Website::where('visible', 'yes')
                 ->orderBy('created_at', 'desc')
                 ->get()
@@ -129,7 +129,7 @@ class HomeController extends Controller
                         'title'      => $web->title,
                         'origin'     => $web->origin,
                         'link'       => $web->link,
-                        'description'=> $web->description,
+                        'description' => $web->description,
                         'tech'       => $web->tech,
                         'thumbnail'  => $web->thumbnail,
                         'created_at' => $web->created_at,

@@ -105,7 +105,7 @@ export default function ExperienceEducationSection({
                 <motion.div
                     initial={{ opacity: 0, y: 30 }}
                     whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true, amount: 0.2 }}
+                    viewport={{ once: true, amount: 0.8 }}
                     transition={{ duration: 0.6, delay: 0.2 }}
                     className="flex flex-row items-center justify-center gap-4 text-center md:justify-between md:text-left"
                 >
@@ -133,7 +133,7 @@ export default function ExperienceEducationSection({
                         whileInView="visible"
                         viewport={{
                             once: true,
-                            amount: 0.2,
+                            amount: 0.3,
                         }}
                         transition={{ delay: 0.2 }}
                         className="flex flex-col gap-10"
@@ -155,14 +155,14 @@ export default function ExperienceEducationSection({
                                 <motion.div
                                     key={item.id}
                                     variants={itemVariants}
-                                    className="group relative mb-12 pl-10 last:mb-0 md:pl-12"
+                                    className="group relative mb-5 pl-10 last:mb-0 md:pl-12"
                                 >
                                     {/* Bullet Point / Dot */}
                                     <div className="absolute top-1.5 left-[-5px] h-4 w-4 rounded-full border-4 border-[#050015] bg-bshine transition-all duration-300 group-hover:scale-125 group-hover:shadow-[0_0_15px_rgba(192,104,0,0.6)] group-hover:brightness-130 md:left-[-1px] dark:group-hover:shadow-[0_0_15px_rgba(34,211,238,0.6)]" />
 
                                     {/* Konten Card */}
                                     <div
-                                        className="flex cursor-pointer flex-col gap-2 rounded-2xl border border-white/5 bg-white/[0.02] p-6 transition-all duration-300 group-hover:border-white/10 group-hover:bg-white/[0.04] group-hover:shadow-xl md:backdrop-blur-sm"
+                                        className="flex cursor-pointer flex-col gap-1 rounded-2xl border border-white/5 bg-white/[0.02] p-6 transition-all duration-300 group-hover:border-white/10 group-hover:bg-white/[0.04] group-hover:shadow-xl md:backdrop-blur-sm"
                                         onClick={() =>
                                             setExpandedExp(
                                                 expandedExp === item.id
@@ -176,7 +176,7 @@ export default function ExperienceEducationSection({
                                             {item.end_date !== null
                                                 ? ' - ' +
                                                   getMonthYear(item.end_date)
-                                                : ''}
+                                                : ' - Sekarang'}
                                         </span>
                                         <div className="mt-1 flex items-center justify-between">
                                             <h4 className="text-lg font-bold text-white md:text-xl">
@@ -240,7 +240,7 @@ export default function ExperienceEducationSection({
                         whileInView="visible"
                         viewport={{
                             once: true,
-                            amount: 0.2,
+                            amount: 0.3,
                         }}
                         transition={{ delay: 0.2 }}
                         className="flex flex-col gap-10"
@@ -262,14 +262,14 @@ export default function ExperienceEducationSection({
                                 <motion.div
                                     key={item.id}
                                     variants={itemVariants}
-                                    className="group relative mb-12 pl-10 last:mb-0 md:pl-12"
+                                    className="group relative mb-5 pl-10 last:mb-0 md:pl-12"
                                 >
                                     {/* Bullet Point / Dot */}
                                     <div className="absolute top-1.5 left-[-5px] h-4 w-4 rounded-full border-4 border-[#050015] bg-bshine transition-all duration-300 group-hover:scale-125 group-hover:shadow-[0_0_15px_rgba(192,104,0,0.6)] group-hover:brightness-130 md:left-[-1px] dark:group-hover:shadow-[0_0_15px_rgba(34,211,238,0.6)]" />
 
                                     {/* Konten Card */}
                                     <div
-                                        className="flex cursor-pointer flex-col gap-2 rounded-2xl border border-white/5 bg-white/[0.02] p-6 transition-all duration-300 group-hover:border-white/10 group-hover:bg-white/[0.04] group-hover:shadow-xl md:backdrop-blur-sm"
+                                        className="flex cursor-pointer flex-col gap-1 rounded-2xl border border-white/5 bg-white/[0.02] p-6 transition-all duration-300 group-hover:border-white/10 group-hover:bg-white/[0.04] group-hover:shadow-xl md:backdrop-blur-sm"
                                         onClick={() =>
                                             setExpandedEdu(
                                                 expandedEdu === item.id
@@ -283,7 +283,7 @@ export default function ExperienceEducationSection({
                                             {item.end_date !== null
                                                 ? ' - ' +
                                                   getMonthYear(item.end_date)
-                                                : ''}
+                                                : ' - Sekarang'}
                                         </span>
                                         <div className="mt-1 flex items-center justify-between">
                                             <h4 className="text-lg font-bold text-white md:text-xl">

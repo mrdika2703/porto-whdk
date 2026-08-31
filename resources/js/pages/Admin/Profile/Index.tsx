@@ -212,9 +212,9 @@ export default function Index({ profile, flash }: IndexProps) {
                 className="space-y-8"
                 encType="multipart/form-data"
             >
-                {/* GRID UTAMA FORM */}
+                {/* 1. INFORMASI DASAR & FOTO (GRID ATAS) */}
                 <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
-                    {/* BAGIAN KIRI: Foto & Identitas Inti */}
+                    {/* FOTO UTAMA */}
                     <div className="space-y-6 lg:col-span-1">
                         <div className="rounded-2xl border border-bmain/20 bg-bcard p-6 shadow-sm">
                             <h3 className="text-md mb-4 border-b border-bmain/20 pb-3 font-bold text-htext dark:text-tmain">
@@ -257,34 +257,37 @@ export default function Index({ profile, flash }: IndexProps) {
                                 </div>
                             </div>
                         </div>
+                    </div>
 
+                    {/* INFORMASI DASAR & PASSION */}
+                    <div className="space-y-6 lg:col-span-2">
                         <div className="space-y-4 rounded-2xl border border-bmain/20 bg-bcard p-6 shadow-sm">
                             <h3 className="text-md border-b border-bmain/20 pb-3 font-bold text-htext dark:text-tmain">
                                 <i className="fa-solid fa-id-card mr-2 text-accent"></i>{' '}
-                                Informasi Dasar
+                                Informasi Dasar & Passion
                             </h3>
 
-                            <div>
-                                <label className="mb-2 block text-xs font-semibold tracking-wider text-tmuted uppercase">
-                                    Nama Lengkap
-                                </label>
-                                <input
-                                    type="text"
-                                    value={data.name}
-                                    onChange={(e) =>
-                                        setData('name', e.target.value)
-                                    }
-                                    className="w-full rounded-xl border border-bmain/30 bg-main/40 px-4 py-3 text-sm text-htext transition-colors focus:border-accent focus:outline-none dark:text-tmain"
-                                    placeholder="Masukkan nama lengkap"
-                                />
-                                {errors.name && (
-                                    <p className="mt-1 text-xs text-red-500">
-                                        {errors.name}
-                                    </p>
-                                )}
-                            </div>
+                            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                                <div>
+                                    <label className="mb-2 block text-xs font-semibold tracking-wider text-tmuted uppercase">
+                                        Nama Lengkap
+                                    </label>
+                                    <input
+                                        type="text"
+                                        value={data.name}
+                                        onChange={(e) =>
+                                            setData('name', e.target.value)
+                                        }
+                                        className="w-full rounded-xl border border-bmain/30 bg-main/40 px-4 py-3 text-sm text-htext transition-colors focus:border-accent focus:outline-none dark:text-tmain"
+                                        placeholder="Masukkan nama lengkap"
+                                    />
+                                    {errors.name && (
+                                        <p className="mt-1 text-xs text-red-500">
+                                            {errors.name}
+                                        </p>
+                                    )}
+                                </div>
 
-                            <div className="grid grid-cols-2 gap-4">
                                 <div>
                                     <label className="mb-2 block text-xs font-semibold tracking-wider text-tmuted uppercase">
                                         Nama Panggilan
@@ -305,6 +308,9 @@ export default function Index({ profile, flash }: IndexProps) {
                                         </p>
                                     )}
                                 </div>
+                            </div>
+
+                            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                                 <div>
                                     <label className="mb-2 block text-xs font-semibold tracking-wider text-tmuted uppercase">
                                         Tanggal Lahir
@@ -323,131 +329,157 @@ export default function Index({ profile, flash }: IndexProps) {
                                         </p>
                                     )}
                                 </div>
+
+                                <div>
+                                    <label className="mb-2 block text-xs font-semibold tracking-wider text-tmuted uppercase">
+                                        Passion / Fokus Utama
+                                    </label>
+                                    <input
+                                        type="text"
+                                        value={data.passion}
+                                        onChange={(e) =>
+                                            setData('passion', e.target.value)
+                                        }
+                                        className="w-full rounded-xl border border-bmain/30 bg-main/40 px-4 py-3 text-sm text-htext transition-colors focus:border-accent focus:outline-none dark:text-tmain"
+                                        placeholder="Contoh: Full Stack Developer & UI/UX Designer"
+                                    />
+                                    {errors.passion && (
+                                        <p className="mt-1 text-xs text-red-500">
+                                            {errors.passion}
+                                        </p>
+                                    )}
+                                </div>
                             </div>
 
-                            <div>
-                                <label className="mb-2 block text-xs font-semibold tracking-wider text-tmuted uppercase">
-                                    Passion / Fokus Karir
-                                </label>
-                                <input
-                                    type="text"
-                                    value={data.passion}
-                                    onChange={(e) =>
-                                        setData('passion', e.target.value)
-                                    }
-                                    className="w-full rounded-xl border border-bmain/30 bg-main/40 px-4 py-3 text-sm text-htext transition-colors focus:border-accent focus:outline-none dark:text-tmain"
-                                    placeholder="Contoh: Web Developer & UI Designer"
-                                />
-                                {errors.passion && (
-                                    <p className="mt-1 text-xs text-red-500">
-                                        {errors.passion}
-                                    </p>
-                                )}
-                            </div>
+                            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                                <div>
+                                    <label className="mb-2 block text-xs font-semibold tracking-wider text-tmuted uppercase">
+                                        Passion (Mode MULTIMEDIA)
+                                    </label>
+                                    <input
+                                        type="text"
+                                        value={data.passion_multimedia || ''}
+                                        onChange={(e) =>
+                                            setData(
+                                                'passion_multimedia',
+                                                e.target.value,
+                                            )
+                                        }
+                                        className="w-full rounded-xl border border-bmain/30 bg-main/40 px-4 py-3 text-sm text-htext transition-colors focus:border-accent focus:outline-none dark:text-tmain"
+                                        placeholder="Contoh: Graphic Designer & Photographer"
+                                    />
+                                    {errors.passion_multimedia && (
+                                        <p className="mt-1 text-xs text-red-500">
+                                            {errors.passion_multimedia}
+                                        </p>
+                                    )}
+                                </div>
 
-                            <div>
-                                <label className="mb-2 block text-xs font-semibold tracking-wider text-tmuted uppercase">
-                                    Passion (MULTIMEDIA)
-                                </label>
-                                <input
-                                    type="text"
-                                    value={data.passion_multimedia || ''}
-                                    onChange={(e) =>
-                                        setData(
-                                            'passion_multimedia',
-                                            e.target.value,
-                                        )
-                                    }
-                                    className="w-full rounded-xl border border-bmain/30 bg-main/40 px-4 py-3 text-sm text-htext transition-colors focus:border-accent focus:outline-none dark:text-tmain"
-                                    placeholder="Contoh: Web Developer & UI Designer"
-                                />
-                                {errors.passion_multimedia && (
-                                    <p className="mt-1 text-xs text-red-500">
-                                        {errors.passion_multimedia}
-                                    </p>
-                                )}
-                            </div>
-
-                            <div>
-                                <label className="mb-2 block text-xs font-semibold tracking-wider text-tmuted uppercase">
-                                    Passion (CODING)
-                                </label>
-                                <input
-                                    type="text"
-                                    value={data.passion_coding || ''}
-                                    onChange={(e) =>
-                                        setData(
-                                            'passion_coding',
-                                            e.target.value,
-                                        )
-                                    }
-                                    className="w-full rounded-xl border border-bmain/30 bg-main/40 px-4 py-3 text-sm text-htext transition-colors focus:border-accent focus:outline-none dark:text-tmain"
-                                    placeholder="Contoh: Web Developer & UI Designer"
-                                />
-                                {errors.passion_coding && (
-                                    <p className="mt-1 text-xs text-red-500">
-                                        {errors.passion_coding}
-                                    </p>
-                                )}
+                                <div>
+                                    <label className="mb-2 block text-xs font-semibold tracking-wider text-tmuted uppercase">
+                                        Passion (Mode CODING)
+                                    </label>
+                                    <input
+                                        type="text"
+                                        value={data.passion_coding || ''}
+                                        onChange={(e) =>
+                                            setData(
+                                                'passion_coding',
+                                                e.target.value,
+                                            )
+                                        }
+                                        className="w-full rounded-xl border border-bmain/30 bg-main/40 px-4 py-3 text-sm text-htext transition-colors focus:border-accent focus:outline-none dark:text-tmain"
+                                        placeholder="Contoh: Laravel & React Developer"
+                                    />
+                                    {errors.passion_coding && (
+                                        <p className="mt-1 text-xs text-red-500">
+                                            {errors.passion_coding}
+                                        </p>
+                                    )}
+                                </div>
                             </div>
                         </div>
                     </div>
+                </div>
 
-                    {/* BAGIAN KANAN: Narasi & Informasi Sosial Media */}
-                    <div className="space-y-6 lg:col-span-2">
-                        {/* Blok Deskripsi */}
-                        <div className="space-y-4 rounded-2xl border border-bmain/20 bg-bcard p-6 shadow-sm">
-                            <h3 className="text-md border-b border-bmain/20 pb-3 font-bold text-htext dark:text-tmain">
+                {/* 2. NARASI & DESKRIPSI PROFIL (LEBAR PENUH / FULL WIDTH) */}
+                <div className="w-full space-y-6 rounded-2xl border border-bmain/20 bg-bcard p-6 shadow-sm">
+                    <div className="flex flex-col gap-2 border-b border-bmain/20 pb-4 sm:flex-row sm:items-center sm:justify-between">
+                        <div>
+                            <h3 className="text-lg font-bold text-htext dark:text-tmain">
                                 <i className="fa-solid fa-feather-pointed mr-2 text-accent"></i>{' '}
-                                Narasi Profil
+                                Narasi & Deskripsi Profil
                             </h3>
+                            <p className="mt-1 text-xs text-tmuted">
+                                Input berukuran lebar dan mendukung style multi-paragraf. Gunakan <kbd className="rounded border border-bmain/30 bg-main/60 px-1.5 py-0.5 font-mono text-[11px] text-accent">Enter</kbd> untuk membuat jeda baris / paragraf baru.
+                            </p>
+                        </div>
+                        <span className="inline-flex items-center gap-1.5 self-start rounded-lg bg-accent/10 px-3 py-1.5 text-xs font-medium text-accent">
+                            <i className="fa-solid fa-align-left text-xs"></i> Style Paragraf Aktif
+                        </span>
+                    </div>
 
-                            <div>
-                                <label className="mb-2 block text-xs font-semibold tracking-wider text-tmuted uppercase">
-                                    Keterangan Singkat (Caption)
+                    <div className="space-y-6">
+                        {/* Keterangan Singkat / Caption */}
+                        <div>
+                            <label className="mb-2 block text-xs font-semibold tracking-wider text-tmuted uppercase">
+                                Keterangan Singkat (Floating Caption / Quote)
+                            </label>
+                            <input
+                                type="text"
+                                value={data.caption}
+                                onChange={(e) =>
+                                    setData('caption', e.target.value)
+                                }
+                                className="w-full rounded-xl border border-bmain/30 bg-main/40 px-4 py-3 text-sm text-htext transition-colors focus:border-accent focus:outline-none dark:text-tmain"
+                                placeholder="Quote singkat pendukung landing page..."
+                            />
+                            {errors.caption && (
+                                <p className="mt-1 text-xs text-red-500">
+                                    {errors.caption}
+                                </p>
+                            )}
+                        </div>
+
+                        {/* Tentang Saya (About) */}
+                        <div>
+                            <div className="mb-2 flex items-center justify-between">
+                                <label className="text-xs font-semibold tracking-wider text-tmuted uppercase">
+                                    Tentang Saya (About - Mode Utama / All)
                                 </label>
-                                <input
-                                    type="text"
-                                    value={data.caption}
-                                    onChange={(e) =>
-                                        setData('caption', e.target.value)
-                                    }
-                                    className="w-full rounded-xl border border-bmain/30 bg-main/40 px-4 py-3 text-sm text-htext transition-colors focus:border-accent focus:outline-none dark:text-tmain"
-                                    placeholder="Quote singkat pendukung landing page"
-                                />
-                                {errors.caption && (
-                                    <p className="mt-1 text-xs text-red-500">
-                                        {errors.caption}
-                                    </p>
-                                )}
+                                <span className="text-[11px] text-tmuted">
+                                    Format paragraf didukung
+                                </span>
                             </div>
+                            <textarea
+                                rows={6}
+                                value={data.about}
+                                onChange={(e) =>
+                                    setData('about', e.target.value)
+                                }
+                                className="w-full min-h-[140px] resize-y rounded-xl border border-bmain/30 bg-main/40 px-4 py-3 font-sans text-sm leading-relaxed text-htext transition-colors focus:border-accent focus:outline-none dark:text-tmain"
+                                placeholder="Tuliskan deskripsi ringkasan diri Anda...&#10;&#10;Tekan Enter untuk membuat paragraf baru."
+                            />
+                            {errors.about && (
+                                <p className="mt-1 text-xs text-red-500">
+                                    {errors.about}
+                                </p>
+                            )}
+                        </div>
 
+                        {/* 2 Kolom Lebar: Deskripsi Multimedia & Coding */}
+                        <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
                             <div>
-                                <label className="mb-2 block text-xs font-semibold tracking-wider text-tmuted uppercase">
-                                    Tentang Saya (About)
-                                </label>
+                                <div className="mb-2 flex items-center justify-between">
+                                    <label className="text-xs font-semibold tracking-wider text-tmuted uppercase">
+                                        Deskripsi Khusus Mode Multimedia
+                                    </label>
+                                    <span className="text-[11px] text-tmuted">
+                                        Format paragraf
+                                    </span>
+                                </div>
                                 <textarea
-                                    rows={3}
-                                    value={data.about}
-                                    onChange={(e) =>
-                                        setData('about', e.target.value)
-                                    }
-                                    className="w-full resize-none rounded-xl border border-bmain/30 bg-main/40 px-4 py-3 text-sm text-htext transition-colors focus:border-accent focus:outline-none dark:text-tmain"
-                                    placeholder="Jelaskan ringkasan diri Anda..."
-                                />
-                                {errors.about && (
-                                    <p className="mt-1 text-xs text-red-500">
-                                        {errors.about}
-                                    </p>
-                                )}
-                            </div>
-
-                            <div>
-                                <label className="mb-2 block text-xs font-semibold tracking-wider text-tmuted uppercase">
-                                    Deskripsi Multimedia
-                                </label>
-                                <textarea
-                                    rows={3}
+                                    rows={6}
                                     value={data.description_multimedia || ''}
                                     onChange={(e) =>
                                         setData(
@@ -455,8 +487,8 @@ export default function Index({ profile, flash }: IndexProps) {
                                             e.target.value,
                                         )
                                     }
-                                    className="w-full resize-none rounded-xl border border-bmain/30 bg-main/40 px-4 py-3 text-sm text-htext transition-colors focus:border-accent focus:outline-none dark:text-tmain"
-                                    placeholder="Jelaskan ringkasan diri Anda..."
+                                    className="w-full min-h-[140px] resize-y rounded-xl border border-bmain/30 bg-main/40 px-4 py-3 font-sans text-sm leading-relaxed text-htext transition-colors focus:border-accent focus:outline-none dark:text-tmain"
+                                    placeholder="Jelaskan pengalaman & passion Anda di bidang multimedia (Graphic design, photography, videography)...&#10;&#10;Tekan Enter untuk membuat paragraf baru."
                                 />
                                 {errors.description_multimedia && (
                                     <p className="mt-1 text-xs text-red-500">
@@ -466,11 +498,16 @@ export default function Index({ profile, flash }: IndexProps) {
                             </div>
 
                             <div>
-                                <label className="mb-2 block text-xs font-semibold tracking-wider text-tmuted uppercase">
-                                    Deskripsi Coding
-                                </label>
+                                <div className="mb-2 flex items-center justify-between">
+                                    <label className="text-xs font-semibold tracking-wider text-tmuted uppercase">
+                                        Deskripsi Khusus Mode Coding
+                                    </label>
+                                    <span className="text-[11px] text-tmuted">
+                                        Format paragraf
+                                    </span>
+                                </div>
                                 <textarea
-                                    rows={3}
+                                    rows={6}
                                     value={data.description_coding || ''}
                                     onChange={(e) =>
                                         setData(
@@ -478,8 +515,8 @@ export default function Index({ profile, flash }: IndexProps) {
                                             e.target.value,
                                         )
                                     }
-                                    className="w-full resize-none rounded-xl border border-bmain/30 bg-main/40 px-4 py-3 text-sm text-htext transition-colors focus:border-accent focus:outline-none dark:text-tmain"
-                                    placeholder="Jelaskan ringkasan diri Anda..."
+                                    className="w-full min-h-[140px] resize-y rounded-xl border border-bmain/30 bg-main/40 px-4 py-3 font-sans text-sm leading-relaxed text-htext transition-colors focus:border-accent focus:outline-none dark:text-tmain"
+                                    placeholder="Jelaskan pengalaman & stack keahlian Anda di bidang pemrograman / web development...&#10;&#10;Tekan Enter untuk membuat paragraf baru."
                                 />
                                 {errors.description_coding && (
                                     <p className="mt-1 text-xs text-red-500">
@@ -487,164 +524,170 @@ export default function Index({ profile, flash }: IndexProps) {
                                     </p>
                                 )}
                             </div>
-
-                            <div>
-                                <label className="mb-2 block text-xs font-semibold tracking-wider text-tmuted uppercase">
-                                    Deskripsi Tambahan (Opsional)
-                                </label>
-                                <textarea
-                                    rows={4}
-                                    value={data.description || ''}
-                                    onChange={(e) =>
-                                        setData('description', e.target.value)
-                                    }
-                                    className="w-full resize-none rounded-xl border border-bmain/30 bg-main/40 px-4 py-3 text-sm text-htext transition-colors focus:border-accent focus:outline-none dark:text-tmain"
-                                    placeholder="Detail tambahan pengalaman atau rekam jejak..."
-                                />
-                                {errors.description && (
-                                    <p className="mt-1 text-xs text-red-500">
-                                        {errors.description}
-                                    </p>
-                                )}
-                            </div>
                         </div>
 
-                        {/* Blok Sosial Media & Kontak */}
-                        <div className="rounded-2xl border border-bmain/20 bg-bcard p-6 shadow-sm">
-                            <h3 className="text-md mb-4 border-b border-bmain/20 pb-3 font-bold text-htext dark:text-tmain">
-                                <i className="fa-solid fa-share-nodes mr-2 text-accent"></i>{' '}
-                                Kontak & Integrasi Sosial
-                            </h3>
-
-                            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                                <div>
-                                    <label className="mb-2 block text-xs font-semibold tracking-wider text-tmuted uppercase">
-                                        <i className="fa-brands fa-whatsapp mr-1 text-green-500"></i>{' '}
-                                        WhatsApp
-                                    </label>
-                                    <input
-                                        type="text"
-                                        value={data.whatsapp}
-                                        onChange={(e) =>
-                                            setData('whatsapp', e.target.value)
-                                        }
-                                        className="w-full rounded-xl border border-bmain/30 bg-main/40 px-4 py-3 text-sm text-htext transition-colors focus:border-accent focus:outline-none dark:text-tmain"
-                                        placeholder="Contoh: 08123456789"
-                                    />
-                                    {errors.whatsapp && (
-                                        <p className="mt-1 text-xs text-red-500">
-                                            {errors.whatsapp}
-                                        </p>
-                                    )}
-                                </div>
-
-                                <div>
-                                    <label className="mb-2 block text-xs font-semibold tracking-wider text-tmuted uppercase">
-                                        <i className="fa-solid fa-envelope mr-1 text-red-400"></i>{' '}
-                                        Email Publik
-                                    </label>
-                                    <input
-                                        type="email"
-                                        value={data.email}
-                                        onChange={(e) =>
-                                            setData('email', e.target.value)
-                                        }
-                                        className="w-full rounded-xl border border-bmain/30 bg-main/40 px-4 py-3 text-sm text-htext transition-colors focus:border-accent focus:outline-none dark:text-tmain"
-                                        placeholder="email@domain.com"
-                                    />
-                                    {errors.email && (
-                                        <p className="mt-1 text-xs text-red-500">
-                                            {errors.email}
-                                        </p>
-                                    )}
-                                </div>
-
-                                <div>
-                                    <label className="mb-2 block text-xs font-semibold tracking-wider text-tmuted uppercase">
-                                        <i className="fa-brands fa-linkedin mr-1 text-blue-500"></i>{' '}
-                                        URL LinkedIn
-                                    </label>
-                                    <input
-                                        type="text"
-                                        value={data.linkedin}
-                                        onChange={(e) =>
-                                            setData('linkedin', e.target.value)
-                                        }
-                                        className="w-full rounded-xl border border-bmain/30 bg-main/40 px-4 py-3 text-sm text-htext transition-colors focus:border-accent focus:outline-none dark:text-tmain"
-                                        placeholder="https://linkedin.com/in/username"
-                                    />
-                                    {errors.linkedin && (
-                                        <p className="mt-1 text-xs text-red-500">
-                                            {errors.linkedin}
-                                        </p>
-                                    )}
-                                </div>
-
-                                <div>
-                                    <label className="mb-2 block text-xs font-semibold tracking-wider text-tmuted uppercase">
-                                        Nama Tampilan LinkedIn
-                                    </label>
-                                    <input
-                                        type="text"
-                                        value={data.linkedin_name}
-                                        onChange={(e) =>
-                                            setData(
-                                                'linkedin_name',
-                                                e.target.value,
-                                            )
-                                        }
-                                        className="w-full rounded-xl border border-bmain/30 bg-main/40 px-4 py-3 text-sm text-htext transition-colors focus:border-accent focus:outline-none dark:text-tmain"
-                                        placeholder="Contoh: Wahyu Adam A."
-                                    />
-                                    {errors.linkedin_name && (
-                                        <p className="mt-1 text-xs text-red-500">
-                                            {errors.linkedin_name}
-                                        </p>
-                                    )}
-                                </div>
-
-                                <div>
-                                    <label className="mb-2 block text-xs font-semibold tracking-wider text-tmuted uppercase">
-                                        <i className="fa-brands fa-instagram mr-1 text-pink-500"></i>{' '}
-                                        URL Instagram
-                                    </label>
-                                    <input
-                                        type="text"
-                                        value={data.instagram}
-                                        onChange={(e) =>
-                                            setData('instagram', e.target.value)
-                                        }
-                                        className="w-full rounded-xl border border-bmain/30 bg-main/40 px-4 py-3 text-sm text-htext transition-colors focus:border-accent focus:outline-none dark:text-tmain"
-                                        placeholder="https://instagram.com/username"
-                                    />
-                                    {errors.instagram && (
-                                        <p className="mt-1 text-xs text-red-500">
-                                            {errors.instagram}
-                                        </p>
-                                    )}
-                                </div>
-
-                                <div>
-                                    <label className="mb-2 block text-xs font-semibold tracking-wider text-tmuted uppercase">
-                                        <i className="fa-brands fa-github mr-1 text-neutral-800 dark:text-neutral-200"></i>{' '}
-                                        URL GitHub
-                                    </label>
-                                    <input
-                                        type="text"
-                                        value={data.github}
-                                        onChange={(e) =>
-                                            setData('github', e.target.value)
-                                        }
-                                        className="w-full rounded-xl border border-bmain/30 bg-main/40 px-4 py-3 text-sm text-htext transition-colors focus:border-accent focus:outline-none dark:text-tmain"
-                                        placeholder="https://github.com/username"
-                                    />
-                                    {errors.github && (
-                                        <p className="mt-1 text-xs text-red-500">
-                                            {errors.github}
-                                        </p>
-                                    )}
-                                </div>
+                        {/* Deskripsi Tambahan (Opsional) */}
+                        <div>
+                            <div className="mb-2 flex items-center justify-between">
+                                <label className="text-xs font-semibold tracking-wider text-tmuted uppercase">
+                                    Deskripsi Tambahan (Opsional)
+                                </label>
+                                <span className="text-[11px] text-tmuted">
+                                    Format paragraf
+                                </span>
                             </div>
+                            <textarea
+                                rows={4}
+                                value={data.description || ''}
+                                onChange={(e) =>
+                                    setData('description', e.target.value)
+                                }
+                                className="w-full min-h-[110px] resize-y rounded-xl border border-bmain/30 bg-main/40 px-4 py-3 font-sans text-sm leading-relaxed text-htext transition-colors focus:border-accent focus:outline-none dark:text-tmain"
+                                placeholder="Detail tambahan rekam jejak, visi, atau portofolio lainnya...&#10;&#10;Tekan Enter untuk membuat paragraf baru."
+                            />
+                            {errors.description && (
+                                <p className="mt-1 text-xs text-red-500">
+                                    {errors.description}
+                                </p>
+                            )}
+                        </div>
+                    </div>
+                </div>
+
+                {/* 3. KONTAK & INTEGRASI SOSIAL (LEBAR PENUH) */}
+                <div className="rounded-2xl border border-bmain/20 bg-bcard p-6 shadow-sm">
+                    <h3 className="text-md mb-4 border-b border-bmain/20 pb-3 font-bold text-htext dark:text-tmain">
+                        <i className="fa-solid fa-share-nodes mr-2 text-accent"></i>{' '}
+                        Kontak & Integrasi Sosial
+                    </h3>
+
+                    <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+                        <div>
+                            <label className="mb-2 block text-xs font-semibold tracking-wider text-tmuted uppercase">
+                                <i className="fa-brands fa-whatsapp mr-1 text-green-500"></i>{' '}
+                                WhatsApp
+                            </label>
+                            <input
+                                type="text"
+                                value={data.whatsapp}
+                                onChange={(e) =>
+                                    setData('whatsapp', e.target.value)
+                                }
+                                className="w-full rounded-xl border border-bmain/30 bg-main/40 px-4 py-3 text-sm text-htext transition-colors focus:border-accent focus:outline-none dark:text-tmain"
+                                placeholder="Contoh: 08123456789"
+                            />
+                            {errors.whatsapp && (
+                                <p className="mt-1 text-xs text-red-500">
+                                    {errors.whatsapp}
+                                </p>
+                            )}
+                        </div>
+
+                        <div>
+                            <label className="mb-2 block text-xs font-semibold tracking-wider text-tmuted uppercase">
+                                <i className="fa-solid fa-envelope mr-1 text-red-400"></i>{' '}
+                                Email Publik
+                            </label>
+                            <input
+                                type="email"
+                                value={data.email}
+                                onChange={(e) =>
+                                    setData('email', e.target.value)
+                                }
+                                className="w-full rounded-xl border border-bmain/30 bg-main/40 px-4 py-3 text-sm text-htext transition-colors focus:border-accent focus:outline-none dark:text-tmain"
+                                placeholder="email@domain.com"
+                            />
+                            {errors.email && (
+                                <p className="mt-1 text-xs text-red-500">
+                                    {errors.email}
+                                </p>
+                            )}
+                        </div>
+
+                        <div>
+                            <label className="mb-2 block text-xs font-semibold tracking-wider text-tmuted uppercase">
+                                <i className="fa-brands fa-linkedin mr-1 text-blue-500"></i>{' '}
+                                URL LinkedIn
+                            </label>
+                            <input
+                                type="text"
+                                value={data.linkedin}
+                                onChange={(e) =>
+                                    setData('linkedin', e.target.value)
+                                }
+                                className="w-full rounded-xl border border-bmain/30 bg-main/40 px-4 py-3 text-sm text-htext transition-colors focus:border-accent focus:outline-none dark:text-tmain"
+                                placeholder="https://linkedin.com/in/username"
+                            />
+                            {errors.linkedin && (
+                                <p className="mt-1 text-xs text-red-500">
+                                    {errors.linkedin}
+                                </p>
+                            )}
+                        </div>
+
+                        <div>
+                            <label className="mb-2 block text-xs font-semibold tracking-wider text-tmuted uppercase">
+                                Nama Tampilan LinkedIn
+                            </label>
+                            <input
+                                type="text"
+                                value={data.linkedin_name}
+                                onChange={(e) =>
+                                    setData(
+                                        'linkedin_name',
+                                        e.target.value,
+                                    )
+                                }
+                                className="w-full rounded-xl border border-bmain/30 bg-main/40 px-4 py-3 text-sm text-htext transition-colors focus:border-accent focus:outline-none dark:text-tmain"
+                                placeholder="Contoh: Wahyu Adam A."
+                            />
+                            {errors.linkedin_name && (
+                                <p className="mt-1 text-xs text-red-500">
+                                    {errors.linkedin_name}
+                                </p>
+                            )}
+                        </div>
+
+                        <div>
+                            <label className="mb-2 block text-xs font-semibold tracking-wider text-tmuted uppercase">
+                                <i className="fa-brands fa-instagram mr-1 text-pink-500"></i>{' '}
+                                URL Instagram
+                            </label>
+                            <input
+                                type="text"
+                                value={data.instagram}
+                                onChange={(e) =>
+                                    setData('instagram', e.target.value)
+                                }
+                                className="w-full rounded-xl border border-bmain/30 bg-main/40 px-4 py-3 text-sm text-htext transition-colors focus:border-accent focus:outline-none dark:text-tmain"
+                                placeholder="https://instagram.com/username"
+                            />
+                            {errors.instagram && (
+                                <p className="mt-1 text-xs text-red-500">
+                                    {errors.instagram}
+                                </p>
+                            )}
+                        </div>
+
+                        <div>
+                            <label className="mb-2 block text-xs font-semibold tracking-wider text-tmuted uppercase">
+                                <i className="fa-brands fa-github mr-1 text-neutral-800 dark:text-neutral-200"></i>{' '}
+                                URL GitHub
+                            </label>
+                            <input
+                                type="text"
+                                value={data.github}
+                                onChange={(e) =>
+                                    setData('github', e.target.value)
+                                }
+                                className="w-full rounded-xl border border-bmain/30 bg-main/40 px-4 py-3 text-sm text-htext transition-colors focus:border-accent focus:outline-none dark:text-tmain"
+                                placeholder="https://github.com/username"
+                            />
+                            {errors.github && (
+                                <p className="mt-1 text-xs text-red-500">
+                                    {errors.github}
+                                </p>
+                            )}
                         </div>
                     </div>
                 </div>

@@ -79,14 +79,14 @@ class WebsiteController extends Controller
             'tech'        => 'nullable|string',
             'link'        => 'nullable|string',
             'origin'      => 'nullable|string',
-            'url_1'       => 'required|file|mimes:jpeg,png,jpg,webp,mp4,mov,avi|max:1024', // 10MB max
-            'url_2'       => 'nullable|file|mimes:jpeg,png,jpg,webp,mp4,mov,avi|max:1024',
-            'url_3'       => 'nullable|file|mimes:jpeg,png,jpg,webp,mp4,mov,avi|max:1024',
-            'url_4'       => 'nullable|file|mimes:jpeg,png,jpg,webp,mp4,mov,avi|max:1024',
-            'url_5'       => 'nullable|file|mimes:jpeg,png,jpg,webp,mp4,mov,avi|max:1024',
-            'url_6'       => 'nullable|file|mimes:jpeg,png,jpg,webp,mp4,mov,avi|max:1024',
-            'url_7'       => 'nullable|file|mimes:jpeg,png,jpg,webp,mp4,mov,avi|max:1024',
-            'url_8'       => 'nullable|file|mimes:jpeg,png,jpg,webp,mp4,mov,avi|max:1024',
+            'url_1'       => 'required|file|mimes:jpeg,png,jpg,webp|max:2048', // 10MB max
+            'url_2'       => 'nullable|file|mimes:jpeg,png,jpg,webp|max:2048',
+            'url_3'       => 'nullable|file|mimes:jpeg,png,jpg,webp|max:2048',
+            'url_4'       => 'nullable|file|mimes:jpeg,png,jpg,webp|max:2048',
+            'url_5'       => 'nullable|file|mimes:jpeg,png,jpg,webp|max:2048',
+            'url_6'       => 'nullable|file|mimes:jpeg,png,jpg,webp|max:2048',
+            'url_7'       => 'nullable|file|mimes:jpeg,png,jpg,webp|max:2048',
+            'url_8'       => 'nullable|file|mimes:jpeg,png,jpg,webp|max:2048',
             'visible'     => 'required|in:yes,no',
         ]);
 
@@ -141,14 +141,14 @@ class WebsiteController extends Controller
             'tech'        => 'nullable|string',
             'link'        => 'nullable|string',
             'origin'      => 'nullable|string',
-            'url_1'       => 'nullable|file|mimes:jpeg,png,jpg,webp,mp4,mov,avi|max:1024', // 10MB max
-            'url_2'       => 'nullable|file|mimes:jpeg,png,jpg,webp,mp4,mov,avi|max:1024',
-            'url_3'       => 'nullable|file|mimes:jpeg,png,jpg,webp,mp4,mov,avi|max:1024',
-            'url_4'       => 'nullable|file|mimes:jpeg,png,jpg,webp,mp4,mov,avi|max:1024',
-            'url_5'       => 'nullable|file|mimes:jpeg,png,jpg,webp,mp4,mov,avi|max:1024',
-            'url_6'       => 'nullable|file|mimes:jpeg,png,jpg,webp,mp4,mov,avi|max:1024',
-            'url_7'       => 'nullable|file|mimes:jpeg,png,jpg,webp,mp4,mov,avi|max:1024',
-            'url_8'       => 'nullable|file|mimes:jpeg,png,jpg,webp,mp4,mov,avi|max:1024',
+            'url_1'       => 'nullable|file|mimes:jpeg,png,jpg,webp|max:2048', // 10MB max
+            'url_2'       => 'nullable|file|mimes:jpeg,png,jpg,webp|max:2048',
+            'url_3'       => 'nullable|file|mimes:jpeg,png,jpg,webp|max:2048',
+            'url_4'       => 'nullable|file|mimes:jpeg,png,jpg,webp|max:2048',
+            'url_5'       => 'nullable|file|mimes:jpeg,png,jpg,webp|max:2048',
+            'url_6'       => 'nullable|file|mimes:jpeg,png,jpg,webp|max:2048',
+            'url_7'       => 'nullable|file|mimes:jpeg,png,jpg,webp|max:2048',
+            'url_8'       => 'nullable|file|mimes:jpeg,png,jpg,webp|max:2048',
             'visible'     => 'required|in:yes,no',
         ]);
 

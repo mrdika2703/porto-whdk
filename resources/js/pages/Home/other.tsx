@@ -99,7 +99,11 @@ function renderDescription(text: string) {
             if (trimmed === '') {
                 elements.push(<div key={`br-${idx}`} className="h-2" />);
             } else {
-                elements.push(<p key={`p-${idx}`} className="leading-relaxed">{trimmed}</p>);
+                elements.push(
+                    <p key={`p-${idx}`} className="leading-relaxed">
+                        {trimmed}
+                    </p>,
+                );
             }
         }
     });
@@ -192,7 +196,7 @@ export default function OtherSection({
                 <motion.div
                     initial={{ opacity: 0, y: 30 }}
                     whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true, amount: 0.2 }}
+                    viewport={{ once: true, amount: 0.8 }}
                     transition={{ duration: 0.6, delay: 0.2 }}
                     className="flex flex-col items-center gap-5 text-center md:flex-row md:justify-between md:text-left"
                 >
@@ -206,7 +210,7 @@ export default function OtherSection({
                         </h2>
 
                         <p
-                            className={`font-regular text-center text-xs text-gray-500 transition-opacity duration-100 md:text-left md:text-sm ${isOpen ? 'absolute opacity-0' : 'opacity-100'}`}
+                            className={`font-regular text-center text-xs leading-relaxed text-gray-500 whitespace-pre-line transition-opacity duration-100 md:text-left md:text-sm ${isOpen ? 'absolute opacity-0' : 'opacity-100'}`}
                         >
                             {description_sections?.other_section ||
                                 others.map((item) => item.category).join(', ')}
@@ -437,7 +441,9 @@ export default function OtherSection({
                                         style={{ scrollbarWidth: 'thin' }}
                                     >
                                         {selectedOther.description
-                                            ? renderDescription(selectedOther.description)
+                                            ? renderDescription(
+                                                  selectedOther.description,
+                                              )
                                             : 'Tidak ada deskripsi.'}
                                     </div>
                                 </div>

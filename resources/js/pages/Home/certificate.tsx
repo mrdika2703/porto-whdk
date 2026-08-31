@@ -29,7 +29,7 @@ function ModalImage({ src, alt }: { src: string; alt: string }) {
                     setIsLoaded(true);
                 }}
                 className={`max-h-[50vh] max-w-full rounded-lg object-contain shadow-lg transition-opacity duration-300 md:max-h-[85vh] ${
-                    isLoaded ? 'opacity-100' : 'opacity-0 absolute'
+                    isLoaded ? 'opacity-100' : 'absolute opacity-0'
                 }`}
             />
         </div>
@@ -72,7 +72,11 @@ function renderDescription(text: string) {
             if (trimmed === '') {
                 elements.push(<div key={`br-${idx}`} className="h-2" />);
             } else {
-                elements.push(<p key={`p-${idx}`} className="leading-relaxed">{trimmed}</p>);
+                elements.push(
+                    <p key={`p-${idx}`} className="leading-relaxed">
+                        {trimmed}
+                    </p>,
+                );
             }
         }
     });
@@ -168,7 +172,7 @@ export default function CertificateSection({
                 <motion.div
                     initial={{ opacity: 0, y: 30 }}
                     whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true, amount: 0.2 }}
+                    viewport={{ once: true, amount: 0.8 }}
                     transition={{ duration: 0.6, delay: 0.2 }}
                     className="flex flex-col items-center gap-5 text-center md:flex-row md:justify-between md:text-left"
                 >
@@ -187,7 +191,7 @@ export default function CertificateSection({
                 <motion.div
                     initial={{ opacity: 0 }}
                     whileInView={{ opacity: 1 }}
-                    viewport={{ once: true, amount: 0.1 }}
+                    viewport={{ once: true, amount: 0.5 }}
                     transition={{ duration: 0.5 }}
                     className="grid grid-cols-1 gap-8 md:grid-cols-2"
                 >
@@ -397,7 +401,9 @@ export default function CertificateSection({
                                         style={{ scrollbarWidth: 'thin' }}
                                     >
                                         {selectedCert.description
-                                            ? renderDescription(selectedCert.description)
+                                            ? renderDescription(
+                                                  selectedCert.description,
+                                              )
                                             : 'Tidak ada deskripsi.'}
                                     </div>
                                 </div>

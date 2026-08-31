@@ -198,7 +198,7 @@ export default function DesignGraphicSection({
                 <motion.div
                     initial={{ opacity: 0, y: -20 }}
                     whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true, amount: 0.2 }}
+                    viewport={{ once: true, amount: 0.8 }}
                     transition={{ duration: 0.6, ease: 'easeOut', delay: 0.2 }}
                     className="relative z-20 flex flex-row items-center justify-between gap-4 md:gap-6"
                 >
@@ -220,7 +220,7 @@ export default function DesignGraphicSection({
 
                 {description_sections?.design_section && (
                     <div className="flex w-full flex-col items-center md:items-start">
-                        <p className="text-xs font-light text-tmain/70 md:text-sm">
+                        <p className="text-xs font-light leading-relaxed text-tmain/70 whitespace-pre-line md:text-sm">
                             {description_sections.design_section}
                         </p>
                     </div>

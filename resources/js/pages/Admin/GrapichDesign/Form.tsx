@@ -369,17 +369,22 @@ export default function Form({ design, existingCategories = [] }: FormProps) {
                         </div>
 
                         <div>
-                            <label className="mb-2 block text-xs font-semibold tracking-wider text-tmuted uppercase">
-                                Deskripsi (Opsional)
-                            </label>
+                            <div className="mb-2 flex items-center justify-between">
+                                <label className="text-xs font-semibold tracking-wider text-tmuted uppercase">
+                                    Deskripsi (Opsional)
+                                </label>
+                                <span className="text-[11px] text-tmuted">
+                                    Format paragraf (Enter)
+                                </span>
+                            </div>
                             <textarea
-                                rows={4}
+                                rows={5}
                                 value={data.description || ''}
                                 onChange={(e) =>
                                     setData('description', e.target.value)
                                 }
-                                className="w-full resize-none rounded-xl border border-bmain/30 bg-main/40 px-4 py-3 text-sm text-htext transition-colors focus:border-accent focus:outline-none dark:text-tmain"
-                                placeholder="Jelaskan konsep karya ini..."
+                                className="w-full min-h-[120px] resize-y rounded-xl border border-bmain/30 bg-main/40 px-4 py-3 text-sm leading-relaxed text-htext transition-colors focus:border-accent focus:outline-none dark:text-tmain"
+                                placeholder="Jelaskan konsep atau ringkasan karya desain ini...&#10;&#10;Gunakan Enter untuk membuat paragraf baru."
                             />
                             {errors.description && (
                                 <p className="mt-1 text-xs text-red-500">

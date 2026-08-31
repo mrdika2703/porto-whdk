@@ -226,13 +226,22 @@ export default function WebsiteSection({
 
     const ITEMS_PER_PAGE = 3;
 
+    const scrollToFirstItem = useCallback(() => {
+        if (!isMobile) return;
+        const el = document.getElementById('website');
+        if (el) {
+            el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+    }, [isMobile]);
+
     const handleNextProject = useCallback(() => {
         setDirection('next');
         setProjectIndex((prev) => {
             const next = prev + ITEMS_PER_PAGE;
             return next >= filteredProjects.length ? 0 : next;
         });
-    }, [filteredProjects.length]);
+        scrollToFirstItem();
+    }, [filteredProjects.length, scrollToFirstItem]);
 
     const handlePrevProject = useCallback(() => {
         setDirection('prev');
@@ -243,7 +252,8 @@ export default function WebsiteSection({
                       ITEMS_PER_PAGE
                 : next;
         });
-    }, [filteredProjects.length]);
+        scrollToFirstItem();
+    }, [filteredProjects.length, scrollToFirstItem]);
 
     const totalPages = Math.ceil(filteredProjects.length / ITEMS_PER_PAGE);
     const pageIndex = Math.floor(projectIndex / ITEMS_PER_PAGE);
@@ -282,7 +292,7 @@ export default function WebsiteSection({
 
                 {description_sections?.website_section && (
                     <div className="flex w-full flex-col items-start">
-                        <p className="text-xs font-light text-tmain/70 md:text-sm">
+                        <p className="text-xs font-light leading-relaxed text-tmain/70 whitespace-pre-line md:text-sm">
                             {description_sections.website_section}
                         </p>
                     </div>
@@ -484,6 +494,7 @@ export default function WebsiteSection({
                                                 setProjectIndex(
                                                     idx * ITEMS_PER_PAGE,
                                                 );
+                                                scrollToFirstItem();
                                             }}
                                         />
                                     ),
